@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+	<Response 
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xmlns="http://schemas.microsoft.com/search/local/ws/rest/v1">
+		<Copyright>
+					Copyright © 2017 Microsoft and its suppliers. All rights reserved.
+					This API cannot be accessed and the content and any results may not be used,
+					reproduced or transmitted in any manner without express written permission from 
+					Microsoft Corporation.
+		</Copyright>
+		<BrandLogoUri>http://dev.virtualearth.net/Branding/logo_powered_by.png</BrandLogoUri>
+		<StatusCode>200</StatusCode>
+		<StatusDescription>OK</StatusDescription>
+		<AuthenticationResultCode>ValidCredentials</AuthenticationResultCode>
+		<TraceId>982280b2b9b8403884674976e652a671|CO30275941|7.7.0.0|</TraceId>
+		<ResourceSets>
+			<ResourceSet>
+				<EstimatedTotal>1</EstimatedTotal>
+				<Resources>
+					<ImageryMetadata>
+						<ImageUrl>http://ecn.t3.tiles.virtualearth.net/tiles/a032010110123333.jpeg?g=5698</ImageUrl>
+						<ImageWidth>256</ImageWidth>
+						<ImageHeight>256</ImageHeight>
+						<ZoomMin>15</ZoomMin>
+						<ZoomMax>15</ZoomMax>
+						<VintageStart>2012-06-16</VintageStart>
+						<VintageEnd>2014-08-10</VintageEnd>
+					</ImageryMetadata>
+				</Resources>
+			</ResourceSet>
+		</ResourceSets>
+	</Response>
+	
+Response/ResourceSets/ResourceSet/Resources/ImageryMetadata/ImageUrl
