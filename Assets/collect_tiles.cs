@@ -8,6 +8,7 @@ public class collect_tiles : MonoBehaviour {
 
     WebClient client = new WebClient();
     Terrain Terr;
+    Terrain mTerr;
    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
     static string elvFilename = @"Assets/Textures/elvTile.png";
     static string aerXMLFilename = @"Assets/Textures/aerXML.xml";
@@ -32,7 +33,8 @@ public class collect_tiles : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        Terr = Terrain.activeTerrain;
+        Terr = Terrain.activeTerrains[1];
+        mTerr = Terrain.activeTerrains[0];
         heights = Terr.terrainData.GetHeights(0, 0, Terr.terrainData.heightmapWidth, Terr.terrainData.heightmapHeight);
         filetex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
         tileTex = new Texture2D(256, 256);
