@@ -161,8 +161,11 @@ public class collect_tiles : MonoBehaviour {
             for(int j = 0; j< Terr.terrainData.heightmapHeight; j++)      
                 heights[j, i] = 1- tileTex.GetPixel(i, j).a;
 
-                Terr.terrainData.SetHeights(0, 0, heights);
+        Terr.terrainData.SetHeights(0, 0, heights);
+        mTerr.terrainData.SetHeights(0, 0, heights);
+                
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
+        mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
 
     }
 
