@@ -15,9 +15,9 @@ public class collect_tiles : MonoBehaviour {
     static string key = "AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut";
     static string ImageURL;
     static string oImageURL;
-    static float latitude;
+    public float latitude;
     static float olatitude;
-    static float longitude;
+    public float longitude;
     static float olongitude;
     static int zoom;
     static float ozoom;
@@ -64,6 +64,7 @@ public class collect_tiles : MonoBehaviour {
         float y2 = Mathf.Log10(Mathf.Tan(0.25f * Mathf.PI + 0.5f * y1));
         float tiles = 2 ^ zoom;
         float diameter = 2 * Mathf.PI;
+        //temp swapped these two- don't froget!
         merc_long = (int)(tiles * (x2 + Mathf.PI) / diameter);
         merc_lat = (int)(tiles * (Mathf.PI - y2) / diameter);
 
@@ -164,7 +165,7 @@ public class collect_tiles : MonoBehaviour {
         mTerr.terrainData.SetHeights(0, 0, heights);
                 
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
-        mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
+   //     mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
 
     }
 

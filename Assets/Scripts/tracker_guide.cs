@@ -39,7 +39,26 @@ public class tracker_guide : MonoBehaviour {
         if (!isGrabbed)
         {
             Vector3 trackPos = cameraRigTransform.position / Terr.terrainData.heightmapWidth;
-            trackPos.y = 0.1f;
+            //  trackPos.y = (cameraRigTransform.position + Terr.transform.position  / Terr.terrainData.heightmapHeight).y;
+            // trackPos.y = 0.1f;
+            trackPos.y += 0.6f;
+
+
+            if (trackPos.x > 1)
+                trackPos.x = 1;
+            if (trackPos.x < -1)
+                trackPos.x = -1;
+            if (trackPos.y > 1)
+                trackPos.y = 1;
+            if (trackPos.y < -1)
+                trackPos.y = -1;
+            if (trackPos.z > 1)
+                trackPos.z = 1;
+            if (trackPos.z < -1)
+                trackPos.z = -1;
+
+
+
             trackerTransform.localPosition = trackPos;
             mesh.material.color = Color.red;
         }
@@ -49,8 +68,12 @@ public class tracker_guide : MonoBehaviour {
             temp = trackerTransform.localPosition * Terr.terrainData.heightmapWidth;
             temp.y = Terr.SampleHeight(temp);
             Vector3 difference = cameraRigTransform.position - headTransform.position;
-            // 4
-            difference.y = Terr.transform.position.y;
+            // Keep tracker on the ground
+       //     difference.y = Terr.transform.position.y;
+
+            //Let tracker roam0
+            difference.y = Terr.transform.position.y + (trackerTransform.localPosition.y - 0.1f) * Terr.terrainData.heightmapHeight;
+
             // 5
             cameraRigTransform.position = temp + difference;
 

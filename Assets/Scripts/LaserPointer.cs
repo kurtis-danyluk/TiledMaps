@@ -60,7 +60,7 @@ public class LaserPointer : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-        if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+        if (Controller.GetPress(SteamVR_Controller.ButtonMask.Grip))
         {
             RaycastHit hit;
 
@@ -71,6 +71,15 @@ public class LaserPointer : MonoBehaviour {
                 ShowLaser(hit);
 
                 reticle.SetActive(true);
+                if (hit.collider.gameObject.name == "Terrain")
+                {
+                  //  Debug.Log("Hit main map");
+                }
+                else if (hit.collider.gameObject.name == "mTerr")
+                {
+                    hitPoint = hit.collider.gameObject.transform.InverseTransformPoint(hitPoint);
+                    hitPoint = hitPoint * Terrain.activeTerrains[1].terrainData.heightmapWidth;
+                }
                 teleportReticleTransform.position = hitPoint + teleportReticleOffset;
                 shouldTeleport = true;
 
@@ -81,7 +90,7 @@ public class LaserPointer : MonoBehaviour {
             laser.SetActive(false);
             reticle.SetActive(false);
         }
-        if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad) && shouldTeleport)
+        if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Grip) && shouldTeleport)
         {
             Teleport();
         }
