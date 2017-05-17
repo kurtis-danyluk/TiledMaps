@@ -11,7 +11,6 @@ public class collect_tiles : MonoBehaviour {
     Terrain mTerr;
    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
     static string elvFilename = @"Assets/Textures/elvTile.png";
-    static string aerXMLFilename = @"Assets/Textures/aerXML.xml";
     static string aerImageFilename = @"Assets/Textures/aerImage.jpeg";
     static string key = "AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut";
     static string ImageURL;

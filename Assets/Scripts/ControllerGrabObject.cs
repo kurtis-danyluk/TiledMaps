@@ -7,6 +7,8 @@ public class ControllerGrabObject : MonoBehaviour {
     private SteamVR_TrackedObject trackedObj;
     private GameObject collidingObject;
     private GameObject objectInHand;
+    public tracker_guide target;
+    public Transform trackerTransform;
 
     private SteamVR_Controller.Device Controller
     {
@@ -52,9 +54,13 @@ public class ControllerGrabObject : MonoBehaviour {
         // 1
         objectInHand = collidingObject;
         collidingObject = null;
+    //    if (objectInHand.name == "tracker")
+            target.isGrabbed = true;
         // 2
-        var joint = AddFixedJoint();
-        joint.connectedBody = objectInHand.GetComponent<Rigidbody>();
+     //   Debug.Log("Grabbed:" + objectInHand.name);
+     //   var joint = AddFixedJoint();
+     //   joint.connectedBody = objectInHand.GetComponent<Rigidbody>();
+        
     }
 
     // 3
@@ -74,11 +80,12 @@ public class ControllerGrabObject : MonoBehaviour {
             GetComponent<FixedJoint>().connectedBody = null;
             Destroy(GetComponent<FixedJoint>());
             // 3
-            objectInHand.GetComponent<Rigidbody>().velocity = Controller.velocity;
-            objectInHand.GetComponent<Rigidbody>().angularVelocity = Controller.angularVelocity;
+       //     objectInHand.GetComponent<Rigidbody>().velocity = Controller.velocity;
+       //     objectInHand.GetComponent<Rigidbody>().angularVelocity = Controller.angularVelocity;
         }
         // 4
         objectInHand = null;
+        target.isGrabbed = false;
     }
     // Update is called once per frame
     void Update () {
@@ -98,5 +105,7 @@ public class ControllerGrabObject : MonoBehaviour {
                 ReleaseObject();
             }
         }
+        if (target.isGrabbed)
+            trackerTransform.position = this.transform.position + this.transform.forward.normalized * 0.05f;
     }
 }
