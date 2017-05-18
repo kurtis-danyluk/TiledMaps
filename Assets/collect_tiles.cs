@@ -55,19 +55,10 @@ public class collect_tiles : MonoBehaviour {
     void dlFile() {
         //template for an aws elevation tile request. z is zoom level and x and y refer to a tile in mercantor format
         // https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
-        int merc_lat;// =(int)((2^zoom)*((Mathf.PI + (0.25*Mathf.PI + 0.5*(latitude * Mathf.PI/180)))/ (2*Mathf.PI)));
-        int merc_long;//= (int)((2 ^ zoom) * ((Mathf.PI + (0.25 * Mathf.PI + 0.5 * (longitude * Mathf.PI / 180))) / (2 * Mathf.PI)));
+        int merc_lat;
+        int merc_long;
 
-        float x1 = longitude * Mathf.PI / 180; 
-        float y1 = latitude* Mathf.PI / 180;
-        float x2 = x1;
-        float y2 = Mathf.Log10(Mathf.Tan(0.25f * Mathf.PI + 0.5f * y1));
-        float tiles = 2 ^ zoom;
-        float diameter = 2 * Mathf.PI;
-        //temp swapped these two- don't froget!
-        merc_long = (int)(tiles * (x2 + Mathf.PI) / diameter);
-        merc_lat = (int)(tiles * (Mathf.PI - y2) / diameter);
-
+        mercator(latitude, longitude, zoom, out merc_long, out merc_lat);
 
         string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/" + latitude.ToString() +","+longitude.ToString()+"?zl="+zoom.ToString()+"&o=xml&key=" + key;
         string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/"+ zoom + "/"+merc_long.ToString()+"/"+merc_lat.ToString() +".png";
@@ -167,6 +158,26 @@ public class collect_tiles : MonoBehaviour {
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
    //     mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
 
+    }
+
+    private static void mercator(float lat, float lon, int zoom, out int x3, out int y3)
+    {
+        float pi = Mathf.PI;
+
+        //convert to radians
+        float x1 = lon * pi / 180;
+        float y1 = lat * pi / 180;
+
+        //project to mercantor
+        float x2 = x1;
+        float y2 = Mathf.Log(Mathf.Tan((0.25f * pi + 0.5f * y1)));
+
+        //transform to tile space
+        int tiles = (int)System.Math.Pow(2, zoom);
+        float diameter = 2 * pi;
+
+        x3 = (int)(tiles * (x2 + pi)/ diameter);
+        y3 = (int)(tiles * (pi - y2)/ diameter);
     }
 
     public void watch_lat(float l)
