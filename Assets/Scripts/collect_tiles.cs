@@ -23,6 +23,8 @@ public class collect_tiles : MonoBehaviour {
     static float ozoom;
     static float[,] heights;
     static bool image_changed;
+    float terrBaseHeight;
+    float mTerrBaseHeight;
 
 
     MeshRenderer mesh;
@@ -47,6 +49,8 @@ public class collect_tiles : MonoBehaviour {
         zoom = 1;
         ozoom = zoom;
         image_changed = false;
+        terrBaseHeight = 15f;
+        mTerrBaseHeight = 0.1f;
     }
     //http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/40.714550167322159,-74.007124900817871?zl=15&o=xml&key=AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut
     //http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet/centerPoint/zoomLevel?mapSize=mapSize&pushpin=pushpin&mapLayer=mapLayer&format=format&mapMetadata=mapMetadata&key=BingMapsKey
@@ -121,42 +125,61 @@ public class collect_tiles : MonoBehaviour {
             formHeight();
         if (File.Exists(aerImageFilename) && image_changed)
         {
-            
-            fileData = File.ReadAllBytes(aerImageFilename);
-           
-            filetex.LoadImage(fileData);
-            filetex.alphaIsTransparency = true;
-            filetex.Apply();
-            
-            mesh.material.SetTexture("_MainTex", filetex);
-            image_changed = false;
-
-            //SplatPrototype tTex = Terr.terrainData.splatPrototypes[0];
-           // tTex.texture = filetex;
-          //  Terr.terrainData.splatPrototypes[0] = tTex;
-
-            Terr.terrainData.splatPrototypes[0].texture = filetex;
-            Terr.transform.Translate(new Vector3(0, 0, 0));
-            UnityEditor.EditorWindow.focusedWindow.Repaint();
+            changeTex();
         }
         
 
     }
+    private void changeTex()
+    {
+        fileData = File.ReadAllBytes(aerImageFilename);
+
+        filetex.LoadImage(fileData);
+        filetex.alphaIsTransparency = true;
+        filetex.Apply();
+
+        //   mesh.material.SetTexture("_MainTex", filetex);
+        image_changed = false;
+
+        Terr.terrainData.splatPrototypes[0].texture = filetex;
+        float[,,] map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 20];
+        Terr.terrainData.SetAlphamaps(0, 0, map);
+       
+        Terr.terrainData.RefreshPrototypes();
+        Terr.Flush();
+        
+    }
+
 
     public void formHeight()
     {
         byte[] imageBytes = File.ReadAllBytes(elvFilename);    // Read
         tileTex.LoadImage(imageBytes);
-
+        float min_height= 1;
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
-            for(int j = 0; j< Terr.terrainData.heightmapHeight; j++)      
-                heights[j, i] = 1- tileTex.GetPixel(i, j).a;
-
+            for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
+            {
+                heights[j, i] = 1 - tileTex.GetPixel(i, j).a;
+                if (heights[j, i] < min_height)
+                    min_height = heights[j, i];
+            }
+        /*
+        for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
+            for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
+                heights[j,i] = heights[j,i] - min_height;
+*/
         Terr.terrainData.SetHeights(0, 0, heights);
+        float tX = Terr.terrainData.size.x;
+        float tZ = Terr.terrainData.size.z;
+     //   Terr.terrainData.size = new Vector3 (tX, terrBaseHeight * (zoom - 1) * 1.2f, tZ);
+
         mTerr.terrainData.SetHeights(0, 0, heights);
-                
+        tX = mTerr.terrainData.size.x;
+        tZ = mTerr.terrainData.size.z;
+     //   mTerr.terrainData.size = new Vector3(tX, mTerrBaseHeight * (zoom - 1) * 1.2f, tZ);
+
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
-   //     mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
+    //    mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
 
     }
 

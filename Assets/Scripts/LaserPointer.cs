@@ -73,13 +73,17 @@ public class LaserPointer : MonoBehaviour {
                 reticle.SetActive(true);
                 if (hit.collider.gameObject.name == "Terrain")
                 {
-                  //  Debug.Log("Hit main map");
+                    //  Debug.Log("Hit main map");
                 }
                 else if (hit.collider.gameObject.name == "mTerr")
                 {
                     hitPoint = hit.collider.gameObject.transform.InverseTransformPoint(hitPoint);
                     hitPoint = hitPoint * Terrain.activeTerrains[1].terrainData.heightmapWidth;
+                    hitPoint.y = Terrain.activeTerrains[1].SampleHeight(hitPoint) - 128;
                 }
+                else if (hit.collider.gameObject.name == "Platform")
+                    hitPoint = new Vector3(128, 0, 128);
+
                 teleportReticleTransform.position = hitPoint + teleportReticleOffset;
                 shouldTeleport = true;
 
