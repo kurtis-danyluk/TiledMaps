@@ -142,9 +142,17 @@ public class collect_tiles : MonoBehaviour {
         image_changed = false;
 
         Terr.terrainData.splatPrototypes[0].texture = filetex;
-        float[,,] map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 20];
+      
+        float[,,] map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 1];
+        for (int i = 0; i < Terr.terrainData.alphamapWidth; i++)
+            for (int j = 0; j < Terr.terrainData.alphamapHeight; j++)
+                map[i, j, 0] = 1;
+
         Terr.terrainData.SetAlphamaps(0, 0, map);
-       
+
+        foreach (float i in mTerr.terrainData.GetAlphamaps(0, 0, mTerr.terrainData.alphamapWidth, mTerr.terrainData.alphamapHeight))
+            Debug.Log(i);
+
         Terr.terrainData.RefreshPrototypes();
         Terr.Flush();
         
