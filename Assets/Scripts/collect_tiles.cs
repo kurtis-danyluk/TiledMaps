@@ -15,6 +15,7 @@ public class collect_tiles : MonoBehaviour {
     static string key = "AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut";
     static string ImageURL;
     static string oImageURL;
+    static float earthCircumference;
     public float latitude;
     static float olatitude;
     public float longitude;
@@ -26,6 +27,7 @@ public class collect_tiles : MonoBehaviour {
     static bool tex_swap;
     float terrBaseHeight;
     float mTerrBaseHeight;
+    ArrayList qMappingTable;
     float[,,] map;
     float[,,] mapB;
 
@@ -52,6 +54,7 @@ public class collect_tiles : MonoBehaviour {
         olatitude = latitude;
         zoom = 1;
         ozoom = zoom;
+        earthCircumference = 6378137f;
         image_changed = false;
         tex_swap = false;
         terrBaseHeight = 15f;
@@ -68,14 +71,18 @@ public class collect_tiles : MonoBehaviour {
                 mapB[i, j, 0] = 0;           
                 mapB[i, j, 1] = 1;
             }
+        qMappingTable = generate_quantized_table();
     }
+    //Some sample bing maps tile requests
     //http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/40.714550167322159,-74.007124900817871?zl=15&o=xml&key=AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut
     //http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet/centerPoint/zoomLevel?mapSize=mapSize&pushpin=pushpin&mapLayer=mapLayer&format=format&mapMetadata=mapMetadata&key=BingMapsKey
     //http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet=Aerial/centerPoint=47,-122/zoomLevel=1?mapSize=mapSize&pushpin=pushpin&mapLayer=mapLayer&format=format&mapMetadata=mapMetadata&key=BingMapsKey
+    //template for an aws elevation tile request. z is zoom level and x and y refer to a tile in mercantor format
+    //https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
+
+
 
     void dlFile() {
-        //template for an aws elevation tile request. z is zoom level and x and y refer to a tile in mercantor format
-        // https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
         int merc_lat;
         int merc_long;
 
@@ -136,11 +143,7 @@ public class collect_tiles : MonoBehaviour {
             ozoom = zoom;
             dlFile();
         }
-        if (tex_swap)
-        {
-          //  Terr.terrainData.SetAlphamaps(0, 0, map);
-        }
-        // Debug.Log(latitude + " " + longitude + " " + zoom);
+
         if (File.Exists(elvFilename) && image_changed)
             formHeight();
         if (File.Exists(aerImageFilename) && image_changed)
@@ -154,7 +157,6 @@ public class collect_tiles : MonoBehaviour {
     }
     private void changeTex()
     {
-     //   UnityEditor.Undo.RecordObject(Terr, "Reoaded Terrain Texture");
         fileData = File.ReadAllBytes(aerImageFilename);
         if (tex_swap)
         {
@@ -171,12 +173,6 @@ public class collect_tiles : MonoBehaviour {
             tex_swap = true;
         }
 
-        //  UnityEditor.EditorUtility.SetDirty(Terr);
-        //    Terr.terrainData.RefreshPrototypes();
-        //  Terr.Flush();
-        //  UnityEditor.SceneView.RepaintAll();
-        //    UnityEditor.HandleUtility.Repaint();
-        //   Application.LoadLevel("central");
         UnityEditor.AssetDatabase.Refresh();
     }
 
@@ -197,20 +193,43 @@ public class collect_tiles : MonoBehaviour {
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
                 heights[j,i] = heights[j,i] - min_height;
-*/
+        */
         Terr.terrainData.SetHeights(0, 0, heights);
-      //  float tX = Terr.terrainData.size.x;
-      //  float tZ = Terr.terrainData.size.z;
-     //   Terr.terrainData.size = new Vector3 (tX, terrBaseHeight * (zoom - 1) * 1.2f, tZ);
-
         mTerr.terrainData.SetHeights(0, 0, heights);
-     //   tX = mTerr.terrainData.size.x;
-     //   tZ = mTerr.terrainData.size.z;
-     //   mTerr.terrainData.size = new Vector3(tX, mTerrBaseHeight * (zoom - 1) * 1.2f, tZ);
-
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
     //    mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
 
+    }
+    //Gives ratio of meters per pixel at given zoom level and latitude
+    private float ground_resolution(float latitude, int zoom)
+    {
+        float ground_resolution = (Mathf.Cos(latitude * Mathf.PI / 180) * 2 * Mathf.PI * earthCircumference)
+            / (256 * Mathf.Pow(2,zoom));
+
+        return ground_resolution;
+    }
+    private ArrayList generate_quantized_table()
+    {
+        ArrayList table = new ArrayList();
+        for (int i = 0; i <= 11; i++)
+            table.Add(-11000 + i * 1000);
+        table.Add(-100);
+        table.Add(-50);
+        table.Add(-20);
+        table.Add(-10);
+        table.Add(-1);
+        for (int i = 0; i <= 150; i++)
+            table.Add(20 * i);
+        for (int i = 0; i <= 60; i++)
+            table.Add(3000 + 50 * i);
+        for (int i = 0; i <= 29; i++)
+            table.Add(6000 + 100 * i);
+
+        return table;
+    }
+    private float quantized_height(int h)
+    {
+        return (float)qMappingTable[h];
     }
 
     private static void mercator(float lat, float lon, int zoom, out int x3, out int y3)
