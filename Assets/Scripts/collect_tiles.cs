@@ -23,12 +23,15 @@ public class collect_tiles : MonoBehaviour {
     static float ozoom;
     static float[,] heights;
     static bool image_changed;
+    static bool tex_swap;
     float terrBaseHeight;
     float mTerrBaseHeight;
-
+    float[,,] map;
+    float[,,] mapB;
 
     MeshRenderer mesh;
     Texture2D filetex;
+    Texture2D oFiletex;
     Texture2D tileTex;
     byte[] fileData;
 
@@ -38,6 +41,7 @@ public class collect_tiles : MonoBehaviour {
         mTerr = Terrain.activeTerrains[0];
         heights = Terr.terrainData.GetHeights(0, 0, Terr.terrainData.heightmapWidth, Terr.terrainData.heightmapHeight);
         filetex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+        oFiletex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
         tileTex = new Texture2D(256, 256);
         mesh = this.GetComponent<MeshRenderer>();
         ImageURL = string.Empty;
@@ -49,8 +53,21 @@ public class collect_tiles : MonoBehaviour {
         zoom = 1;
         ozoom = zoom;
         image_changed = false;
+        tex_swap = false;
         terrBaseHeight = 15f;
         mTerrBaseHeight = 0.1f;
+        Terr.terrainData.splatPrototypes[0].texture = filetex;
+        Terr.terrainData.splatPrototypes[1].texture = oFiletex;
+        map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
+        mapB = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
+        for (int i = 0; i < Terr.terrainData.alphamapWidth; i++)
+            for (int j = 0; j < Terr.terrainData.alphamapHeight; j++)
+            {
+                map[i, j, 0] = 1;
+                map[i, j, 1] = 0;
+                mapB[i, j, 0] = 0;           
+                mapB[i, j, 1] = 1;
+            }
     }
     //http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/40.714550167322159,-74.007124900817871?zl=15&o=xml&key=AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut
     //http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet/centerPoint/zoomLevel?mapSize=mapSize&pushpin=pushpin&mapLayer=mapLayer&format=format&mapMetadata=mapMetadata&key=BingMapsKey
@@ -119,43 +136,48 @@ public class collect_tiles : MonoBehaviour {
             ozoom = zoom;
             dlFile();
         }
-
+        if (tex_swap)
+        {
+          //  Terr.terrainData.SetAlphamaps(0, 0, map);
+        }
         // Debug.Log(latitude + " " + longitude + " " + zoom);
         if (File.Exists(elvFilename) && image_changed)
             formHeight();
         if (File.Exists(aerImageFilename) && image_changed)
         {
             changeTex();
+            image_changed = false;
+            tex_swap = true;
+            Terr.terrainData.SetAlphamaps(0, 0, map);
         }
         
-
     }
     private void changeTex()
     {
+     //   UnityEditor.Undo.RecordObject(Terr, "Reoaded Terrain Texture");
         fileData = File.ReadAllBytes(aerImageFilename);
+        if (tex_swap)
+        {
+            oFiletex.LoadImage(fileData);
+            oFiletex.Apply();
+            Terr.terrainData.SetAlphamaps(0, 0, mapB);
+            tex_swap = false;
+        }
+        else
+        {
+            filetex.LoadImage(fileData);
+            filetex.Apply();
+            Terr.terrainData.SetAlphamaps(0, 0, map);
+            tex_swap = true;
+        }
 
-        filetex.LoadImage(fileData);
-        filetex.alphaIsTransparency = true;
-        filetex.Apply();
-
-        //   mesh.material.SetTexture("_MainTex", filetex);
-        image_changed = false;
-
-        Terr.terrainData.splatPrototypes[0].texture = filetex;
-      
-        float[,,] map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 1];
-        for (int i = 0; i < Terr.terrainData.alphamapWidth; i++)
-            for (int j = 0; j < Terr.terrainData.alphamapHeight; j++)
-                map[i, j, 0] = 1;
-
-        Terr.terrainData.SetAlphamaps(0, 0, map);
-
-        foreach (float i in mTerr.terrainData.GetAlphamaps(0, 0, mTerr.terrainData.alphamapWidth, mTerr.terrainData.alphamapHeight))
-            Debug.Log(i);
-
-        Terr.terrainData.RefreshPrototypes();
-        Terr.Flush();
-        
+        //  UnityEditor.EditorUtility.SetDirty(Terr);
+        //    Terr.terrainData.RefreshPrototypes();
+        //  Terr.Flush();
+        //  UnityEditor.SceneView.RepaintAll();
+        //    UnityEditor.HandleUtility.Repaint();
+        //   Application.LoadLevel("central");
+        UnityEditor.AssetDatabase.Refresh();
     }
 
 
@@ -177,13 +199,13 @@ public class collect_tiles : MonoBehaviour {
                 heights[j,i] = heights[j,i] - min_height;
 */
         Terr.terrainData.SetHeights(0, 0, heights);
-        float tX = Terr.terrainData.size.x;
-        float tZ = Terr.terrainData.size.z;
+      //  float tX = Terr.terrainData.size.x;
+      //  float tZ = Terr.terrainData.size.z;
      //   Terr.terrainData.size = new Vector3 (tX, terrBaseHeight * (zoom - 1) * 1.2f, tZ);
 
         mTerr.terrainData.SetHeights(0, 0, heights);
-        tX = mTerr.terrainData.size.x;
-        tZ = mTerr.terrainData.size.z;
+     //   tX = mTerr.terrainData.size.x;
+     //   tZ = mTerr.terrainData.size.z;
      //   mTerr.terrainData.size = new Vector3(tX, mTerrBaseHeight * (zoom - 1) * 1.2f, tZ);
 
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
