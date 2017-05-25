@@ -25,9 +25,10 @@ public class collect_tiles : MonoBehaviour {
     static float[,] heights;
     static bool image_changed;
     static bool tex_swap;
+    public static bool hasSeaFloor;
     float terrBaseHeight;
     float mTerrBaseHeight;
-    ArrayList qMappingTable;
+    System.Collections.Generic.List<float> qMappingTable;
     float[,,] map;
     float[,,] mapB;
 
@@ -57,6 +58,7 @@ public class collect_tiles : MonoBehaviour {
         earthCircumference = 6378137f;
         image_changed = false;
         tex_swap = false;
+        hasSeaFloor = false;
         terrBaseHeight = 15f;
         mTerrBaseHeight = 0.1f;
         Terr.terrainData.splatPrototypes[0].texture = filetex;
@@ -180,20 +182,53 @@ public class collect_tiles : MonoBehaviour {
     public void formHeight()
     {
         byte[] imageBytes = File.ReadAllBytes(elvFilename);    // Read
+        float[,] qHeights= new float[Terr.terrainData.heightmapHeight, Terr.terrainData.heightmapWidth];
         tileTex.LoadImage(imageBytes);
-        float min_height= 1;
+
+
+        float min_height= float.MaxValue;
+        float max_height = float.MinValue;
+
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
                 heights[j, i] = 1 - tileTex.GetPixel(i, j).a;
-                if (heights[j, i] < min_height)
-                    min_height = heights[j, i];
+                qHeights[j, i] = quantized_height((int)(heights[j, i] * 255));
+                if (qHeights[j, i] < min_height)
+                    min_height = qHeights[j, i];
+                if (qHeights[j, i] > max_height)
+                    max_height = qHeights[j, i];
             }
-        /*
+        if (min_height < 0 && !hasSeaFloor)
+            min_height = 0;
+        if (max_height < 0 && !hasSeaFloor)
+            max_height = 0;
+
+        float hRange = max_height - min_height;
+        Debug.Log("hRange:" + hRange);
+        float mRes = ground_resolution(latitude, zoom);
+        Debug.Log("mRes:" + mRes);
+        terrBaseHeight = hRange / mRes * Terr.terrainData.heightmapWidth;
+        Debug.Log("Height" + terrBaseHeight);
+        Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, (int)terrBaseHeight, Terr.terrainData.size.z);
+
+
+
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
-                heights[j,i] = heights[j,i] - min_height;
-        */
+            {
+                qHeights[i, j] = qHeights[i, j] - min_height;
+                if (qHeights[i, j] < min_height & !hasSeaFloor)
+                    qHeights[i, j] = min_height;
+
+                heights[i, j] = qHeights[i, j] / hRange;
+            }
+                
+        
+
+
+
+
         Terr.terrainData.SetHeights(0, 0, heights);
         mTerr.terrainData.SetHeights(0, 0, heights);
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
@@ -208,9 +243,9 @@ public class collect_tiles : MonoBehaviour {
 
         return ground_resolution;
     }
-    private ArrayList generate_quantized_table()
+    private System.Collections.Generic.List<float> generate_quantized_table()
     {
-        ArrayList table = new ArrayList();
+        System.Collections.Generic.List<float> table = new System.Collections.Generic.List<float>();
         for (int i = 0; i <= 11; i++)
             table.Add(-11000 + i * 1000);
         table.Add(-100);
@@ -229,7 +264,7 @@ public class collect_tiles : MonoBehaviour {
     }
     private float quantized_height(int h)
     {
-        return (float)qMappingTable[h];
+        return qMappingTable[h];
     }
 
     private static void mercator(float lat, float lon, int zoom, out int x3, out int y3)
