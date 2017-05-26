@@ -5,7 +5,7 @@ using UnityEngine;
 public class Control_lat_long : MonoBehaviour {
 
     private SteamVR_TrackedObject trackedObj;
-    private float lat_range = 89f;
+    private float lat_range = 85f;
     private float long_range = 179f;
     public collect_tiles collector;
     // Use this for initialization

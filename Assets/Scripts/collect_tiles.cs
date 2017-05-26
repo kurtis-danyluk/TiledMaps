@@ -25,6 +25,7 @@ public class collect_tiles : MonoBehaviour {
     static float[,] heights;
     static bool image_changed;
     static bool tex_swap;
+//    public float exageration_constant;
     public static bool hasSeaFloor;
     float terrBaseHeight;
     float mTerrBaseHeight;
@@ -55,6 +56,7 @@ public class collect_tiles : MonoBehaviour {
         olatitude = latitude;
         zoom = 1;
         ozoom = zoom;
+      //  exageration_constant = 0;
         earthCircumference = 6378137f;
         image_changed = false;
         tex_swap = false;
@@ -90,10 +92,18 @@ public class collect_tiles : MonoBehaviour {
 
         mercator(latitude, longitude, zoom, out merc_long, out merc_lat);
 
+
         string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/" + latitude.ToString() +","+longitude.ToString()+"?zl="+zoom.ToString()+"&o=xml&key=" + key;
         string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/"+ zoom + "/"+merc_long.ToString()+"/"+merc_lat.ToString() +".png";
-        // Debug.Log(eQuery);
-
+        Debug.Log(eQuery);
+        Debug.Log(bQuery);
+       // inverse_mercator(out latitude, out longitude, zoom, merc_long, merc_lat);
+        /*
+        if (latitude >= 85)
+            latitude = 85;
+        if (latitude <= -85)
+            latitude = -85;
+           */
         try
         {
             client.DownloadFile(eQuery, elvFilename);
@@ -140,6 +150,7 @@ public class collect_tiles : MonoBehaviour {
 	void Update () {
         if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
         {
+            
             olatitude = latitude;
             olongitude = longitude;
             ozoom = zoom;
@@ -192,7 +203,7 @@ public class collect_tiles : MonoBehaviour {
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
-                heights[j, i] = 1 - tileTex.GetPixel(i, j).a;
+                heights[j, i] = 1- tileTex.GetPixel(i, j).a;
                 qHeights[j, i] = quantized_height((int)(heights[j, i] * 255));
                 if (qHeights[j, i] < min_height)
                     min_height = qHeights[j, i];
@@ -206,12 +217,21 @@ public class collect_tiles : MonoBehaviour {
 
         float hRange = max_height - min_height;
         Debug.Log("hRange:" + hRange);
-        float mRes = ground_resolution(latitude, zoom);
+
+        float mRes = Mathf.Abs(ground_resolution(latitude, zoom));
         Debug.Log("mRes:" + mRes);
-        terrBaseHeight = hRange / mRes * Terr.terrainData.heightmapWidth;
+
+        terrBaseHeight = hRange / (mRes);
+
+    //    terrBaseHeight += (exageration_constant/terrBaseHeight); 
+
+        mTerrBaseHeight = terrBaseHeight / 256;
+        
+
+
         Debug.Log("Height" + terrBaseHeight);
         Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, (int)terrBaseHeight, Terr.terrainData.size.z);
-
+        mTerr.terrainData.size = new Vector3(mTerr.terrainData.size.x, (mTerrBaseHeight), mTerr.terrainData.size.z);
 
 
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
@@ -223,11 +243,6 @@ public class collect_tiles : MonoBehaviour {
 
                 heights[i, j] = qHeights[i, j] / hRange;
             }
-                
-        
-
-
-
 
         Terr.terrainData.SetHeights(0, 0, heights);
         mTerr.terrainData.SetHeights(0, 0, heights);
@@ -267,6 +282,26 @@ public class collect_tiles : MonoBehaviour {
         return qMappingTable[h];
     }
 
+    private static void inverse_mercator(out float lat, out float lon, int zoom, int x3, int y3)
+    {
+        float pi = Mathf.PI;
+
+        int tiles = (int)System.Math.Pow(2, zoom);
+        float diameter = 2 * pi;
+
+        //transform from tile space
+        float x2 = ((x3 * diameter)/tiles)- pi;
+        float y2 = (-1) * (((y3 * diameter) / tiles) - pi);
+
+        //Project from mercantor
+        float x1 = x2;
+        float y1 = (float)System.Math.Atan(((float)System.Math.Pow(System.Math.E, y2)) - 4 * pi)* 2;
+
+        //Convert from radians
+        lon = x1 * 180 / pi;
+        lat = y1 * 180 / pi;
+    }
+
     private static void mercator(float lat, float lon, int zoom, out int x3, out int y3)
     {
         float pi = Mathf.PI;
@@ -299,5 +334,10 @@ public class collect_tiles : MonoBehaviour {
     {
         zoom = (int)z;
     }
-
+    /*
+    public void watch_exageration(float e)
+    {
+        exageration_constant = e;
+    }
+*/
 }
