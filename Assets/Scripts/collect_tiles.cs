@@ -9,27 +9,28 @@ public class collect_tiles : MonoBehaviour {
     WebClient client = new WebClient();
     Terrain Terr;
     Terrain mTerr;
+    public Terrain me;
    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
-    static string elvFilename = @"Assets/Textures/elvTile.png";
-    static string aerImageFilename = @"Assets/Textures/aerImage.jpeg";
+    static string base_dir = @"Assets/Textures/";
+    private string elvFilename = "elvTile.png";
+    private string aerImageFilename = "aerImage.jpeg";
     static string key = "AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut";
-    static string ImageURL;
-    static string oImageURL;
-    static float earthCircumference;
+    private string ImageURL;
+    private string oImageURL;
+    static float earthCircumference = 6378137f;
     public float latitude;
-    static float olatitude;
+    private float olatitude;
     public float longitude;
-    static float olongitude;
+    private float olongitude;
     static int zoom;
-    static float ozoom;
-    static float[,] heights;
-    static bool image_changed;
-    static bool tex_swap;
-//    public float exageration_constant;
+    float ozoom;
+    private float[,] heights;
+    private bool image_changed;
+    private bool tex_swap;
     public static bool hasSeaFloor;
     float terrBaseHeight;
     float mTerrBaseHeight;
-    System.Collections.Generic.List<float> qMappingTable;
+    static System.Collections.Generic.List<float> qMappingTable;
     float[,,] map;
     float[,,] mapB;
 
@@ -41,30 +42,55 @@ public class collect_tiles : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        Terr = Terrain.activeTerrains[1];
+
+        //Setup filenames
+        elvFilename = base_dir + this.name + elvFilename;
+        aerImageFilename = base_dir + this.name + aerImageFilename;
+        //  Debug.Log(elvFilename);
+
+        //Load the active terrains TODO: Make this generic!
+        //     Terr = Terrain.activeTerrains[1];
+        Terr = me;
         mTerr = Terrain.activeTerrains[0];
+
+        //Setup a table of heightmap values
         heights = Terr.terrainData.GetHeights(0, 0, Terr.terrainData.heightmapWidth, Terr.terrainData.heightmapHeight);
+
+        //Setup the textures to be used
         filetex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
         oFiletex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
         tileTex = new Texture2D(256, 256);
-        mesh = this.GetComponent<MeshRenderer>();
+
+     //   mesh = this.GetComponent<MeshRenderer>();
+        //Setup bing maps tile URL
         ImageURL = string.Empty;
         oImageURL = ImageURL;
+
+        //Setup default lat, long, zoom
         longitude = 0.0f;
         olongitude = longitude;
         latitude = 0.0f;
         olatitude = latitude;
         zoom = 1;
         ozoom = zoom;
-      //  exageration_constant = 0;
-        earthCircumference = 6378137f;
-        image_changed = false;
-        tex_swap = false;
-        hasSeaFloor = false;
+
+        //  exageration_constant = 0;
+        //Currently unused but these are set at minimums for terrain exageration
         terrBaseHeight = 15f;
         mTerrBaseHeight = 0.1f;
+
+        //Records state of image change
+        image_changed = false;
+        tex_swap = false;
+
+        //Determine if we care about the sea floor
+        hasSeaFloor = false;
+
+        
+        //Link the terrain's texture to the appropriate files
         Terr.terrainData.splatPrototypes[0].texture = filetex;
-        Terr.terrainData.splatPrototypes[1].texture = oFiletex;
+     //   Terr.terrainData.splatPrototypes[1].texture = oFiletex;
+        //Use map and mapB to swap between the 2 textures
         map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
         mapB = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
         for (int i = 0; i < Terr.terrainData.alphamapWidth; i++)
@@ -75,8 +101,12 @@ public class collect_tiles : MonoBehaviour {
                 mapB[i, j, 0] = 0;           
                 mapB[i, j, 1] = 1;
             }
+
+        //Generate a quantized table
         qMappingTable = generate_quantized_table();
     }
+
+
     //Some sample bing maps tile requests
     //http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/40.714550167322159,-74.007124900817871?zl=15&o=xml&key=AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut
     //http://dev.virtualearth.net/REST/v1/Imagery/Map/imagerySet/centerPoint/zoomLevel?mapSize=mapSize&pushpin=pushpin&mapLayer=mapLayer&format=format&mapMetadata=mapMetadata&key=BingMapsKey
@@ -87,6 +117,7 @@ public class collect_tiles : MonoBehaviour {
 
 
     void dlFile() {
+        Debug.Log(this.name + elvFilename);
         int merc_lat;
         int merc_long;
 
@@ -106,6 +137,7 @@ public class collect_tiles : MonoBehaviour {
            */
         try
         {
+            //Debug.Log(elvFilename);
             client.DownloadFile(eQuery, elvFilename);
         }
         catch(WebException e)
@@ -120,8 +152,6 @@ public class collect_tiles : MonoBehaviour {
         try
         {
             
-            
-
             string line = client.DownloadString(bQuery);
             string[] lines = line.Split((new char[] { '<', '>' }));
             foreach (string item in lines)
@@ -148,9 +178,9 @@ public class collect_tiles : MonoBehaviour {
     }
         // Update is called once per frame
 	void Update () {
+
         if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
-        {
-            
+        {           
             olatitude = latitude;
             olongitude = longitude;
             ozoom = zoom;
@@ -164,12 +194,13 @@ public class collect_tiles : MonoBehaviour {
             changeTex();
             image_changed = false;
             tex_swap = true;
-            Terr.terrainData.SetAlphamaps(0, 0, map);
+      //      Terr.terrainData.SetAlphamaps(0, 0, map);
         }
         
     }
     private void changeTex()
     {
+        /*
         fileData = File.ReadAllBytes(aerImageFilename);
         if (tex_swap)
         {
@@ -185,36 +216,49 @@ public class collect_tiles : MonoBehaviour {
             Terr.terrainData.SetAlphamaps(0, 0, map);
             tex_swap = true;
         }
-
+        */
         UnityEditor.AssetDatabase.Refresh();
     }
 
 
     public void formHeight()
     {
-        byte[] imageBytes = File.ReadAllBytes(elvFilename);    // Read
-        float[,] qHeights= new float[Terr.terrainData.heightmapHeight, Terr.terrainData.heightmapWidth];
+        //Read the heightmap into a texture file for storage
+        byte[] imageBytes = File.ReadAllBytes(elvFilename);
         tileTex.LoadImage(imageBytes);
 
-
+        //Setup a table to hold quantized height values
+        float[,] qHeights= new float[Terr.terrainData.heightmapHeight, Terr.terrainData.heightmapWidth];
+        
+        //Determine the min and max height.
+        //We'll use these to determine the proper height value for the scene
         float min_height= float.MaxValue;
         float max_height = float.MinValue;
 
+        //Get the heights from file and their repsective quantized values
+        //While we're at it we'll find the min/max height values
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
+                
                 heights[j, i] = 1- tileTex.GetPixel(i, j).a;
                 qHeights[j, i] = quantized_height((int)(heights[j, i] * 255));
+
+                if (qHeights[j, i] < 0 && !hasSeaFloor)
+                    qHeights[j, i] = 0f;
+
                 if (qHeights[j, i] < min_height)
                     min_height = qHeights[j, i];
                 if (qHeights[j, i] > max_height)
                     max_height = qHeights[j, i];
             }
+
         if (min_height < 0 && !hasSeaFloor)
             min_height = 0;
         if (max_height < 0 && !hasSeaFloor)
             max_height = 0;
 
+        //Determine the range between the minimum and maximum height
         float hRange = max_height - min_height;
         Debug.Log("hRange:" + hRange);
 
@@ -227,10 +271,9 @@ public class collect_tiles : MonoBehaviour {
 
         mTerrBaseHeight = terrBaseHeight / 256;
         
-
-
         Debug.Log("Height" + terrBaseHeight);
         Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, (int)terrBaseHeight, Terr.terrainData.size.z);
+
         mTerr.terrainData.size = new Vector3(mTerr.terrainData.size.x, (mTerrBaseHeight), mTerr.terrainData.size.z);
 
 
@@ -238,9 +281,10 @@ public class collect_tiles : MonoBehaviour {
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
                 qHeights[i, j] = qHeights[i, j] - min_height;
+                /*
                 if (qHeights[i, j] < min_height & !hasSeaFloor)
                     qHeights[i, j] = min_height;
-
+                    */
                 heights[i, j] = qHeights[i, j] / hRange;
             }
 
@@ -277,7 +321,7 @@ public class collect_tiles : MonoBehaviour {
 
         return table;
     }
-    private float quantized_height(int h)
+    private static float quantized_height(int h)
     {
         return qMappingTable[h];
     }
