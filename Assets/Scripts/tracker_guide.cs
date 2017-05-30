@@ -6,7 +6,7 @@ public class tracker_guide : MonoBehaviour {
 
     public bool isGrabbed;
     private SteamVR_TrackedObject trackedObj;
-    private Terrain Terr;
+    public Terrain Terr;
     private GameObject tracker;
     private Transform trackerTransform;
     private MeshRenderer mesh;
@@ -18,7 +18,7 @@ public class tracker_guide : MonoBehaviour {
     {
         tracker = this.gameObject;
         trackerTransform = tracker.transform;
-        Terr = Terrain.activeTerrains[1];
+    //    Terr = Terrain.activeTerrains[1];
         isGrabbed = false;
         mesh = this.GetComponent<MeshRenderer>();
     }
