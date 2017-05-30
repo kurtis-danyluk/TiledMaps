@@ -7,6 +7,7 @@ public class tracker_guide : MonoBehaviour {
     public bool isGrabbed;
     private SteamVR_TrackedObject trackedObj;
     public Terrain Terr;
+    public Terrain mTerr;
     private GameObject tracker;
     private Transform trackerTransform;
     private MeshRenderer mesh;
@@ -39,9 +40,10 @@ public class tracker_guide : MonoBehaviour {
         if (!isGrabbed)
         {
             Vector3 trackPos = cameraRigTransform.position / Terr.terrainData.heightmapWidth;
-            //  trackPos.y = (cameraRigTransform.position + Terr.transform.position  / Terr.terrainData.heightmapHeight).y;
+              trackPos.y = (cameraRigTransform.position/ Terr.terrainData.heightmapHeight).y;
             // trackPos.y = 0.1f;
-            trackPos.y += 0.6f;
+            //Calculate based off the terrain height!
+            trackPos.y +=0.6f;
 
 
             if (trackPos.x > 1)
@@ -60,6 +62,7 @@ public class tracker_guide : MonoBehaviour {
 
 
             trackerTransform.localPosition = trackPos;
+
             mesh.material.color = Color.red;
         }
         else
