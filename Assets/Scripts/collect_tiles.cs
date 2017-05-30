@@ -128,24 +128,15 @@ public class collect_tiles : MonoBehaviour {
 
 
     void dlFile(float latitude, float longitude, int zoom) {
-        Debug.Log(this.name + elvFilename);
+        //Debug.Log(this.name + elvFilename);
         int merc_lat;
         int merc_long;
 
         mercator(latitude, longitude, zoom, out merc_long, out merc_lat);
 
-
         string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/" + latitude.ToString() +","+longitude.ToString()+"?zl="+zoom.ToString()+"&o=xml&key=" + key;
         string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/"+ zoom + "/"+merc_long.ToString()+"/"+merc_lat.ToString() +".png";
-        Debug.Log(eQuery);
-        Debug.Log(bQuery);
-       // inverse_mercator(out latitude, out longitude, zoom, merc_long, merc_lat);
-        /*
-        if (latitude >= 85)
-            latitude = 85;
-        if (latitude <= -85)
-            latitude = -85;
-           */
+
         try
         {
             //Debug.Log(elvFilename);
@@ -192,22 +183,23 @@ public class collect_tiles : MonoBehaviour {
 
         // Update is called once per frame
 	void Update () {
-        //This is totally assuming even lat long distrubution- which is wrong for my map sets...
-        tile_lat_arc = ((180 / Mathf.Pow(2, zoom)));
-        tile_lon_arc = (360 / Mathf.Pow(2, zoom));
 
-        this.latitude = center.latitude + tile_lat_arc * zpos;
-        this.longitude = center.longitude + tile_lon_arc * xpos;
+        if (!isCenter)
+        {
+            int x3, y3;
+            mercator(center.latitude, center.longitude, zoom, out x3, out y3);
 
-        if (latitude > 85)
-            latitude = 85;
-        if (latitude < -85)
-            latitude = -85;
-        if (longitude > 180)
-            longitude = 180;
-        if (longitude < -180)
-            longitude = -180;
+            inverse_mercator(out this.latitude, out this.longitude, zoom, x3 + xpos, y3 - zpos);
 
+            if (latitude > 85)
+                latitude = 85;
+            if (latitude < -85)
+                latitude = -85;
+            if (longitude > 180)
+                longitude = 180;
+            if (longitude < -180)
+                longitude = -180;
+        }
         if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
         {
 
@@ -251,6 +243,19 @@ public class collect_tiles : MonoBehaviour {
         //if (isCenter)
         //{
         //  yield return new WaitForEndOfFrame();
+        /*
+        Debug.Log("Start merc and inv merc test");
+        Debug.Log("Lat Long Zoom" + 48 +" "+ -113 +" "+ 7);
+        int x1, y1;
+        mercator(48, -113, 7, out x1, out y1);
+        Debug.Log("x1 y1 z" + " " + x1.ToString() +" "+ y1.ToString()+ " " + 7);
+        float lat1, lon1;
+        inverse_mercator(out lat1, out lon1, 7, x1, y1);
+        Debug.Log("lat lon zoom" + lat1 +" "+ lon1+ " " + 7);
+        mercator(lat1, lon1, 7, out x1, out y1);
+        Debug.Log("x1 y1" + x1 +" " + y1);
+        */
+
         try
         {
             UnityEditor.AssetDatabase.Refresh();
@@ -390,20 +395,17 @@ public class collect_tiles : MonoBehaviour {
     {
         float pi = Mathf.PI;
 
+        float x1,x2,y1,y2;
+
         int tiles = (int)System.Math.Pow(2, zoom);
         float diameter = 2 * pi;
 
-        //transform from tile space
-        float x2 = ((x3 * diameter)/tiles)- pi;
-        float y2 = (-1) * (((y3 * diameter) / tiles) - pi);
+        x1 = x2 = ((x3 * 2 * pi) / tiles) - pi; 
+        lon = (180 * x1) / pi;
 
-        //Project from mercantor
-        float x1 = x2;
-        float y1 = (float)System.Math.Atan(((float)System.Math.Pow(System.Math.E, y2)) - 4 * pi)* 2;
-
-        //Convert from radians
-        lon = x1 * 180 / pi;
-        lat = y1 * 180 / pi;
+        y2 = (-1) * (((2 * pi * y3) / tiles) - pi);
+        y1 = (float)(2* (System.Math.Atan(System.Math.Pow(System.Math.E, y2)) - pi * 0.25));
+        lat = (180 * y1) / pi;
     }
 
     private static void mercator(float lat, float lon, int zoom, out int x3, out int y3)

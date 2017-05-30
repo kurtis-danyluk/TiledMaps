@@ -9,6 +9,7 @@ public class LaserPointer : MonoBehaviour {
     private GameObject laser;
     private Transform laserTransform;
     private Vector3 hitPoint;
+    public Terrain Terr;
 
     public Transform cameraRigTransform;
     public GameObject teleportReticlePrefab;
@@ -78,8 +79,8 @@ public class LaserPointer : MonoBehaviour {
                 else if (hit.collider.gameObject.name == "mTerr")
                 {
                     hitPoint = hit.collider.gameObject.transform.InverseTransformPoint(hitPoint);
-                    hitPoint = hitPoint * Terrain.activeTerrains[1].terrainData.heightmapWidth;
-                    hitPoint.y = Terrain.activeTerrains[1].SampleHeight(hitPoint) - 128;
+                    hitPoint = hitPoint * Terr.terrainData.heightmapWidth;
+                    hitPoint.y = Terr.SampleHeight(hitPoint) - 128;
                 }
                 else if (hit.collider.gameObject.name == "Platform")
                     hitPoint = new Vector3(128, 0, 128);
