@@ -10,6 +10,8 @@ public class collect_tiles : MonoBehaviour {
     Terrain Terr;
     Terrain mTerr;
     public Terrain me;
+    public collect_tiles center;
+
    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
     static string base_dir = @"Assets/Textures/";
     private string elvFilename = "elvTile.png";
@@ -24,6 +26,10 @@ public class collect_tiles : MonoBehaviour {
     private float olongitude;
     static int zoom;
     float ozoom;
+    float tile_lat_arc;
+    float tile_lon_arc;
+    public int xpos;
+    public int zpos;
     private float[,] heights;
     private bool image_changed;
     private bool tex_swap;
@@ -72,7 +78,9 @@ public class collect_tiles : MonoBehaviour {
         latitude = 0.0f;
         olatitude = latitude;
         zoom = 1;
-        ozoom = zoom;
+        ozoom = 2;
+        tile_lat_arc = 90;
+        tile_lon_arc = 180;
 
         //  exageration_constant = 0;
         //Currently unused but these are set at minimums for terrain exageration
@@ -102,6 +110,7 @@ public class collect_tiles : MonoBehaviour {
                 mapB[i, j, 1] = 1;
             }
 
+
         //Generate a quantized table
         qMappingTable = generate_quantized_table();
     }
@@ -116,7 +125,7 @@ public class collect_tiles : MonoBehaviour {
 
 
 
-    void dlFile() {
+    void dlFile(float latitude, float longitude, int zoom) {
         Debug.Log(this.name + elvFilename);
         int merc_lat;
         int merc_long;
@@ -178,13 +187,30 @@ public class collect_tiles : MonoBehaviour {
     }
         // Update is called once per frame
 	void Update () {
+        //This is totally assuming even lat long distrubution- which is wrong for my map sets...
+        tile_lat_arc = ((180 / Mathf.Pow(2, zoom)));
+        tile_lon_arc = (360 / Mathf.Pow(2, zoom));
+
+        this.latitude = center.latitude + tile_lat_arc * zpos;
+        this.longitude = center.longitude + tile_lon_arc * xpos;
+
+        if (latitude > 85)
+            latitude = 85;
+        if (latitude < -85)
+            latitude = -85;
+        if (longitude > 180)
+            longitude = 180;
+        if (longitude < -180)
+            longitude = -180;
 
         if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
-        {           
+        {
+
+
             olatitude = latitude;
             olongitude = longitude;
             ozoom = zoom;
-            dlFile();
+            dlFile(latitude, longitude, zoom);
         }
 
         if (File.Exists(elvFilename) && image_changed)
@@ -217,7 +243,12 @@ public class collect_tiles : MonoBehaviour {
             tex_swap = true;
         }
         */
-        UnityEditor.AssetDatabase.Refresh();
+        try {
+            UnityEditor.AssetDatabase.Refresh();
+        }
+        catch (System.Exception e){
+           
+        }
     }
 
 
@@ -260,10 +291,10 @@ public class collect_tiles : MonoBehaviour {
 
         //Determine the range between the minimum and maximum height
         float hRange = max_height - min_height;
-        Debug.Log("hRange:" + hRange);
+        //Debug.Log("hRange:" + hRange);
 
         float mRes = Mathf.Abs(ground_resolution(latitude, zoom));
-        Debug.Log("mRes:" + mRes);
+        //Debug.Log("mRes:" + mRes);
 
         terrBaseHeight = hRange / (mRes);
 
@@ -271,8 +302,8 @@ public class collect_tiles : MonoBehaviour {
 
         mTerrBaseHeight = terrBaseHeight / 256;
         
-        Debug.Log("Height" + terrBaseHeight);
-        Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, (int)terrBaseHeight, Terr.terrainData.size.z);
+        //Debug.Log("Height" + terrBaseHeight);
+        Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, terrBaseHeight, Terr.terrainData.size.z);
 
         mTerr.terrainData.size = new Vector3(mTerr.terrainData.size.x, (mTerrBaseHeight), mTerr.terrainData.size.z);
 
