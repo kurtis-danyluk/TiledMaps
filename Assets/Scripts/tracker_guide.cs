@@ -74,7 +74,7 @@ public class tracker_guide : MonoBehaviour {
             // Keep tracker on the ground
        //     difference.y = Terr.transform.position.y;
 
-            //Let tracker roam0
+            //Let tracker roam
             difference.y = Terr.transform.position.y + (trackerTransform.localPosition.y - 0.1f) * Terr.terrainData.heightmapHeight;
 
             // 5

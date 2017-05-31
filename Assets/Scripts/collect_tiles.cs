@@ -19,6 +19,7 @@ public class collect_tiles : MonoBehaviour {
     private string elvFilename = "elvTile.png";
     private string aerImageFilename = "aerImage.jpeg";
     static string key = "AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut";
+    string tile_type;
     private string ImageURL;
     private string oImageURL;
     static float earthCircumference = 6378137f;
@@ -31,7 +32,7 @@ public class collect_tiles : MonoBehaviour {
     float tile_lat_arc;
     float tile_lon_arc;
     public int xpos;
-    public int zpos;
+    public int ypos;
     private float[,] heights;
     private bool image_changed;
     private bool tex_swap;
@@ -54,6 +55,7 @@ public class collect_tiles : MonoBehaviour {
         //Setup filenames
         elvFilename = base_dir + this.name + elvFilename;
         aerImageFilename = base_dir + this.name + aerImageFilename;
+        tile_type = "Road/";//"Aerial/";//
         //  Debug.Log(elvFilename);
 
         //Load the active terrains TODO: Make this generic!
@@ -75,11 +77,11 @@ public class collect_tiles : MonoBehaviour {
         oImageURL = ImageURL;
 
         //Setup default lat, long, zoom
-        longitude = 0.0f;
+        longitude = -114f;
         olongitude = longitude;
-        latitude = 0.0f;
+        latitude = 51f;
         olatitude = latitude;
-        zoom = 1;
+        zoom = 11;
         ozoom = 2;
         tile_lat_arc = 90;
         tile_lon_arc = 180;
@@ -126,6 +128,124 @@ public class collect_tiles : MonoBehaviour {
     //https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
 
 
+    void dlElvFile(int merc_long, int merc_lat, int zoom)
+    {
+        Debug.Log(Terr.name);
+        Debug.Log("lat lon " + merc_lat + " " + merc_long);
+
+        string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
+        try
+        {
+            //Debug.Log(elvFilename);
+            client.DownloadFile(eQuery, elvFilename);
+        }
+        catch (WebException e)
+        {
+            Debug.Log("Error Trying To get Elevation Data");
+            Debug.LogException(e);
+            Debug.Log("latitude:" + latitude + " " + merc_lat);
+            Debug.Log("Longitude:" + longitude + " " + merc_long);
+            Debug.Log("Zoom:" + zoom);
+            Debug.Log(eQuery);
+        }
+
+
+    }
+
+    void dlElvFile(float latitude,float longitude , int zoom)
+    {
+        int merc_long;
+        int merc_lat;
+
+        mercator(latitude, longitude, zoom, out merc_long, out merc_lat);
+        
+
+
+        string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
+
+        try
+        {
+            //Debug.Log(elvFilename);
+            client.DownloadFile(eQuery, elvFilename);
+        }
+        catch (WebException e)
+        {
+            Debug.Log("Error Trying To get Elevation Data");
+            Debug.LogException(e);
+            Debug.Log("latitude:" + latitude + " " + merc_lat);
+            Debug.Log("Longitude:" + longitude + " " + merc_long);
+            Debug.Log("Zoom:" + zoom);
+            Debug.Log(eQuery);
+        }
+
+
+    }
+    void dlImgFile(float latitude, float longitude, int zoom)
+    {
+        string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/" + tile_type + latitude.ToString() + "," + longitude.ToString() + "?zl=" + zoom.ToString() + "&o=xml&key=" + key;
+
+        try
+        {
+
+            string line = client.DownloadString(bQuery);
+            string[] lines = line.Split((new char[] { '<', '>' }));
+            foreach (string item in lines)
+            {
+                if (item.StartsWith("http"))
+                    ImageURL = item;
+            }
+
+            if (!ImageURL.Equals(oImageURL))
+            {
+                client.DownloadFile(ImageURL, aerImageFilename);
+                oImageURL = ImageURL;
+                image_changed = true;
+            }
+        }
+        catch (WebException e)
+        {
+            Debug.Log("Error Getting Image Data");
+            Debug.LogException(e);
+            Debug.Log(bQuery);
+        };
+    }
+    void dlImgFile(int merc_lat, int merc_lon, int zoom)
+    {
+        float latitude;
+        float longitude;
+
+        inverse_mercator(out latitude, out longitude, zoom, merc_lon, merc_lat);
+        Debug.Log(Terr.name);
+        Debug.Log("mlat mlon " + merc_lat + " " + merc_lon);
+        Debug.Log("Lat Lon " + latitude + " " + longitude);
+
+        string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/" + tile_type + latitude.ToString() + "," + longitude.ToString() + "?zl=" + zoom.ToString() + "&o=xml&key=" + key;
+
+        try
+        {
+
+            string line = client.DownloadString(bQuery);
+            string[] lines = line.Split((new char[] { '<', '>' }));
+            foreach (string item in lines)
+            {
+                if (item.StartsWith("http"))
+                    ImageURL = item;
+            }
+
+            if (!ImageURL.Equals(oImageURL))
+            {
+                client.DownloadFile(ImageURL, aerImageFilename);
+                oImageURL = ImageURL;
+                image_changed = true;
+            }
+        }
+        catch (WebException e)
+        {
+            Debug.Log("Error Getting Image Data");
+            Debug.LogException(e);
+            Debug.Log(bQuery);
+        };
+    }
 
     void dlFile(float latitude, float longitude, int zoom) {
         //Debug.Log(this.name + elvFilename);
@@ -134,8 +254,9 @@ public class collect_tiles : MonoBehaviour {
 
         mercator(latitude, longitude, zoom, out merc_long, out merc_lat);
 
-        string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Aerial/" + latitude.ToString() +","+longitude.ToString()+"?zl="+zoom.ToString()+"&o=xml&key=" + key;
+        string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/" + tile_type+ latitude.ToString() +","+longitude.ToString()+"?zl="+zoom.ToString()+"&o=xml&key=" + key;
         string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/"+ zoom + "/"+merc_long.ToString()+"/"+merc_lat.ToString() +".png";
+        Debug.Log(Terr.name + " " + eQuery);
 
         try
         {
@@ -178,28 +299,78 @@ public class collect_tiles : MonoBehaviour {
         
 
     }
+
+    /*
+    void dlFile(int merc_lat, int merc_long, int zoom)
+    {
+        float latitude;
+        float longitude;
+
+        //Debug.Log(this.name + elvFilename);
+        inverse_mercator(out latitude, out longitude, zoom, merc_long, merc_lat);
+
+        string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/" + tile_type + latitude.ToString() + "," + longitude.ToString() + "?zl=" + zoom.ToString() + "&o=xml&key=" + key;
+        string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
+        Debug.Log(Terr.name + " " + eQuery);
+
+
+        try
+        {
+            //Debug.Log(elvFilename);
+            client.DownloadFile(eQuery, elvFilename);
+        }
+        catch (WebException e)
+        {
+            Debug.Log("Error Trying To get Elevation Data");
+            Debug.LogException(e);
+            Debug.Log("latitude:" + latitude + " " + merc_lat);
+            Debug.Log("Longitude:" + longitude + " " + merc_long);
+            Debug.Log("Zoom:" + zoom);
+            Debug.Log(eQuery);
+        }
+        try
+        {
+
+            string line = client.DownloadString(bQuery);
+            string[] lines = line.Split((new char[] { '<', '>' }));
+            foreach (string item in lines)
+            {
+                if (item.StartsWith("http"))
+                    ImageURL = item;
+            }
+
+            if (!ImageURL.Equals(oImageURL))
+            {
+                client.DownloadFile(ImageURL, aerImageFilename);
+                oImageURL = ImageURL;
+                image_changed = true;
+            }
+        }
+        catch (WebException e)
+        {
+            Debug.Log("Error Getting Image Data");
+            Debug.LogException(e);
+            Debug.Log(bQuery);
+        };
+
+
+    }
+    */
+
     void LateUpdate() { }
 
 
         // Update is called once per frame
 	void Update () {
 
-        if (!isCenter)
-        {
+        //if (!isCenter)
+        
             int x3, y3;
             mercator(center.latitude, center.longitude, zoom, out x3, out y3);
-
-            inverse_mercator(out this.latitude, out this.longitude, zoom, x3 + xpos, y3 - zpos);
-
-            if (latitude > 85)
-                latitude = 85;
-            if (latitude < -85)
-                latitude = -85;
-            if (longitude > 180)
-                longitude = 180;
-            if (longitude < -180)
-                longitude = -180;
-        }
+           // Debug.Log(center.latitude + " " + center.longitude + " " + y3 + " " + x3);
+            inverse_mercator(out this.latitude, out this.longitude, zoom, x3 + xpos, y3 - ypos);
+           // Debug.Log(latitude + " " + longitude + " " + (y3 - ypos) + " " + (x3 + xpos));
+        
         if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
         {
 
@@ -207,11 +378,19 @@ public class collect_tiles : MonoBehaviour {
             olatitude = latitude;
             olongitude = longitude;
             ozoom = zoom;
-            dlFile(latitude, longitude, zoom);
+
+          //  dlElvFile(latitude, longitude, zoom);
+          //  dlImgFile(latitude, longitude, zoom);
+
+            dlElvFile(x3 + xpos, y3 - ypos, zoom);
+            dlImgFile(x3 + xpos, y3 - ypos, zoom);
+
+
+            //dlFile(this.latitude, this.longitude, zoom);
         }
 
         if (File.Exists(elvFilename) && image_changed)
-            formHeight();
+            formHeight(Terr, elvFilename);
         if (File.Exists(aerImageFilename) && image_changed)
         {
             changeTex();
@@ -242,19 +421,6 @@ public class collect_tiles : MonoBehaviour {
         // 
         //if (isCenter)
         //{
-        //  yield return new WaitForEndOfFrame();
-        /*
-        Debug.Log("Start merc and inv merc test");
-        Debug.Log("Lat Long Zoom" + 48 +" "+ -113 +" "+ 7);
-        int x1, y1;
-        mercator(48, -113, 7, out x1, out y1);
-        Debug.Log("x1 y1 z" + " " + x1.ToString() +" "+ y1.ToString()+ " " + 7);
-        float lat1, lon1;
-        inverse_mercator(out lat1, out lon1, 7, x1, y1);
-        Debug.Log("lat lon zoom" + lat1 +" "+ lon1+ " " + 7);
-        mercator(lat1, lon1, 7, out x1, out y1);
-        Debug.Log("x1 y1" + x1 +" " + y1);
-        */
 
         try
         {
@@ -271,7 +437,7 @@ public class collect_tiles : MonoBehaviour {
     }
 
 
-    public void formHeight()
+    public void formHeight(Terrain Terr, string elvFilename)
     {
         
 
@@ -297,8 +463,8 @@ public class collect_tiles : MonoBehaviour {
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
                 
-                heights[j, i] = 1- tileTex.GetPixel(i, j).a;
-                qHeights[j, i] = quantized_height((int)(heights[j, i] * 255));
+                heights[i, j] = 1- tileTex.GetPixel(i, j).a;
+                qHeights[i, j] = quantized_height((int)(heights[i, j] * 255));
 
                 if (qHeights[j, i] < 0 && !hasSeaFloor)
                     qHeights[j, i] = 0f;
@@ -340,12 +506,12 @@ public class collect_tiles : MonoBehaviour {
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
-                qHeights[i, j] = qHeights[i, j] - min_height;
+                qHeights[j, i] = qHeights[j, i] - min_height;
                 /*
                 if (qHeights[i, j] < min_height & !hasSeaFloor)
                     qHeights[i, j] = min_height;
                     */
-                heights[i, j] = qHeights[i, j] / hRange;
+                heights[j, i] = qHeights[j, i] / hRange;
             }
 
         Terr.terrainData.SetHeights(0, 0, heights);
@@ -403,9 +569,15 @@ public class collect_tiles : MonoBehaviour {
         x1 = x2 = ((x3 * 2 * pi) / tiles) - pi; 
         lon = (180 * x1) / pi;
 
-        y2 = (-1) * (((2 * pi * y3) / tiles) - pi);
-        y1 = (float)(2* (System.Math.Atan(System.Math.Pow(System.Math.E, y2)) - pi * 0.25));
+        y2 =  (((2 * pi * -y3) / tiles) + pi);
+        y1 = (float)(2* (System.Math.Atan(System.Math.Pow(System.Math.E, y2)) - (pi * 0.25)));
         lat = (180 * y1) / pi;
+        
+
+        //y1 = (-y3 / tiles) + pi;
+        //y2 = (float)System.Math.Pow(System.Math.E, y1);
+        //lat = (360 * Mathf.Atan(y2) - (90 * pi)) / pi;
+        //Debug.Log("Lat for " + y3 + " is " + lat); 
     }
 
     private static void mercator(float lat, float lon, int zoom, out int x3, out int y3)
