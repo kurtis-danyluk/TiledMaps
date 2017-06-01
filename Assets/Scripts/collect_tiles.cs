@@ -3,6 +3,7 @@ using System.Collections;
 using System.Net;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 public class collect_tiles : MonoBehaviour {
 
@@ -36,7 +37,7 @@ public class collect_tiles : MonoBehaviour {
     private float[,] heights;
     private bool image_changed;
     private bool tex_swap;
-    public static bool hasSeaFloor;
+    public bool hasSeaFloor;
     float terrBaseHeight;
     float mTerrBaseHeight;
     static System.Collections.Generic.List<float> qMappingTable;
@@ -77,9 +78,9 @@ public class collect_tiles : MonoBehaviour {
         oImageURL = ImageURL;
 
         //Setup default lat, long, zoom
-        longitude = -114f;
+        longitude = -113f;
         olongitude = longitude;
-        latitude = 51f;
+        latitude = 48f;
         olatitude = latitude;
         zoom = 11;
         ozoom = 2;
@@ -96,7 +97,8 @@ public class collect_tiles : MonoBehaviour {
         tex_swap = false;
 
         //Determine if we care about the sea floor
-        hasSeaFloor = false;
+        //Set on the object now!
+        //hasSeaFloor = false;
 
         
         //Link the terrain's texture to the appropriate files
@@ -130,8 +132,8 @@ public class collect_tiles : MonoBehaviour {
 
     void dlElvFile(int merc_long, int merc_lat, int zoom)
     {
-        Debug.Log(Terr.name);
-        Debug.Log("lat lon " + merc_lat + " " + merc_long);
+       // Debug.Log(Terr.name);
+        //Debug.Log("lat lon " + merc_lat + " " + merc_long);
 
         string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
         try
@@ -211,33 +213,19 @@ public class collect_tiles : MonoBehaviour {
     }
     void dlImgFile(int merc_lat, int merc_lon, int zoom)
     {
-        float latitude;
-        float longitude;
+        string qKey = TileXYToQuadKey(merc_lat, merc_lon, zoom);
 
-        inverse_mercator(out latitude, out longitude, zoom, merc_lon, merc_lat);
-        Debug.Log(Terr.name);
-        Debug.Log("mlat mlon " + merc_lat + " " + merc_lon);
-        Debug.Log("Lat Lon " + latitude + " " + longitude);
-
-        string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/" + tile_type + latitude.ToString() + "," + longitude.ToString() + "?zl=" + zoom.ToString() + "&o=xml&key=" + key;
+        //http://ecn.t0.tiles.virtualearth.net/tiles/r01212323100.jpeg?g=5733&amp;mkt={culture}&amp;shading=hill
+        string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/a" + qKey + ".jpeg?g=5733";
+        //string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/r" + qKey + ".jpeg?g=5733&amp;mkt={culture}&amp;shading=hill";
+        //Debug.Log(bQuery);
 
         try
         {
 
-            string line = client.DownloadString(bQuery);
-            string[] lines = line.Split((new char[] { '<', '>' }));
-            foreach (string item in lines)
-            {
-                if (item.StartsWith("http"))
-                    ImageURL = item;
-            }
+            client.DownloadFile(bQuery, aerImageFilename);
 
-            if (!ImageURL.Equals(oImageURL))
-            {
-                client.DownloadFile(ImageURL, aerImageFilename);
-                oImageURL = ImageURL;
-                image_changed = true;
-            }
+            image_changed = true;
         }
         catch (WebException e)
         {
@@ -399,6 +387,8 @@ public class collect_tiles : MonoBehaviour {
       //      Terr.terrainData.SetAlphamaps(0, 0, map);
         }
     }
+
+    //All this does is refresh the asset database. The textures are meaningfully changed each time they're downloaded anyway
     private void changeTex()
     {
         /*
@@ -441,7 +431,7 @@ public class collect_tiles : MonoBehaviour {
     {
         
 
-        //Read the heightmap into a texture file for storage
+        //Read the heightmap file into a texture file for storage
         byte[] imageBytes = File.ReadAllBytes(elvFilename);
         tileTex.LoadImage(imageBytes);
 
@@ -450,15 +440,15 @@ public class collect_tiles : MonoBehaviour {
         
         //Determine the min and max height.
         //We'll use these to determine the proper height value for the scene
+        float min_height= 0f;       //Sea Level
+        float max_height = 8900f;   //The highest point on earth!
 
-        float min_height= 0f;
-        float max_height = 8900f;
-
+        //We normally only care about above sea level values but we do have bathometry data
+        //Toggle the has Sea floor tag if we want to sea it!
         if (hasSeaFloor)
             min_height = -11000f;
 
         //Get the heights from file and their repsective quantized values
-        //While we're at it we'll find the min/max height values
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
@@ -466,55 +456,62 @@ public class collect_tiles : MonoBehaviour {
                 heights[i, j] = 1- tileTex.GetPixel(i, j).a;
                 qHeights[i, j] = quantized_height((int)(heights[i, j] * 255));
 
-                if (qHeights[j, i] < 0 && !hasSeaFloor)
-                    qHeights[j, i] = 0f;
-                /*
-                if (qHeights[j, i] < min_height)
-                    min_height = qHeights[j, i];
-                if (qHeights[j, i] > max_height)
-                    max_height = qHeights[j, i];*/
+                //If we get a below sea level value just treat it as sea level
+                if (qHeights[i, j] < 0 && !hasSeaFloor)
+                    qHeights[i, j] = 0f;
             }
-        /*
-        if (min_height < 0 && !hasSeaFloor)
-            min_height = 0;
-        if (max_height < 0 && !hasSeaFloor)
-            max_height = 0;
-            */
         //Determine the range between the minimum and maximum height
+        //This will change depending on if we care about sub sea level heights
         float hRange = max_height - min_height;
         //Debug.Log("hRange:" + hRange);
 
-        float mRes = Mathf.Abs(ground_resolution(latitude, zoom));
-        //Debug.Log("mRes:" + mRes);
-
-        terrBaseHeight = hRange / (mRes);
-
-        //    terrBaseHeight *= exageration_constant; 
-
         if (isCenter)
         {
+
+
+            //Determine the width in meters of the central tile given its latitude
+            float mRes = Mathf.Abs(ground_resolution(center.latitude, zoom));
+            //Debug.Log("mRes:" + mRes);
+
+            //Figures out how tall the scene should be based on the width of the tile
+            terrBaseHeight = hRange / (mRes);
+
+            //Exagerate the height abit - makes things look more impressive
+            //terrBaseHeight *= exageration_constant; 
+
+            //Debug.Log("Height" + terrBaseHeight);
+            Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, terrBaseHeight, Terr.terrainData.size.z);
+
+
             mTerrBaseHeight = terrBaseHeight / 256;
             mTerr.terrainData.size = new Vector3(mTerr.terrainData.size.x, (mTerrBaseHeight), mTerr.terrainData.size.z);
         }
-        //Debug.Log("Height" + terrBaseHeight);
-        Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, terrBaseHeight, Terr.terrainData.size.z);
+        else
+            Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, center.Terr.terrainData.size.y, Terr.terrainData.size.z);
 
-        
-        
+
+        qHeights = flipMatrix(qHeights, ((Terr.terrainData.heightmapHeight)));
+        qHeights = RotateMatrix(qHeights, (Terr.terrainData.heightmapHeight));
+        qHeights = flattenMatrixEdge(qHeights, (Terr.terrainData.heightmapHeight));
+        //qHeights = RotateMatrix(qHeights, (Terr.terrainData.heightmapHeight));
+        //qHeights = RotateMatrix(qHeights, (Terr.terrainData.heightmapHeight));
+
 
 
         for (int i = 0; i < Terr.terrainData.heightmapWidth; i++)
             for (int j = 0; j < Terr.terrainData.heightmapHeight; j++)
             {
-                qHeights[j, i] = qHeights[j, i] - min_height;
+                qHeights[i, j] = qHeights[i, j] - min_height;
                 /*
                 if (qHeights[i, j] < min_height & !hasSeaFloor)
                     qHeights[i, j] = min_height;
                     */
-                heights[j, i] = qHeights[j, i] / hRange;
+                heights[i, j] = qHeights[i, j] / hRange;
             }
 
         Terr.terrainData.SetHeights(0, 0, heights);
+        
+
         if (isCenter)
             mTerr.terrainData.SetHeights(0, 0, center.heights);
         
@@ -556,6 +553,94 @@ public class collect_tiles : MonoBehaviour {
     {
         return qMappingTable[h];
     }
+
+    //------------------------------------------------------------------------------
+    // <copyright company="Microsoft">
+    //     Copyright (c) 2006-2009 Microsoft Corporation.  All rights reserved.
+    // </copyright>
+    //------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Converts tile XY coordinates into a QuadKey at a specified level of detail.
+    /// </summary>
+    /// <param name="tileX">Tile X coordinate.</param>
+    /// <param name="tileY">Tile Y coordinate.</param>
+    /// <param name="levelOfDetail">Level of detail, from 1 (lowest detail)
+    /// to 23 (highest detail).</param>
+    /// <returns>A string containing the QuadKey.</returns>
+    public static string TileXYToQuadKey(int tileX, int tileY, int levelOfDetail)
+    {
+        StringBuilder quadKey = new StringBuilder();
+        for (int i = levelOfDetail; i > 0; i--)
+        {
+            char digit = '0';
+            int mask = 1 << (i - 1);
+            if ((tileX & mask) != 0)
+            {
+                digit++;
+            }
+            if ((tileY & mask) != 0)
+            {
+                digit++;
+                digit++;
+            }
+            quadKey.Append(digit);
+        }
+        return quadKey.ToString();
+    }
+
+    //Auther: Nick Berardi
+    static float[,] RotateMatrix(float[,] matrix, int n)
+    {
+        float[,] ret = new float[n, n];
+
+        for (int i = 0; i < n; ++i)
+        {
+            for (int j = 0; j < n; ++j)
+            {
+                ret[i, j] = matrix[n - j - 1, i];
+            }
+        }
+
+        return ret;
+    }
+
+    static float [,] flipMatrix(float[,] matrix, int dims)
+    {
+        float[,] ret = new float[dims, dims];
+        for(int i = 0; i < dims; i++)
+            for(int j = 0; j < dims; j++)
+            {
+                ret[dims - i - 1, j] = matrix[i, j];
+
+            }
+        return ret;
+    }
+    static float [,] flattenMatrixEdge(float [,] matrix, int dims)
+    {
+        float[,] ret;
+        ret = matrix;
+        for(int i = 0; i < dims; i++)
+        {
+            ret[0, i] = ret[1, i];
+        }
+        for (int i = 0; i < dims; i++)
+        {
+            ret[dims - 1, i] = ret[dims - 2, i];
+        }
+        for (int i = 0; i < dims; i++)
+        {
+            ret[i, 0] = ret[i, 1];
+        }
+        for (int i = 0; i < dims; i++)
+        {
+            ret[i, dims - 1] = ret[i,  dims -2];
+        }
+
+        return ret;
+    }
+
+
 
     private static void inverse_mercator(out float lat, out float lon, int zoom, int x3, int y3)
     {
