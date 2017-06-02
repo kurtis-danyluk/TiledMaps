@@ -13,7 +13,7 @@ public class collect_tiles : MonoBehaviour {
     public Terrain me;
     public collect_tiles center;
 
-
+    static bool center_changed;
     public bool isCenter;
    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
     static string base_dir = @"Assets/Textures/";
@@ -28,7 +28,7 @@ public class collect_tiles : MonoBehaviour {
     private float olatitude;
     public float longitude;
     private float olongitude;
-    static int zoom;
+    static public int zoom;
     float ozoom;
     float tile_lat_arc;
     float tile_lon_arc;
@@ -58,7 +58,7 @@ public class collect_tiles : MonoBehaviour {
         aerImageFilename = base_dir + this.name + aerImageFilename;
         tile_type = "Road/";//"Aerial/";//
         //  Debug.Log(elvFilename);
-
+        
         //Load the active terrains TODO: Make this generic!
         //     Terr = Terrain.activeTerrains[1];
         Terr = me;
@@ -78,9 +78,9 @@ public class collect_tiles : MonoBehaviour {
         oImageURL = ImageURL;
 
         //Setup default lat, long, zoom
-        longitude = -113f;
+        longitude = -114f;
         olongitude = longitude;
-        latitude = 48f;
+        latitude = 51f;
         olatitude = latitude;
         zoom = 11;
         ozoom = 2;
@@ -95,12 +95,13 @@ public class collect_tiles : MonoBehaviour {
         //Records state of image change
         image_changed = false;
         tex_swap = false;
+        center_changed = false;
 
         //Determine if we care about the sea floor
         //Set on the object now!
         //hasSeaFloor = false;
 
-        
+
         //Link the terrain's texture to the appropriate files
         Terr.terrainData.splatPrototypes[0].texture = filetex;
      //   Terr.terrainData.splatPrototypes[1].texture = oFiletex;
@@ -216,8 +217,8 @@ public class collect_tiles : MonoBehaviour {
         string qKey = TileXYToQuadKey(merc_lat, merc_lon, zoom);
 
         //http://ecn.t0.tiles.virtualearth.net/tiles/r01212323100.jpeg?g=5733&amp;mkt={culture}&amp;shading=hill
-        string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/a" + qKey + ".jpeg?g=5733";
-        //string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/r" + qKey + ".jpeg?g=5733&amp;mkt={culture}&amp;shading=hill";
+        //string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/a" + qKey + ".jpeg?g=5733";
+        string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/r" + qKey + ".jpeg?g=5733&amp;mkt={culture}&amp;shading=hill";
         //Debug.Log(bQuery);
 
         try
@@ -345,46 +346,83 @@ public class collect_tiles : MonoBehaviour {
     }
     */
 
-    void LateUpdate() { }
+    void LateUpdate() {
+        if (!isCenter && center_changed)
+        {
+
+            int x3, y3;
+            mercator(center.latitude, center.longitude, zoom, out x3, out y3);
+            // Debug.Log(center.latitude + " " + center.longitude + " " + y3 + " " + x3);
+            inverse_mercator(out this.latitude, out this.longitude, zoom, x3 + xpos, y3 - ypos);
+            // Debug.Log(latitude + " " + longitude + " " + (y3 - ypos) + " " + (x3 + xpos));
+
+            if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
+            {
+                //  dlElvFile(latitude, longitude, zoom);
+                //  dlImgFile(latitude, longitude, zoom);
+
+                dlElvFile(x3 + xpos, y3 - ypos, zoom);
+                dlImgFile(x3 + xpos, y3 - ypos, zoom);
+
+                olatitude = latitude;
+                olongitude = longitude;
+                ozoom = zoom;
+
+                //dlFile(this.latitude, this.longitude, zoom);
+            }
+
+
+            if (File.Exists(elvFilename) && File.Exists(aerImageFilename) && image_changed)
+            {
+                formHeight(Terr, elvFilename);
+                changeTex();
+                image_changed = false;
+                tex_swap = true;
+                //      Terr.terrainData.SetAlphamaps(0, 0, map);
+            }
+        }
+    }
 
 
         // Update is called once per frame
 	void Update () {
 
-        //if (!isCenter)
-        
+        if (isCenter)
+        {
+            center_changed = false;
             int x3, y3;
             mercator(center.latitude, center.longitude, zoom, out x3, out y3);
-           // Debug.Log(center.latitude + " " + center.longitude + " " + y3 + " " + x3);
+            // Debug.Log(center.latitude + " " + center.longitude + " " + y3 + " " + x3);
             inverse_mercator(out this.latitude, out this.longitude, zoom, x3 + xpos, y3 - ypos);
-           // Debug.Log(latitude + " " + longitude + " " + (y3 - ypos) + " " + (x3 + xpos));
-        
-        if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
-        {
+            // Debug.Log(latitude + " " + longitude + " " + (y3 - ypos) + " " + (x3 + xpos));
+
+            if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
+            {
+                center_changed = true;
 
 
-            olatitude = latitude;
-            olongitude = longitude;
-            ozoom = zoom;
 
-          //  dlElvFile(latitude, longitude, zoom);
-          //  dlImgFile(latitude, longitude, zoom);
+                //  dlElvFile(latitude, longitude, zoom);
+                //  dlImgFile(latitude, longitude, zoom);
 
-            dlElvFile(x3 + xpos, y3 - ypos, zoom);
-            dlImgFile(x3 + xpos, y3 - ypos, zoom);
+                dlElvFile(x3 + xpos, y3 - ypos, zoom);
+                dlImgFile(x3 + xpos, y3 - ypos, zoom);
 
+                olatitude = latitude;
+                olongitude = longitude;
+                ozoom = zoom;
 
-            //dlFile(this.latitude, this.longitude, zoom);
-        }
+                //dlFile(this.latitude, this.longitude, zoom);
+            }
 
-        if (File.Exists(elvFilename) && image_changed)
-            formHeight(Terr, elvFilename);
-        if (File.Exists(aerImageFilename) && image_changed)
-        {
-            changeTex();
-            image_changed = false;
-            tex_swap = true;
-      //      Terr.terrainData.SetAlphamaps(0, 0, map);
+            if (File.Exists(elvFilename) && File.Exists(aerImageFilename) && image_changed)
+            {
+                formHeight(Terr, elvFilename);
+                changeTex();
+                image_changed = false;
+                tex_swap = true;
+                //      Terr.terrainData.SetAlphamaps(0, 0, map);
+            }
         }
     }
 
@@ -468,7 +506,6 @@ public class collect_tiles : MonoBehaviour {
         if (isCenter)
         {
 
-
             //Determine the width in meters of the central tile given its latitude
             float mRes = Mathf.Abs(ground_resolution(center.latitude, zoom));
             //Debug.Log("mRes:" + mRes);
@@ -488,13 +525,13 @@ public class collect_tiles : MonoBehaviour {
         }
         else
             Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, center.Terr.terrainData.size.y, Terr.terrainData.size.z);
+        Debug.Log(Terr.name + " " + Terr.terrainData.size.y + " " + center.Terr.terrainData.size.y);
 
-
+        //Transform Heightmap to match terrain
         qHeights = flipMatrix(qHeights, ((Terr.terrainData.heightmapHeight)));
         qHeights = RotateMatrix(qHeights, (Terr.terrainData.heightmapHeight));
         qHeights = flattenMatrixEdge(qHeights, (Terr.terrainData.heightmapHeight));
-        //qHeights = RotateMatrix(qHeights, (Terr.terrainData.heightmapHeight));
-        //qHeights = RotateMatrix(qHeights, (Terr.terrainData.heightmapHeight));
+
 
 
 
