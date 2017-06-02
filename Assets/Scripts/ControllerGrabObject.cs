@@ -9,6 +9,8 @@ public class ControllerGrabObject : MonoBehaviour {
     private GameObject objectInHand;
     public tracker_guide target;
     public Transform trackerTransform;
+    private bool iGrabbed;
+
 
     private SteamVR_Controller.Device Controller
     {
@@ -56,6 +58,7 @@ public class ControllerGrabObject : MonoBehaviour {
         collidingObject = null;
     //    if (objectInHand.name == "tracker")
             target.isGrabbed = true;
+        iGrabbed = true;
         // 2
      //   Debug.Log("Grabbed:" + objectInHand.name);
      //   var joint = AddFixedJoint();
@@ -86,6 +89,7 @@ public class ControllerGrabObject : MonoBehaviour {
         // 4
         objectInHand = null;
         target.isGrabbed = false;
+        iGrabbed = false;
     }
     // Update is called once per frame
     void Update () {
@@ -105,7 +109,7 @@ public class ControllerGrabObject : MonoBehaviour {
                 ReleaseObject();
             }
         }
-        if (target.isGrabbed)
+        if (target.isGrabbed && iGrabbed)
             trackerTransform.position = this.transform.position + this.transform.forward.normalized * 0.05f;
     }
 }

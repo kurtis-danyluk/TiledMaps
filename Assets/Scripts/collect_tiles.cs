@@ -521,6 +521,8 @@ public class collect_tiles : MonoBehaviour {
 
 
             mTerrBaseHeight = terrBaseHeight / 256;
+
+
             mTerr.terrainData.size = new Vector3(mTerr.terrainData.size.x, (mTerrBaseHeight), mTerr.terrainData.size.z);
         }
         else
@@ -547,11 +549,26 @@ public class collect_tiles : MonoBehaviour {
             }
 
         Terr.terrainData.SetHeights(0, 0, heights);
-        
+
 
         if (isCenter)
-            mTerr.terrainData.SetHeights(0, 0, center.heights);
-        
+        {
+            float[,] mmap_heights = center.heights;
+            float m_min = float.MaxValue;
+            for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
+                for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
+                {
+                    if (mmap_heights[i, j] < m_min)
+                        m_min = mmap_heights[i, j];
+                }
+            for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
+                for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
+                {
+                    mmap_heights[i, j] = mmap_heights[i, j] - m_min;
+                }
+
+                    mTerr.terrainData.SetHeights(0, 0, center.heights);
+        }
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
     //    mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
 
