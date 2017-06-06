@@ -38,6 +38,8 @@ public class collect_tiles : MonoBehaviour {
     private bool image_changed;
     private bool tex_swap;
     public bool hasSeaFloor;
+    public char texture_mode;
+
     float terrBaseHeight;
     float mTerrBaseHeight;
     static System.Collections.Generic.List<float> qMappingTable;
@@ -217,8 +219,25 @@ public class collect_tiles : MonoBehaviour {
         string qKey = TileXYToQuadKey(merc_lat, merc_lon, zoom);
 
         //http://ecn.t0.tiles.virtualearth.net/tiles/r01212323100.jpeg?g=5733&amp;mkt={culture}&amp;shading=hill
-        //string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/a" + qKey + ".jpeg?g=5733";
-        string bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/r" + qKey + ".jpeg?g=5733&amp;mkt={culture}&amp;shading=hill";
+
+        string bQuery;
+        switch (texture_mode)
+        {
+            case 'a':
+                bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/a" + qKey + ".jpeg?g=5733";
+                break;
+            case 'r':
+                bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/r" + qKey + ".jpeg?g=5733&amp;mkt={culture}&amp;shading=hill";
+                break;
+            default:
+                bQuery = "http://ecn.t0.tiles.virtualearth.net/tiles/r" + qKey + ".jpeg?g=5733&amp;mkt={culture}&amp;shading=hill";
+                break;
+
+
+
+        }
+        //string 
+        //string 
         //Debug.Log(bQuery);
 
         try
@@ -527,7 +546,7 @@ public class collect_tiles : MonoBehaviour {
         }
         else
             Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, center.Terr.terrainData.size.y, Terr.terrainData.size.z);
-        Debug.Log(Terr.name + " " + Terr.terrainData.size.y + " " + center.Terr.terrainData.size.y);
+        //Debug.Log(Terr.name + " " + Terr.terrainData.size.y + " " + center.Terr.terrainData.size.y);
 
         //Transform Heightmap to match terrain
         qHeights = flipMatrix(qHeights, ((Terr.terrainData.heightmapHeight)));

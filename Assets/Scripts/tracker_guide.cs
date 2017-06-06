@@ -12,6 +12,11 @@ public class tracker_guide : MonoBehaviour {
     private Transform trackerTransform;
     private MeshRenderer mesh;
 
+    public GameObject laserPrefab;
+    private GameObject laser;
+    private Transform laserTransform;
+    private Vector3 hitPoint;
+
     public Transform cameraRigTransform;
     public Transform headTransform;
 
@@ -22,6 +27,10 @@ public class tracker_guide : MonoBehaviour {
     //    Terr = Terrain.activeTerrains[1];
         isGrabbed = false;
         mesh = this.GetComponent<MeshRenderer>();
+
+        laser = Instantiate(laserPrefab);
+        laserTransform = laser.transform;
+
     }
 
     private SteamVR_Controller.Device Controller
@@ -33,19 +42,32 @@ public class tracker_guide : MonoBehaviour {
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
+    private void ShowLaser(RaycastHit hit)
+    {
+        laser.SetActive(true);
+        laserTransform.position = Vector3.Lerp(trackerTransform.position, hitPoint, .5f);
+        laserTransform.LookAt(hitPoint);
+        laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y,
+            hit.distance);
+    }
+
 
     // Update is called once per frame
     void Update()
     {
+
+
         if (!isGrabbed)
         {
-            Vector3 trackPos = cameraRigTransform.position / Terr.terrainData.heightmapWidth;
+            
+
+                Vector3 trackPos = cameraRigTransform.position / Terr.terrainData.heightmapWidth;
               trackPos.y = (cameraRigTransform.position/ Terr.terrainData.heightmapHeight).y;
             // trackPos.y = 0.1f;
             //Calculate based off the terrain height!
             trackPos.y +=0.6f;
 
-
+            /*
             if (trackPos.x > 1)
                 trackPos.x = 1;
             if (trackPos.x < -1)
@@ -58,10 +80,21 @@ public class tracker_guide : MonoBehaviour {
                 trackPos.z = 1;
             if (trackPos.z < -1)
                 trackPos.z = -1;
-
+                */
 
 
             trackerTransform.localPosition = trackPos;
+            
+            RaycastHit hit;
+            if (Physics.Raycast(trackerTransform.position, new Vector3(0, -1, 0), out hit, 1000))
+            {
+                if (hit.collider.gameObject.name == "mTerr")
+                {
+                    hitPoint = hit.point;
+                    ShowLaser(hit);
+                }
+            }
+
 
             mesh.material.color = Color.red;
         }

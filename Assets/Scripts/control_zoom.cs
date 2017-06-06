@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class control_zoom : MonoBehaviour {
     private SteamVR_TrackedObject trackedObj;
-   
 
+    public showDirection indicator;
     private bool inputLock;
     private float lockTime = 1f;
     public collect_tiles collector;
@@ -40,30 +40,50 @@ public class control_zoom : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        
         if (!inputLock)
             if (Controller.GetAxis() != Vector2.zero)
             {
-                lockInput();
                 float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
 
-                Debug.Log("Angle: " + angle);
+                if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                {
+                    lockInput();
+                    Debug.Log("Angle: " + angle);
 
-                int zoom = collect_tiles.zoom; ;
-                
-                if (angle > 0)
-                {
-                    collector.watch_zoom(zoom + 1);
-                    //Debug.Log("Zoom In to "+ collect_tiles.zoom);
+                    int zoom = collect_tiles.zoom; ;
+
+                    if (angle > 0)
+                    {
+                        collector.watch_zoom(zoom + 1);
+                        //Debug.Log("Zoom In to "+ collect_tiles.zoom);
+                    }
+                    else if (angle < 0)
+                    {
+                        collector.watch_zoom(zoom - 1);
+                        //Debug.Log("Zoom Out to " + collect_tiles.zoom);
+                    }
                 }
-                else if (angle < 0)
+                else
                 {
-                    collector.watch_zoom(zoom - 1);
-                    //Debug.Log("Zoom Out to " + collect_tiles.zoom);
+                    if (angle > 0)
+                    {
+                        indicator.changeTex('i');
+                        //collector.watch_zoom(zoom + 1);
+                        //Debug.Log("Zoom In to "+ collect_tiles.zoom);
+                    }
+                    else if (angle < 0)
+                    {
+                        indicator.changeTex('o');
+                        //collector.watch_zoom(zoom - 1);
+                        //Debug.Log("Zoom Out to " + collect_tiles.zoom);
+                    }
                 }
-                
 
                 // collector.latitude = Controller.GetAxis().y * lat_range;
                 // collector.longitude = Controller.GetAxis().x * long_range;
             }
+        else
+                indicator.changeTex('z');
     }
 }
