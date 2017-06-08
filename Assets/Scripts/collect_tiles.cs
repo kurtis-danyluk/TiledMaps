@@ -13,12 +13,17 @@ public class collect_tiles : MonoBehaviour {
     public Terrain me;
     public collect_tiles center;
 
+//    public Terrain neightbourT;
+//    public Terrain neightbourB;
+//    public Terrain neightbourL;
+//    public Terrain neightbourR;
+
     static bool center_changed;
     public bool isCenter;
    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
     static string base_dir = @"Assets/Textures/";
-    private string elvFilename = "elvTile.png";
-    private string aerImageFilename = "aerImage.jpeg";
+    string elvFilename = "elvTile.png";
+    string aerImageFilename = "aerImage.jpeg";
     static string key = "AkkXBASn6AiuOToNWy_FDOv7iU5W8G8lyc_jYWpCKf-dWGzal51unBkQ4G209Iut";
     string tile_type;
     private string ImageURL;
@@ -37,8 +42,8 @@ public class collect_tiles : MonoBehaviour {
     private float[,] heights;
     private bool image_changed;
     private bool tex_swap;
-    public bool hasSeaFloor;
-    public char texture_mode;
+    public bool hasSeaFloor = false;
+    public char texture_mode = 'r';
 
     float terrBaseHeight;
     float mTerrBaseHeight;
@@ -65,7 +70,7 @@ public class collect_tiles : MonoBehaviour {
         //     Terr = Terrain.activeTerrains[1];
         Terr = me;
         //mTerr = Terrain.activeTerrains[0];
-
+        
         //Setup a table of heightmap values
         heights = Terr.terrainData.GetHeights(0, 0, Terr.terrainData.heightmapWidth, Terr.terrainData.heightmapHeight);
 
@@ -106,7 +111,8 @@ public class collect_tiles : MonoBehaviour {
 
         //Link the terrain's texture to the appropriate files
         Terr.terrainData.splatPrototypes[0].texture = filetex;
-     //   Terr.terrainData.splatPrototypes[1].texture = oFiletex;
+        //   Terr.terrainData.splatPrototypes[1].texture = oFiletex;
+        /*
         //Use map and mapB to swap between the 2 textures
         map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
         mapB = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
@@ -118,10 +124,15 @@ public class collect_tiles : MonoBehaviour {
                 mapB[i, j, 0] = 0;           
                 mapB[i, j, 1] = 1;
             }
+            */
+
+     //   Terr.SetNeighbors(neightbourL, neightbourT, neightbourR, neightbourB);
 
 
         //Generate a quantized table
         qMappingTable = generate_quantized_table();
+
+
     }
 
 
