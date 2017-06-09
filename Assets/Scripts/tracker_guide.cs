@@ -6,8 +6,7 @@ public class tracker_guide : MonoBehaviour {
 
     public bool isGrabbed;
     private SteamVR_TrackedObject trackedObj;
-    public Terrain Terr;
-    public Terrain mTerr;
+    public Generate_Terrain map;
     private GameObject tracker;
     private Transform trackerTransform;
     private MeshRenderer mesh;
@@ -59,11 +58,11 @@ public class tracker_guide : MonoBehaviour {
 
         if (!isGrabbed)
         {
-            
 
-                Vector3 trackPos = cameraRigTransform.position / Terr.terrainData.heightmapWidth;
-              trackPos.y = (cameraRigTransform.position/ Terr.terrainData.heightmapHeight).y;
-            // trackPos.y = 0.1f;
+
+            Vector3 trackPos = cameraRigTransform.position / map.terrains_width;
+            trackPos.y = (cameraRigTransform.position/ map.center.Terr.terrainData.heightmapHeight).y;
+            //trackPos.y += 0.1f;
             //Calculate based off the terrain height!
             trackPos.y +=0.6f;
 
@@ -88,27 +87,22 @@ public class tracker_guide : MonoBehaviour {
             RaycastHit hit;
             if (Physics.Raycast(trackerTransform.position, new Vector3(0, -1, 0), out hit, 1000))
             {
-                if (hit.collider.gameObject.name == "mTerr")
-                {
                     hitPoint = hit.point;
-                    ShowLaser(hit);
-                }
+                    ShowLaser(hit);               
             }
-
-
             mesh.material.color = Color.red;
         }
         else
         {
             Vector3 temp;
-            temp = trackerTransform.localPosition * Terr.terrainData.heightmapWidth;
-            temp.y = Terr.SampleHeight(temp);
+            temp = trackerTransform.localPosition * map.terrains_width;
+            temp.y = map.center.Terr.SampleHeight(temp);
             Vector3 difference = cameraRigTransform.position - headTransform.position;
             // Keep tracker on the ground
        //     difference.y = Terr.transform.position.y;
 
             //Let tracker roam
-            difference.y = Terr.transform.position.y + (trackerTransform.localPosition.y - 0.1f) * Terr.terrainData.heightmapHeight;
+            difference.y = map.center.Terr.transform.position.y + (trackerTransform.localPosition.y - 0.1f) * map.center.Terr.terrainData.heightmapHeight;
 
             // 5
             cameraRigTransform.position = temp + difference;

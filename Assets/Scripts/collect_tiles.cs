@@ -9,14 +9,17 @@ public class collect_tiles : MonoBehaviour {
 
     WebClient client = new WebClient();
     Terrain Terr;
-    public Terrain mTerr;
+    public GameObject mTerr;
+    //public Terrain mTerr;
     public Terrain me;
     public collect_tiles center;
 
-//    public Terrain neightbourT;
-//    public Terrain neightbourB;
-//    public Terrain neightbourL;
-//    public Terrain neightbourR;
+    const int tile_width = 256;
+    const int tile_height = 256;
+    //    public Terrain neightbourT;
+    //    public Terrain neightbourB;
+    //    public Terrain neightbourL;
+    //    public Terrain neightbourR;
 
     static bool center_changed;
     public bool isCenter;
@@ -35,8 +38,8 @@ public class collect_tiles : MonoBehaviour {
     private float olongitude;
     static public int zoom;
     float ozoom;
-    float tile_lat_arc;
-    float tile_lon_arc;
+    //float tile_lat_arc;
+    //float tile_lon_arc;
     public int xpos;
     public int ypos;
     private float[,] heights;
@@ -45,15 +48,14 @@ public class collect_tiles : MonoBehaviour {
     public bool hasSeaFloor = false;
     public char texture_mode = 'r';
 
-    float terrBaseHeight;
-    float mTerrBaseHeight;
+    public float terrBaseHeight;
     static System.Collections.Generic.List<float> qMappingTable;
     float[,,] map;
     float[,,] mapB;
 
     MeshRenderer mesh;
     Texture2D filetex;
-    Texture2D oFiletex;
+    //Texture2D oFiletex;
     Texture2D tileTex;
     byte[] fileData;
 
@@ -76,7 +78,7 @@ public class collect_tiles : MonoBehaviour {
 
         //Setup the textures to be used
         filetex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
-        oFiletex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+        //oFiletex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
         tileTex = new Texture2D(256, 256);
 
      //   mesh = this.GetComponent<MeshRenderer>();
@@ -91,13 +93,12 @@ public class collect_tiles : MonoBehaviour {
         olatitude = latitude;
         zoom = 11;
         ozoom = 2;
-        tile_lat_arc = 90;
-        tile_lon_arc = 180;
+        //tile_lat_arc = 90;
+        //tile_lon_arc = 180;
 
         //  exageration_constant = 0;
         //Currently unused but these are set at minimums for terrain exageration
         terrBaseHeight = 15f;
-        mTerrBaseHeight = 0.1f;
 
         //Records state of image change
         image_changed = false;
@@ -459,26 +460,14 @@ public class collect_tiles : MonoBehaviour {
     //All this does is refresh the asset database. The textures are meaningfully changed each time they're downloaded anyway
     private void changeTex()
     {
-        /*
-        fileData = File.ReadAllBytes(aerImageFilename);
-        if (tex_swap)
-        {
-            oFiletex.LoadImage(fileData);
-            oFiletex.Apply();
-            Terr.terrainData.SetAlphamaps(0, 0, mapB);
-            tex_swap = false;
-        }
-        else
-        {
-            filetex.LoadImage(fileData);
-            filetex.Apply();
-            Terr.terrainData.SetAlphamaps(0, 0, map);
-            tex_swap = true;
-        }
-        */
-        // 
-        //if (isCenter)
-        //{
+        SplatPrototype[] splats = new SplatPrototype[1];
+        splats[0] = new SplatPrototype();
+        Texture2D tex = new Texture2D(tile_width, tile_height);
+        tex.LoadImage(File.ReadAllBytes(aerImageFilename));
+        splats[0].texture = tex;
+        splats[0].tileSize = new Vector2(tile_width, tile_height);
+
+        Terr.terrainData.splatPrototypes = splats;
 
         try
         {
@@ -486,7 +475,7 @@ public class collect_tiles : MonoBehaviour {
         }
         catch(System.Exception e)
         {
-
+           
         }
             
             //}
@@ -550,10 +539,10 @@ public class collect_tiles : MonoBehaviour {
             Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, terrBaseHeight, Terr.terrainData.size.z);
 
 
-            mTerrBaseHeight = terrBaseHeight / 256;
+            //mTerrBaseHeight = terrBaseHeight / 256;
 
 
-            mTerr.terrainData.size = new Vector3(mTerr.terrainData.size.x, (mTerrBaseHeight), mTerr.terrainData.size.z);
+            //mTerr.terrainData.size = new Vector3(mTerr.terrainData.size.x, (mTerrBaseHeight), mTerr.terrainData.size.z);
         }
         else
             Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, center.Terr.terrainData.size.y, Terr.terrainData.size.z);
@@ -583,21 +572,25 @@ public class collect_tiles : MonoBehaviour {
 
         if (isCenter)
         {
-            float[,] mmap_heights = center.heights;
-            float m_min = float.MaxValue;
-            for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
-                for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
-                {
-                    if (mmap_heights[i, j] < m_min)
-                        m_min = mmap_heights[i, j];
-                }
-            for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
-                for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
-                {
-                    mmap_heights[i, j] = mmap_heights[i, j] - m_min;
-                }
+            /*   
+               float[,] mmap_heights = center.heights;
+               float m_min = float.MaxValue;
+               for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
+                   for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
+                   {
+                       if (mmap_heights[i, j] < m_min)
+                           m_min = mmap_heights[i, j];
+                   }
+               for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
+                   for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
+                   {
+                       mmap_heights[i, j] = mmap_heights[i, j] - m_min;
+                   }
 
-                    mTerr.terrainData.SetHeights(0, 0, center.heights);
+                       mTerr.terrainData.SetHeights(0, 0, center.heights);
+                      */
+            mTerr.GetComponent<miniMap>().hasChanged = true;
+                    
         }
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
     //    mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
@@ -730,12 +723,12 @@ public class collect_tiles : MonoBehaviour {
     {
         float pi = Mathf.PI;
 
-        float x1,x2,y1,y2;
+        float x1,y1,y2;
 
         int tiles = (int)System.Math.Pow(2, zoom);
-        float diameter = 2 * pi;
 
-        x1 = x2 = ((x3 * 2 * pi) / tiles) - pi; 
+
+        x1 = ((x3 * 2 * pi) / tiles) - pi; 
         lon = (180 * x1) / pi;
 
         y2 =  (((2 * pi * -y3) / tiles) + pi);

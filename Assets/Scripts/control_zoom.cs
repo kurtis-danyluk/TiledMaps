@@ -8,7 +8,9 @@ public class control_zoom : MonoBehaviour {
     public showDirection indicator;
     private bool inputLock;
     private float lockTime = 1f;
-    public collect_tiles collector;
+    private collect_tiles collector;
+
+    public Generate_Terrain map;
 
     // Use this for initialization
     private SteamVR_Controller.Device Controller
@@ -24,6 +26,7 @@ public class control_zoom : MonoBehaviour {
     void Start()
     {
         inputLock = false;
+        collector = map.center.collect;
     }
 
     void unlockInput()
@@ -49,7 +52,7 @@ public class control_zoom : MonoBehaviour {
                 if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
                 {
                     lockInput();
-                    Debug.Log("Angle: " + angle);
+                    //Debug.Log("Angle: " + angle);
 
                     int zoom = collect_tiles.zoom; ;
 

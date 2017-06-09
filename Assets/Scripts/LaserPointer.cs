@@ -10,6 +10,7 @@ public class LaserPointer : MonoBehaviour {
     private Transform laserTransform;
     private Vector3 hitPoint;
     public Terrain Terr;
+    public Generate_Terrain map;
 
     public Transform cameraRigTransform;
     public GameObject teleportReticlePrefab;
@@ -76,14 +77,12 @@ public class LaserPointer : MonoBehaviour {
                 {
                     //  Debug.Log("Hit main map");
                 }
-                else if (hit.collider.gameObject.name == "mTerr")
+                else if (hit.collider.gameObject.name == "miniMap")
                 {
                     hitPoint = hit.collider.gameObject.transform.InverseTransformPoint(hitPoint);
-                    hitPoint = hitPoint * Terr.terrainData.heightmapWidth;
-                    hitPoint.y = Terr.SampleHeight(hitPoint) - 128;
+                    hitPoint = hitPoint * map.map_width;
+                    hitPoint.y = Terr.SampleHeight(hitPoint);
                 }
-                else if (hit.collider.gameObject.name == "Platform")
-                    hitPoint = new Vector3(128, 0, 128);
 
                 teleportReticleTransform.position = hitPoint + teleportReticleOffset;
                 shouldTeleport = true;

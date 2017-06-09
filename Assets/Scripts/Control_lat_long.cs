@@ -5,9 +5,11 @@ using UnityEngine;
 public class Control_lat_long : MonoBehaviour {
 
     private SteamVR_TrackedObject trackedObj;
-    private float lat_range = 85f;
-    private float long_range = 179f;
-    public collect_tiles collector;
+    //private float lat_range = 85f;
+    //private float long_range = 179f;
+    private collect_tiles collector;
+
+    public Generate_Terrain map;
 
     public showDirection indicator;
 
@@ -26,6 +28,7 @@ public class Control_lat_long : MonoBehaviour {
 
     void Start () {
         inputLock = false;
+        collector = map.center.collect;
 	}
 
     void unlockInput()
