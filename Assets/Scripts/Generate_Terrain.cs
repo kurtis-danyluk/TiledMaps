@@ -11,11 +11,14 @@ using UnityEngine;
  * 
  */
 public class Generate_Terrain : MonoBehaviour {
-
+    //Width of a single tile in game units
     public const int tile_width = 256;
+    //Height of a Single tile in game units
     public const int tile_height = 256;
     
+    //Width of the total map in game units
     public int map_width;
+    //Height of the total map in game units
     public int map_height;
 
     //2D list of all the terrains in the scene
@@ -23,7 +26,12 @@ public class Generate_Terrain : MonoBehaviour {
     private TerrainData[,] terDatas;
     //The miniMap the corrisponds to those terrains
 
-    GameObject miniMap;
+    //Describes the tracker object to be created
+    public GameObject trackerPrefab;
+    //A reference to the tracker object
+    public GameObject posTracker;
+
+    public GameObject miniMap;
     private TerrainData mMapTerrData;
 
     private TerrainData terrainPrefab;
@@ -104,14 +112,16 @@ public class Generate_Terrain : MonoBehaviour {
         mSplats[0] = new SplatPrototype();
         mSplats[0].texture = (new Texture2D(1, 1));
         mMapTerrData.splatPrototypes = mSplats;
-
-
+        
+        
         miniMap = Terrain.CreateTerrainGameObject(mMapTerrData);
         miniMap.AddComponent<miniMap>();
         miniMap.GetComponent<miniMap>().map = this;
         miniMap.name = "miniMap";
         miniMap.transform.parent = this.gameObject.transform;
         miniMap.transform.localPosition = new Vector3(-0.5f, 1, -0.5f);
+        miniMap.GetComponent<Terrain>().detailObjectDistance = 250;
+
 
         center.Terr = terrains[centerX, centerY].GetComponent<Terrain>();
         center.collect = terrains[centerX, centerY].GetComponent<collect_tiles>();
@@ -119,12 +129,16 @@ public class Generate_Terrain : MonoBehaviour {
         terrains[centerX, centerY].GetComponent<collect_tiles>().isCenter = true;
         terrains[centerX, centerY].GetComponent<collect_tiles>().mTerr = miniMap;
 
+        posTracker = Instantiate(trackerPrefab);
+
+        posTracker.GetComponent<tracker_guide>().map = this;
+        posTracker.GetComponent<tracker_guide>().cameraRigTransform = GameObject.Find("[CameraRig]").transform;
+        posTracker.GetComponent<tracker_guide>().headTransform = GameObject.Find("Camera (eye)").transform;
+        posTracker.transform.parent = miniMap.transform;
         
 
 
-
-
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {

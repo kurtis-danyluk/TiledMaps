@@ -60,11 +60,14 @@ public class tracker_guide : MonoBehaviour {
         {
 
 
-            Vector3 trackPos = cameraRigTransform.position / map.terrains_width;
-            trackPos.y = (cameraRigTransform.position/ map.center.Terr.terrainData.heightmapHeight).y;
+            Vector3 trackPos = new Vector3();
+            trackPos.x =  cameraRigTransform.position.x + 256;
+            trackPos.z = cameraRigTransform.position.z + 256;
+            trackPos = trackPos / map.map_width;
+            trackPos.y = (cameraRigTransform.position.y / map.miniMap.GetComponent<miniMap>().scale);
             //trackPos.y += 0.1f;
             //Calculate based off the terrain height!
-            trackPos.y +=0.6f;
+            //trackPos.y +=0.6f;
 
             /*
             if (trackPos.x > 1)
@@ -94,8 +97,9 @@ public class tracker_guide : MonoBehaviour {
         }
         else
         {
-            Vector3 temp;
-            temp = trackerTransform.localPosition * map.terrains_width;
+            Vector3 temp = new Vector3();
+            temp.x = (trackerTransform.localPosition.x * map.map_width ) - Generate_Terrain.tile_width;
+            temp.z = (trackerTransform.localPosition.z * map.map_height ) - Generate_Terrain.tile_height;
             temp.y = map.center.Terr.SampleHeight(temp);
             Vector3 difference = cameraRigTransform.position - headTransform.position;
             // Keep tracker on the ground

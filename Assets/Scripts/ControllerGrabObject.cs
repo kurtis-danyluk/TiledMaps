@@ -10,11 +10,17 @@ public class ControllerGrabObject : MonoBehaviour {
     public tracker_guide target;
     public Transform trackerTransform;
     private bool iGrabbed;
-
+    public Generate_Terrain map;
 
     private SteamVR_Controller.Device Controller
     {
         get { return SteamVR_Controller.Input((int)trackedObj.index); }
+    }
+
+    void Start()
+    {
+        target = map.posTracker.GetComponent<tracker_guide>();
+        trackerTransform = map.posTracker.transform;
     }
 
     void Awake()

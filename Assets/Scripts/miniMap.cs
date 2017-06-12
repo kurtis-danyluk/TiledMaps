@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class miniMap : MonoBehaviour {
 
-    float scale;
+    public float scale;
     public Generate_Terrain map;
     public bool hasChanged = false;
     Terrain mMap ;
@@ -22,9 +22,11 @@ public class miniMap : MonoBehaviour {
         {
             //Debug.Log(map.name);
             float[,] heights = createHeightmap(map, map.terrains_width, map.terrains_height);
+            heights = scaleHeightmap(heights, map.map_width, mMap.terrainData.heightmapWidth);
             setHeightMap(heights, mMap);
-            Debug.Log(map.center.Terr.terrainData.size.z);
-            mMap.terrainData.size = new Vector3(mMap.terrainData.size.x, map.center.Terr.GetComponent<collect_tiles>().terrBaseHeight / (scale * map.terrains_width), mMap.terrainData.size.z);
+            //Debug.Log(map.center.Terr.terrainData.size.z);
+            float yheight = (mMap.terrainData.heightmapWidth / map.map_width   )* (map.center.Terr.GetComponent<collect_tiles>().terrBaseHeight / (scale * map.terrains_width));
+            mMap.terrainData.size = new Vector3(mMap.terrainData.size.x, yheight , mMap.terrainData.size.z);
             hasChanged = false;
         }
     }
@@ -52,6 +54,19 @@ public class miniMap : MonoBehaviour {
                
         return heights;
     }
+
+    float [,] scaleHeightmap(float [,] oHeights, int oSize, int nSize)
+    {
+        float[,] nHeights = new float[nSize, nSize];
+        float scale = (float)oSize / (float)nSize;
+        //Debug.Log(scale + " " + oSize + " " + nSize);
+        for (int i = 0; i < nSize; i++)
+            for (int j = 0; j < nSize; j++)
+                nHeights[i, j] = oHeights[(int)(i * scale), (int)(j * scale)];
+
+        return nHeights;
+    }
+
     void setHeightMap(float [,] heights , Terrain map)
     {
         map.terrainData.SetHeights(0, 0, heights);

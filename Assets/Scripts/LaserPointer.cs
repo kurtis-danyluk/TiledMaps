@@ -79,11 +79,14 @@ public class LaserPointer : MonoBehaviour {
                 }
                 else if (hit.collider.gameObject.name == "miniMap")
                 {
+                    
                     hitPoint = hit.collider.gameObject.transform.InverseTransformPoint(hitPoint);
-                    hitPoint = hitPoint * map.map_width;
+                    hitPoint = (hitPoint * map.map_width);
+                    hitPoint.x = hitPoint.x - (Generate_Terrain.tile_width);
+                    hitPoint.z = hitPoint.z  - (Generate_Terrain.tile_height);
                     hitPoint.y = Terr.SampleHeight(hitPoint);
                 }
-
+                //Debug.Log(hitPoint.x + " " + hitPoint.y + " " + hitPoint.z);
                 teleportReticleTransform.position = hitPoint + teleportReticleOffset;
                 shouldTeleport = true;
 
