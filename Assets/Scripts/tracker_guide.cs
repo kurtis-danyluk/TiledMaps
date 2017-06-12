@@ -61,29 +61,10 @@ public class tracker_guide : MonoBehaviour {
 
 
             Vector3 trackPos = new Vector3();
-            trackPos.x =  cameraRigTransform.position.x + 256;
-            trackPos.z = cameraRigTransform.position.z + 256;
+            trackPos.x =  cameraRigTransform.position.x + Generate_Terrain.tile_width;
+            trackPos.z = cameraRigTransform.position.z + Generate_Terrain.tile_height;
             trackPos = trackPos / map.map_width;
-            trackPos.y = (cameraRigTransform.position.y / map.miniMap.GetComponent<miniMap>().scale);
-            //trackPos.y += 0.1f;
-            //Calculate based off the terrain height!
-            //trackPos.y +=0.6f;
-
-            /*
-            if (trackPos.x > 1)
-                trackPos.x = 1;
-            if (trackPos.x < -1)
-                trackPos.x = -1;
-            if (trackPos.y > 1)
-                trackPos.y = 1;
-            if (trackPos.y < -1)
-                trackPos.y = -1;
-            if (trackPos.z > 1)
-                trackPos.z = 1;
-            if (trackPos.z < -1)
-                trackPos.z = -1;
-                */
-
+            trackPos.y = (cameraRigTransform.position.y / Generate_Terrain.tile_height);
 
             trackerTransform.localPosition = trackPos;
             
@@ -100,15 +81,16 @@ public class tracker_guide : MonoBehaviour {
             Vector3 temp = new Vector3();
             temp.x = (trackerTransform.localPosition.x * map.map_width ) - Generate_Terrain.tile_width;
             temp.z = (trackerTransform.localPosition.z * map.map_height ) - Generate_Terrain.tile_height;
-            temp.y = map.center.Terr.SampleHeight(temp);
+            
             Vector3 difference = cameraRigTransform.position - headTransform.position;
             // Keep tracker on the ground
-       //     difference.y = Terr.transform.position.y;
+            //     difference.y = Terr.transform.position.y;
 
             //Let tracker roam
-            difference.y = map.center.Terr.transform.position.y + (trackerTransform.localPosition.y - 0.1f) * map.center.Terr.terrainData.heightmapHeight;
+            temp.y = trackerTransform.localPosition.y * Generate_Terrain.tile_height;
+            //difference.y = map.center.Terr.transform.position.y + map.center.Terr.terrainData.heightmapHeight + (trackerTransform.localPosition.y - 0.1f);
 
-            // 5
+            
             cameraRigTransform.position = temp + difference;
 
             mesh.material.color = Color.green;

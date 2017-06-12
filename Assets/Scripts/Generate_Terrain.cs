@@ -31,11 +31,20 @@ public class Generate_Terrain : MonoBehaviour {
     //A reference to the tracker object
     public GameObject posTracker;
 
+    //A reference to the minimap we'll use in our scene
     public GameObject miniMap;
+    //And the terrain data we'll use to create
     private TerrainData mMapTerrData;
 
+    //A text mesh we're making to show how long the minimap is
+    private GameObject scaleLabel;
+    private GameObject oneKMLabel;
+
+    //The basic data we'll use for all of our terrain tiles.
     private TerrainData terrainPrefab;
 
+    //The style of visual tiles we want to grab such as
+    //r for road maps or a for aerial maps
     public char map_style = 'r';
 
     //Number of terrains tall (must be odd number)
@@ -85,7 +94,7 @@ public class Generate_Terrain : MonoBehaviour {
                 splats[0].tileSize = new Vector2(tile_width, tile_height);
 
                 terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes = splats;
-
+                terrains[i, j].GetComponent<Terrain>().heightmapPixelError = 8;
 
             }
         for (int i = 0; i < terrains_height; i++)
@@ -121,6 +130,9 @@ public class Generate_Terrain : MonoBehaviour {
         miniMap.transform.parent = this.gameObject.transform;
         miniMap.transform.localPosition = new Vector3(-0.5f, 1, -0.5f);
         miniMap.GetComponent<Terrain>().detailObjectDistance = 250;
+        miniMap.GetComponent<Terrain>().heightmapPixelError = 3;
+
+
 
 
         center.Terr = terrains[centerX, centerY].GetComponent<Terrain>();
@@ -135,7 +147,27 @@ public class Generate_Terrain : MonoBehaviour {
         posTracker.GetComponent<tracker_guide>().cameraRigTransform = GameObject.Find("[CameraRig]").transform;
         posTracker.GetComponent<tracker_guide>().headTransform = GameObject.Find("Camera (eye)").transform;
         posTracker.transform.parent = miniMap.transform;
-        
+
+        scaleLabel = new GameObject("Scale_Label");
+        scaleLabel.AddComponent<TextMesh>();
+        scaleLabel.transform.parent = miniMap.transform;
+        scaleLabel.GetComponent<TextMesh>().text = "Hello World";
+        scaleLabel.GetComponent<TextMesh>().characterSize = 0.01f;
+        scaleLabel.GetComponent<TextMesh>().fontSize = 102;
+        scaleLabel.transform.localPosition = new Vector3(0, -0.2f, 0);
+        scaleLabel.AddComponent<ScaleLabel>();
+        scaleLabel.GetComponent<ScaleLabel>().map = this;
+
+        oneKMLabel = new GameObject("One_KM_Label");
+        oneKMLabel.AddComponent<TextMesh>();
+        oneKMLabel.transform.parent = miniMap.transform;
+        oneKMLabel.GetComponent<TextMesh>().text = "1 Kilometer";
+        oneKMLabel.GetComponent<TextMesh>().characterSize = 0.01f;
+        oneKMLabel.GetComponent<TextMesh>().fontSize = 102;
+        oneKMLabel.transform.localPosition = new Vector3(0, 0f, 0);
+        oneKMLabel.AddComponent<oneKMLabel>();
+        oneKMLabel.GetComponent<oneKMLabel>().map = this;
+        oneKMLabel.GetComponent<oneKMLabel>().mMap = miniMap.GetComponent<miniMap>();
 
 
     }

@@ -21,7 +21,7 @@ public class collect_tiles : MonoBehaviour {
     //    public Terrain neightbourL;
     //    public Terrain neightbourR;
 
-    static bool center_changed;
+    public static bool center_changed;
     public bool isCenter;
    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
     static string base_dir = @"Assets/Textures/";
@@ -38,6 +38,7 @@ public class collect_tiles : MonoBehaviour {
     private float olongitude;
     static public int zoom;
     float ozoom;
+    public float mRes;
     //float tile_lat_arc;
     //float tile_lon_arc;
     public int xpos;
@@ -526,7 +527,7 @@ public class collect_tiles : MonoBehaviour {
         {
 
             //Determine the width in meters of the central tile given its latitude
-            float mRes = Mathf.Abs(ground_resolution(center.latitude, zoom));
+            mRes = Mathf.Abs(ground_resolution(center.latitude, zoom));
             //Debug.Log("mRes:" + mRes);
 
             //Figures out how tall the scene should be based on the width of the tile
