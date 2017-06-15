@@ -12,7 +12,10 @@ public class oneKMLabel : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
+        myLine = new GameObject();
+        myLine.transform.position = this.transform.position;
+        myLine.AddComponent<LineRenderer>();
+        myLine.transform.parent = mMap.transform;
         //tMesh = this.GetComponent<TextMesh>();
 
     }
@@ -27,7 +30,7 @@ public class oneKMLabel : MonoBehaviour {
 
         if (collect_tiles.center_changed)
         {
-            GameObject.Destroy(myLine);
+            //GameObject.Destroy(myLine);
             float map_width = map.center.collect.mRes;
             float laser_length = 1/ map_width;
 
@@ -43,9 +46,7 @@ public class oneKMLabel : MonoBehaviour {
 
     void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
     {
-        myLine = new GameObject();
         myLine.transform.position = start;
-        myLine.AddComponent<LineRenderer>();
         LineRenderer lr = myLine.GetComponent<LineRenderer>();
         lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
         //lr.SetColors(color, color);

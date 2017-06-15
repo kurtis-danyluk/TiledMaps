@@ -55,6 +55,8 @@ public class Generate_Terrain : MonoBehaviour {
     public int terrains_width;
     private int centerX;
 
+    public Material tranMat;
+
     public struct Center
     {
         public Terrain Terr;
@@ -117,11 +119,20 @@ public class Generate_Terrain : MonoBehaviour {
         mMapTerrData.size = new Vector3(1, 1, 1);
         mMapTerrData.SetDetailResolution(1024, 8);
         mMapTerrData.baseMapResolution = 1024;
-        SplatPrototype[] mSplats = new SplatPrototype[1];
+        SplatPrototype[] mSplats = new SplatPrototype[2];
         mSplats[0] = new SplatPrototype();
-        mSplats[0].texture = (new Texture2D(1, 1));
-        mMapTerrData.splatPrototypes = mSplats;
+        Texture2D circleTex = new Texture2D(256, 256);
+        circleTex.LoadImage(File.ReadAllBytes(@"assets/transparent256x256.png"));
+            
+        circleTex.Apply();
+        mSplats[0].texture = circleTex;
+        mSplats[0].texture.alphaIsTransparency = true;
+
+        mSplats[0].tileSize = new Vector2(255, 255);
         
+        mSplats[1] = new SplatPrototype();
+        mSplats[1].texture = new Texture2D(256, 256);
+        mMapTerrData.splatPrototypes = mSplats;
         
         miniMap = Terrain.CreateTerrainGameObject(mMapTerrData);
         miniMap.AddComponent<miniMap>();
@@ -131,7 +142,33 @@ public class Generate_Terrain : MonoBehaviour {
         miniMap.transform.localPosition = new Vector3(-0.5f, 1, -0.5f);
         miniMap.GetComponent<Terrain>().detailObjectDistance = 250;
         miniMap.GetComponent<Terrain>().heightmapPixelError = 3;
+        //miniMap.GetComponent<Terrain>().basemapDistance = 10;
+        
+        miniMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;
+        miniMap.GetComponent<Terrain>().materialTemplate = tranMat;
 
+        float[,,] splatMapAlphas = miniMap.GetComponent<Terrain>().terrainData.GetAlphamaps(0,0, miniMap.GetComponent<Terrain>().terrainData.alphamapWidth, miniMap.GetComponent<Terrain>().terrainData.alphamapHeight) ;
+
+        float radius = 0.9f;
+        for (int i = 0; i < miniMap.GetComponent<Terrain>().terrainData.alphamapHeight; i++)
+            for (int j = 0; j < miniMap.GetComponent<Terrain>().terrainData.alphamapWidth; j++)
+            {
+                int height = miniMap.GetComponent<Terrain>().terrainData.alphamapHeight;
+                int width = miniMap.GetComponent<Terrain>().terrainData.alphamapWidth;
+                if (Mathf.Sqrt(Mathf.Pow(i - (height/2 ), 2) + Mathf.Pow(j - (width/2 ), 2)) > (radius * height * 0.5))
+                {
+                    splatMapAlphas[i, j, 0] = 1;
+                    splatMapAlphas[i, j, 1] = 0;
+                }
+                else
+                {
+
+                    splatMapAlphas[i, j, 0] = 0;
+                    splatMapAlphas[i, j, 1] = 1;
+                }
+                
+            }
+        miniMap.GetComponent<Terrain>().terrainData.SetAlphamaps(0, 0, splatMapAlphas);
 
 
 

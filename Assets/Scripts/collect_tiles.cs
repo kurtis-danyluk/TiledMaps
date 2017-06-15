@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Net;
+using System.Web;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,16 @@ public class collect_tiles : MonoBehaviour {
     public Terrain me;
     public collect_tiles center;
 
+    /// <summary>
+    /// Web Cache to hold elevation tiles for faster load times
+    /// </summary>
+    System.Web.Caching.Cache elvCache;
+    /// <summary>
+    /// Web cache to hold img tiles
+    /// </summary>
+    System.Web.Caching.Cache imgCache;
+    
+
     const int tile_width = 256;
     const int tile_height = 256;
     //    public Terrain neightbourT;
@@ -23,7 +34,10 @@ public class collect_tiles : MonoBehaviour {
 
     public static bool center_changed;
     public bool isCenter;
-   // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
+    // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
+
+    
+
     static string base_dir = @"Assets/Textures/";
     string elvFilename = "elvTile.png";
     string aerImageFilename = "aerImage.jpeg";
@@ -45,7 +59,7 @@ public class collect_tiles : MonoBehaviour {
     public int ypos;
     private float[,] heights;
     private bool image_changed;
-    private bool tex_swap;
+    //private bool tex_swap;
     public bool hasSeaFloor = false;
     public char texture_mode = 'r';
 
@@ -69,6 +83,8 @@ public class collect_tiles : MonoBehaviour {
         tile_type = "Road/";//"Aerial/";//
         //  Debug.Log(elvFilename);
         
+        elvCache = new System.Web.Caching.Cache();
+        imgCache = new System.Web.Caching.Cache();
         //Load the active terrains TODO: Make this generic!
         //     Terr = Terrain.activeTerrains[1];
         Terr = me;
@@ -103,7 +119,7 @@ public class collect_tiles : MonoBehaviour {
 
         //Records state of image change
         image_changed = false;
-        tex_swap = false;
+        //tex_swap = false;
         center_changed = false;
 
         //Determine if we care about the sea floor
@@ -148,25 +164,40 @@ public class collect_tiles : MonoBehaviour {
 
     void dlElvFile(int merc_long, int merc_lat, int zoom)
     {
-       // Debug.Log(Terr.name);
+        // Debug.Log(Terr.name);
         //Debug.Log("lat lon " + merc_lat + " " + merc_long);
+        //string key = merc_long +" " + merc_lat + " " + zoom;
+        //elvCache.Get(key);
 
         string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
-        try
-        {
-            //Debug.Log(elvFilename);
-            client.DownloadFile(eQuery, elvFilename);
-        }
-        catch (WebException e)
-        {
-            Debug.Log("Error Trying To get Elevation Data");
-            Debug.LogException(e);
-            Debug.Log("latitude:" + latitude + " " + merc_lat);
-            Debug.Log("Longitude:" + longitude + " " + merc_long);
-            Debug.Log("Zoom:" + zoom);
-            Debug.Log(eQuery);
-        }
 
+        byte [] elv = (byte [])elvCache.Get(eQuery);
+        if (elv != null)
+        {
+            Debug.Log("Grabbed Tile from Cache");
+            File.WriteAllBytes(elvFilename, elv);
+        }
+        else
+        {
+
+            try
+            {
+                //Debug.Log(elvFilename);
+                //client.DownloadFile(eQuery, elvFilename);
+                elv = client.DownloadData(eQuery);
+                imgCache.Add(eQuery, elv, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null);
+                File.WriteAllBytes(elvFilename, elv);
+            }
+            catch (WebException e)
+            {
+                Debug.Log("Error Trying To get Elevation Data");
+                Debug.LogException(e);
+                Debug.Log("latitude:" + latitude + " " + merc_lat);
+                Debug.Log("Longitude:" + longitude + " " + merc_long);
+                Debug.Log("Zoom:" + zoom);
+                Debug.Log(eQuery);
+            }
+        }
 
     }
 
@@ -231,6 +262,8 @@ public class collect_tiles : MonoBehaviour {
     {
         string qKey = TileXYToQuadKey(merc_lat, merc_lon, zoom);
 
+
+
         //http://ecn.t0.tiles.virtualearth.net/tiles/r01212323100.jpeg?g=5733&amp;mkt={culture}&amp;shading=hill
 
         string bQuery;
@@ -253,19 +286,30 @@ public class collect_tiles : MonoBehaviour {
         //string 
         //Debug.Log(bQuery);
 
-        try
+        byte [] img = (byte [])imgCache.Get(bQuery);
+        if (img != null)
         {
-
-            client.DownloadFile(bQuery, aerImageFilename);
-
-            image_changed = true;
+            //Debug.Log("Grabbed Tile from Cache");
+            File.WriteAllBytes(aerImageFilename, img);
         }
-        catch (WebException e)
+        else
         {
-            Debug.Log("Error Getting Image Data");
-            Debug.LogException(e);
-            Debug.Log(bQuery);
-        };
+            try
+            {
+                img = client.DownloadData(bQuery);
+                File.WriteAllBytes(aerImageFilename, img);
+                imgCache.Add(bQuery, img, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null );
+                //client.DownloadFile(bQuery, aerImageFilename);
+
+                image_changed = true;
+            }
+            catch (WebException e)
+            {
+                Debug.Log("Error Getting Image Data");
+                Debug.LogException(e);
+                Debug.Log(bQuery);
+            };
+        }
     }
 
     void dlFile(float latitude, float longitude, int zoom) {
@@ -409,7 +453,7 @@ public class collect_tiles : MonoBehaviour {
                 formHeight(Terr, elvFilename);
                 changeTex();
                 image_changed = false;
-                tex_swap = true;
+                //tex_swap = true;
                 //      Terr.terrainData.SetAlphamaps(0, 0, map);
             }
         }
@@ -452,7 +496,7 @@ public class collect_tiles : MonoBehaviour {
                 formHeight(Terr, elvFilename);
                 changeTex();
                 image_changed = false;
-                tex_swap = true;
+                //tex_swap = true;
                 //      Terr.terrainData.SetAlphamaps(0, 0, map);
             }
         }
