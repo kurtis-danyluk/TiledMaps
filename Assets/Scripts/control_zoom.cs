@@ -9,6 +9,7 @@ public class control_zoom : MonoBehaviour {
     private bool inputLock;
     private float lockTime = 1f;
     private collect_tiles collector;
+    private bool isActive = true;
 
     public Generate_Terrain map;
 
@@ -43,50 +44,55 @@ public class control_zoom : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+            isActive = !isActive;
+
         if (!inputLock)
-            if (Controller.GetAxis() != Vector2.zero)
+            if (isActive)
             {
-                float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
-
-                if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                if (Controller.GetAxis() != Vector2.zero)
                 {
-                    lockInput();
-                    //Debug.Log("Angle: " + angle);
+                    float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
 
-                    int zoom = collect_tiles.zoom; ;
+                    if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                    {
+                        lockInput();
+                        //Debug.Log("Angle: " + angle);
 
-                    if (angle > 0)
-                    {
-                        collector.watch_zoom(zoom + 1);
-                        //Debug.Log("Zoom In to "+ collect_tiles.zoom);
+                        int zoom = collect_tiles.zoom; ;
+
+                        if (angle > 0)
+                        {
+                            collector.watch_zoom(zoom + 1);
+                            //Debug.Log("Zoom In to "+ collect_tiles.zoom);
+                        }
+                        else if (angle < 0)
+                        {
+                            collector.watch_zoom(zoom - 1);
+                            //Debug.Log("Zoom Out to " + collect_tiles.zoom);
+                        }
                     }
-                    else if (angle < 0)
+                    else
                     {
-                        collector.watch_zoom(zoom - 1);
-                        //Debug.Log("Zoom Out to " + collect_tiles.zoom);
+                        if (angle > 0)
+                        {
+                            indicator.changeTex('i');
+                            //collector.watch_zoom(zoom + 1);
+                            //Debug.Log("Zoom In to "+ collect_tiles.zoom);
+                        }
+                        else if (angle < 0)
+                        {
+                            indicator.changeTex('o');
+                            //collector.watch_zoom(zoom - 1);
+                            //Debug.Log("Zoom Out to " + collect_tiles.zoom);
+                        }
                     }
+
+                    // collector.latitude = Controller.GetAxis().y * lat_range;
+                    // collector.longitude = Controller.GetAxis().x * long_range;
                 }
                 else
-                {
-                    if (angle > 0)
-                    {
-                        indicator.changeTex('i');
-                        //collector.watch_zoom(zoom + 1);
-                        //Debug.Log("Zoom In to "+ collect_tiles.zoom);
-                    }
-                    else if (angle < 0)
-                    {
-                        indicator.changeTex('o');
-                        //collector.watch_zoom(zoom - 1);
-                        //Debug.Log("Zoom Out to " + collect_tiles.zoom);
-                    }
-                }
-
-                // collector.latitude = Controller.GetAxis().y * lat_range;
-                // collector.longitude = Controller.GetAxis().x * long_range;
+                    indicator.changeTex('z');
             }
-        else
-                indicator.changeTex('z');
     }
 }

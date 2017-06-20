@@ -27,6 +27,12 @@ public class miniMap : MonoBehaviour {
             //Debug.Log(map.center.Terr.terrainData.size.z);
             float yheight = (mMap.terrainData.heightmapWidth / map.map_width   )* (map.center.Terr.GetComponent<collect_tiles>().terrBaseHeight / (scale * map.terrains_width));
             mMap.terrainData.size = new Vector3(mMap.terrainData.size.x, yheight , mMap.terrainData.size.z);
+            int detail = (collect_tiles.zoom - 8);
+            if (detail <= 0)
+                detail = 1;
+            mMap.heightmapPixelError = detail;
+            Debug.Log(yheight);
+            mMap.gameObject.transform.localPosition  = new Vector3(mMap.gameObject.transform.localPosition.x, 0.5f-yheight, mMap.gameObject.transform.localPosition.z);
             hasChanged = false;
         }
     }

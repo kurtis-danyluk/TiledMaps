@@ -5,9 +5,12 @@ using UnityEngine;
 public class GoogleStyleMovement : MonoBehaviour {
     private SteamVR_TrackedObject trackedObj;
 
+    public showDirection indicator;
 
     public Transform cameraRigTransform;
     public Transform headTransform;
+    private bool isActive = false;
+
 
     // Use this for initialization
     private SteamVR_Controller.Device Controller
@@ -27,28 +30,41 @@ public class GoogleStyleMovement : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+            isActive = !isActive;
 
-        if (Controller.GetAxis() != Vector2.zero)
-        {
-            float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
-
-            if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+        if (isActive) {
+           
+            if (Controller.GetAxis() != Vector2.zero)
             {
-                //Vector3 difference = cameraRigTransform.position - headTransform.position;
-                
-                //difference.y = 0;
-                
-                if (angle > 0)
+                float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
+
+                if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
                 {
-                    cameraRigTransform.Translate(headTransform.forward);
+                    if (angle > 0)
+                    {
+                        cameraRigTransform.Translate(this.transform.forward);
+                    }
+                    else if (angle < 0)
+                    {
+                        cameraRigTransform.Translate(-this.transform.forward);
+                    }
                 }
-                else if (angle < 0)
+                else
                 {
-                    cameraRigTransform.Translate(-headTransform.forward);
+                    if (angle > 0)
+                    {
+                        indicator.changeTex('f');
+                    }
+                    else if (angle < 0)
+                    {
+                        indicator.changeTex('b');
+                    }
                 }
+
             }
-
-
+            else
+                indicator.changeTex('m');
 
         }
     }

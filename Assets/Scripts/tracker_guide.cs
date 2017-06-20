@@ -54,21 +54,24 @@ public class tracker_guide : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
+        RaycastHit hit;
 
         if (!isGrabbed)
         {
-
+            
 
             Vector3 trackPos = new Vector3();
             trackPos.x =  cameraRigTransform.position.x + Generate_Terrain.tile_width;
             trackPos.z = cameraRigTransform.position.z + Generate_Terrain.tile_height;
             trackPos = trackPos / map.map_width;
-            trackPos.y = (cameraRigTransform.position.y / Generate_Terrain.tile_height);
 
+            Physics.Raycast(cameraRigTransform.position, Vector3.down, out hit);
+
+            //trackPos.y =0.05f + (hit.distance / Generate_Terrain.tile_height) + map.miniMap.GetComponent<Terrain>().terrainData.GetInterpolatedHeight(trackPos.x, trackPos.z);
+            trackPos.y = 0.05f + (cameraRigTransform.position.y / map.map_width);
             trackerTransform.localPosition = trackPos;
             
-            RaycastHit hit;
+            
             if (Physics.Raycast(trackerTransform.position, new Vector3(0, -1, 0), out hit, 1000))
             {
                     hitPoint = hit.point;
@@ -81,13 +84,17 @@ public class tracker_guide : MonoBehaviour {
             Vector3 temp = new Vector3();
             temp.x = (trackerTransform.localPosition.x * map.map_width ) - Generate_Terrain.tile_width;
             temp.z = (trackerTransform.localPosition.z * map.map_height ) - Generate_Terrain.tile_height;
-            
+            temp.y = ((trackerTransform.localPosition.y - 0.05f) * map.map_width);// - Generate_Terrain.tile_width;
+
             Vector3 difference = cameraRigTransform.position - headTransform.position;
             // Keep tracker on the ground
             //     difference.y = Terr.transform.position.y;
+            
 
             //Let tracker roam
-            temp.y = trackerTransform.localPosition.y * Generate_Terrain.tile_height;
+            //temp.y = (trackerTransform.transform.localPosition.y);// );
+            //temp.y *= Generate_Terrain.tile_height;
+            //temp.y += map.center.Terr.GetComponent<Terrain>().terrainData.size.y;
             //difference.y = map.center.Terr.transform.position.y + map.center.Terr.terrainData.heightmapHeight + (trackerTransform.localPosition.y - 0.1f);
 
             

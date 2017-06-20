@@ -16,6 +16,10 @@ public class showDirection : MonoBehaviour {
     Texture2D ziTex;
     Texture2D zoTex;
 
+    Texture2D fTex;
+    Texture2D bTex;
+    Texture2D fbTex;
+
     public char default_texture;
 
     MeshRenderer mesh;
@@ -57,6 +61,22 @@ public class showDirection : MonoBehaviour {
         zoTex = new Texture2D(256, 256);
         zoTex.LoadImage(imageBytes);
 
+        //
+        imageBytes = File.ReadAllBytes(@"Assets/Skins/textures/moveF.png");
+        fTex = new Texture2D(256, 256);
+        fTex.LoadImage(imageBytes);
+
+        imageBytes = File.ReadAllBytes(@"Assets/Skins/textures/moveB.png");
+        bTex = new Texture2D(256, 256);
+        bTex.LoadImage(imageBytes);
+
+        imageBytes = File.ReadAllBytes(@"Assets/Skins/textures/moveFB.png");
+        fbTex = new Texture2D(256, 256);
+        fbTex.LoadImage(imageBytes);
+
+        bTex.Apply();
+        fTex.Apply();
+        fbTex.Apply();
 
         zTex.Apply();
         ziTex.Apply();
@@ -97,6 +117,15 @@ public class showDirection : MonoBehaviour {
                 break;
             case 'z':
                 mesh.material.mainTexture = zTex;
+                break;
+            case 'f':
+                mesh.material.mainTexture = fTex;
+                break;
+            case 'b':
+                mesh.material.mainTexture = bTex;
+                break;
+            case 'm':
+                mesh.material.mainTexture = fbTex;
                 break;
         }
     }

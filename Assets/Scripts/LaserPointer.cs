@@ -84,7 +84,10 @@ public class LaserPointer : MonoBehaviour {
                     hitPoint = (hitPoint * map.map_width);
                     hitPoint.x = hitPoint.x - (Generate_Terrain.tile_width);
                     hitPoint.z = hitPoint.z  - (Generate_Terrain.tile_height);
-                    hitPoint.y = Terr.SampleHeight(hitPoint);
+
+                    RaycastHit findHit;
+                    Physics.Raycast(new Vector3(hitPoint.x, 3000, hitPoint.z), Vector3.down, out findHit);
+                    hitPoint.y = findHit.point.y;
                 }
                 //Debug.Log(hitPoint.x + " " + hitPoint.y + " " + hitPoint.z);
                 teleportReticleTransform.position = hitPoint + teleportReticleOffset;

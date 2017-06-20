@@ -16,9 +16,9 @@ public class Generate_Terrain : MonoBehaviour {
     //Height of a Single tile in game units
     public const int tile_height = 256;
     
-    //Width of the total map in game units
+    ///Width of the total map in game units
     public int map_width;
-    //Height of the total map in game units
+    ///Height of the total map in game units
     public int map_height;
 
     //2D list of all the terrains in the scene
@@ -191,10 +191,11 @@ public class Generate_Terrain : MonoBehaviour {
         scaleLabel.GetComponent<TextMesh>().text = "Hello World";
         scaleLabel.GetComponent<TextMesh>().characterSize = 0.01f;
         scaleLabel.GetComponent<TextMesh>().fontSize = 102;
-        scaleLabel.transform.localPosition = new Vector3(0, -0.2f, 0);
+        scaleLabel.transform.localPosition = new Vector3(0, 0, 0);
         scaleLabel.AddComponent<ScaleLabel>();
         scaleLabel.GetComponent<ScaleLabel>().map = this;
 
+        /*
         oneKMLabel = new GameObject("One_KM_Label");
         oneKMLabel.AddComponent<TextMesh>();
         oneKMLabel.transform.parent = miniMap.transform;
@@ -205,7 +206,7 @@ public class Generate_Terrain : MonoBehaviour {
         oneKMLabel.AddComponent<oneKMLabel>();
         oneKMLabel.GetComponent<oneKMLabel>().map = this;
         oneKMLabel.GetComponent<oneKMLabel>().mMap = miniMap.GetComponent<miniMap>();
-
+        */
 
     }
 	

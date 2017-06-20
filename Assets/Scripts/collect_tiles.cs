@@ -5,10 +5,11 @@ using System.Web;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 public class collect_tiles : MonoBehaviour {
 
-    WebClient client = new WebClient();
+    static WebClient client = new WebClient();
     Terrain Terr;
     public GameObject mTerr;
     //public Terrain mTerr;
@@ -18,19 +19,20 @@ public class collect_tiles : MonoBehaviour {
     /// <summary>
     /// Web Cache to hold elevation tiles for faster load times
     /// </summary>
-    System.Web.Caching.Cache elvCache;
+    System.Web.Caching.Cache elvCache = new System.Web.Caching.Cache();
+    
     /// <summary>
     /// Web cache to hold img tiles
     /// </summary>
-    System.Web.Caching.Cache imgCache;
-    
+    System.Web.Caching.Cache imgCache= new System.Web.Caching.Cache();
+
+    //Helper<byte[]> cache;
 
     const int tile_width = 256;
     const int tile_height = 256;
-    //    public Terrain neightbourT;
-    //    public Terrain neightbourB;
-    //    public Terrain neightbourL;
-    //    public Terrain neightbourR;
+
+    public int latX;
+    public int lonY;
 
     public static bool center_changed;
     public bool isCenter;
@@ -76,15 +78,17 @@ public class collect_tiles : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-
+        //cache = new Helper<byte[]>();
         //Setup filenames
         elvFilename = base_dir + this.name + elvFilename;
         aerImageFilename = base_dir + this.name + aerImageFilename;
         tile_type = "Road/";//"Aerial/";//
         //  Debug.Log(elvFilename);
         
-        elvCache = new System.Web.Caching.Cache();
-        imgCache = new System.Web.Caching.Cache();
+        //Done statically now
+        //elvCache = new System.Web.Caching.Cache();
+        //imgCache = new System.Web.Caching.Cache();
+        
         //Load the active terrains TODO: Make this generic!
         //     Terr = Terrain.activeTerrains[1];
         Terr = me;
@@ -104,9 +108,9 @@ public class collect_tiles : MonoBehaviour {
         oImageURL = ImageURL;
 
         //Setup default lat, long, zoom
-        longitude = -114f;
+        longitude = -115.31f;
         olongitude = longitude;
-        latitude = 51f;
+        latitude = 51.17f;
         olatitude = latitude;
         zoom = 11;
         ozoom = 2;
@@ -129,23 +133,7 @@ public class collect_tiles : MonoBehaviour {
 
         //Link the terrain's texture to the appropriate files
         Terr.terrainData.splatPrototypes[0].texture = filetex;
-        //   Terr.terrainData.splatPrototypes[1].texture = oFiletex;
-        /*
-        //Use map and mapB to swap between the 2 textures
-        map = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
-        mapB = new float[Terr.terrainData.alphamapWidth, Terr.terrainData.alphamapHeight, 2];
-        for (int i = 0; i < Terr.terrainData.alphamapWidth; i++)
-            for (int j = 0; j < Terr.terrainData.alphamapHeight; j++)
-            {
-                map[i, j, 0] = 1;
-                map[i, j, 1] = 0;
-                mapB[i, j, 0] = 0;           
-                mapB[i, j, 1] = 1;
-            }
-            */
-
-     //   Terr.SetNeighbors(neightbourL, neightbourT, neightbourR, neightbourB);
-
+        
 
         //Generate a quantized table
         qMappingTable = generate_quantized_table();
@@ -162,40 +150,45 @@ public class collect_tiles : MonoBehaviour {
     //https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
 
 
-    void dlElvFile(int merc_long, int merc_lat, int zoom)
+     static void dlElvFile(int merc_long, int merc_lat, int zoom, string elvFilename, System.Web.Caching.Cache elvCache)
     {
-        // Debug.Log(Terr.name);
+        //Debug.Log(Terr.name);
         //Debug.Log("lat lon " + merc_lat + " " + merc_long);
         //string key = merc_long +" " + merc_lat + " " + zoom;
         //elvCache.Get(key);
-
-        string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
-
-        byte [] elv = (byte [])elvCache.Get(eQuery);
-        if (elv != null)
-        {
-            Debug.Log("Grabbed Tile from Cache");
-            File.WriteAllBytes(elvFilename, elv);
-        }
-        else
-        {
-
-            try
+         {
+            string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
+            string key = "elv&" + zoom.ToString() + "&" + merc_long.ToString() + "&" + merc_lat.ToString() + "&end";
+            byte[] elv = (byte[])elvCache[key];//GetFromCache<byte[]>(elvCache,key);
+            if (elv != null)
             {
-                //Debug.Log(elvFilename);
-                //client.DownloadFile(eQuery, elvFilename);
-                elv = client.DownloadData(eQuery);
-                imgCache.Add(eQuery, elv, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null);
+                //Debug.Log(this.name + " Grabbed Tile from Cache:" + key);
                 File.WriteAllBytes(elvFilename, elv);
+
             }
-            catch (WebException e)
+            else
             {
-                Debug.Log("Error Trying To get Elevation Data");
-                Debug.LogException(e);
-                Debug.Log("latitude:" + latitude + " " + merc_lat);
-                Debug.Log("Longitude:" + longitude + " " + merc_long);
-                Debug.Log("Zoom:" + zoom);
-                Debug.Log(eQuery);
+
+                try
+                {
+                    //Debug.Log(elvFilename);
+                    //client.DownloadFile(eQuery, elvFilename);
+                    elv = client.DownloadData(eQuery);
+                    File.WriteAllBytes(elvFilename, elv);
+                    //AddToCache<byte[]>(elvCache ,key, elv);
+                    //Debug.Log(this.name + " Added to cache: " + key);
+                    elvCache.Insert(key, elv, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null);
+
+                }
+                catch (WebException e)
+                {
+                    Debug.Log("Error Trying To get Elevation Data");
+                    Debug.LogException(e);
+                    //Debug.Log("latitude:" + latitude + " " + merc_lat);
+                    //Debug.Log("Longitude:" + longitude + " " + merc_long);
+                    Debug.Log("Zoom:" + zoom);
+                    Debug.Log(eQuery);
+                }
             }
         }
 
@@ -258,11 +251,12 @@ public class collect_tiles : MonoBehaviour {
             Debug.Log(bQuery);
         };
     }
-    void dlImgFile(int merc_lat, int merc_lon, int zoom)
+    static bool dlImgFile(int merc_lat, int merc_lon, int zoom, string aerImageFilename, char texture_mode, System.Web.Caching.Cache imgCache)
     {
         string qKey = TileXYToQuadKey(merc_lat, merc_lon, zoom);
 
-
+        //Debug.Log(Terr.name);
+        //Debug.Log("lat lon " + merc_lat + " " + merc_lon);
 
         //http://ecn.t0.tiles.virtualearth.net/tiles/r01212323100.jpeg?g=5733&amp;mkt={culture}&amp;shading=hill
 
@@ -282,14 +276,15 @@ public class collect_tiles : MonoBehaviour {
 
 
         }
+        string key = "img&"+ qKey + "&" + texture_mode.ToString() + "end";
         //string 
         //string 
         //Debug.Log(bQuery);
 
-        byte [] img = (byte [])imgCache.Get(bQuery);
+        byte[] img = (byte[])imgCache[key];//GetFromCache<byte[]>(imgCache,key); //
         if (img != null)
         {
-            //Debug.Log("Grabbed Tile from Cache");
+            //Debug.Log(this.name + " Grabbed Tile from Cache: " + key);
             File.WriteAllBytes(aerImageFilename, img);
         }
         else
@@ -298,10 +293,12 @@ public class collect_tiles : MonoBehaviour {
             {
                 img = client.DownloadData(bQuery);
                 File.WriteAllBytes(aerImageFilename, img);
-                imgCache.Add(bQuery, img, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null );
+                //AddToCache<byte[]>(imgCache,key, img);
+                //Debug.Log(this.name + " Added to cache: " + key);
+                imgCache.Insert(key, img, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null );
                 //client.DownloadFile(bQuery, aerImageFilename);
 
-                image_changed = true;
+                return true;
             }
             catch (WebException e)
             {
@@ -310,6 +307,7 @@ public class collect_tiles : MonoBehaviour {
                 Debug.Log(bQuery);
             };
         }
+        return false;
     }
 
     void dlFile(float latitude, float longitude, int zoom) {
@@ -427,7 +425,12 @@ public class collect_tiles : MonoBehaviour {
         {
 
             int x3, y3;
-            mercator(center.latitude, center.longitude, zoom, out x3, out y3);
+            //mercator(center.latitude, center.longitude, zoom, out x3, out y3);
+            x3 = center.latX;
+            y3 = center.lonY;
+            latX = x3 + xpos;
+            lonY = y3 - ypos;
+
             // Debug.Log(center.latitude + " " + center.longitude + " " + y3 + " " + x3);
             inverse_mercator(out this.latitude, out this.longitude, zoom, x3 + xpos, y3 - ypos);
             // Debug.Log(latitude + " " + longitude + " " + (y3 - ypos) + " " + (x3 + xpos));
@@ -437,9 +440,8 @@ public class collect_tiles : MonoBehaviour {
                 //  dlElvFile(latitude, longitude, zoom);
                 //  dlImgFile(latitude, longitude, zoom);
 
-                dlElvFile(x3 + xpos, y3 - ypos, zoom);
-                dlImgFile(x3 + xpos, y3 - ypos, zoom);
-
+                dlElvFile(latX, lonY, zoom, elvFilename, elvCache);
+                image_changed = dlImgFile(latX, lonY, zoom, aerImageFilename, texture_mode, imgCache);
                 olatitude = latitude;
                 olongitude = longitude;
                 ozoom = zoom;
@@ -471,6 +473,8 @@ public class collect_tiles : MonoBehaviour {
             // Debug.Log(center.latitude + " " + center.longitude + " " + y3 + " " + x3);
             inverse_mercator(out this.latitude, out this.longitude, zoom, x3 + xpos, y3 - ypos);
             // Debug.Log(latitude + " " + longitude + " " + (y3 - ypos) + " " + (x3 + xpos));
+            latX = x3;
+            lonY = y3;        
 
             if (olatitude != latitude || olongitude != longitude || ozoom != zoom)
             {
@@ -481,8 +485,8 @@ public class collect_tiles : MonoBehaviour {
                 //  dlElvFile(latitude, longitude, zoom);
                 //  dlImgFile(latitude, longitude, zoom);
 
-                dlElvFile(x3 + xpos, y3 - ypos, zoom);
-                dlImgFile(x3 + xpos, y3 - ypos, zoom);
+                dlElvFile(latX, lonY, zoom, elvFilename, elvCache);
+                image_changed = dlImgFile(latX, lonY, zoom, aerImageFilename, texture_mode, imgCache);
 
                 olatitude = latitude;
                 olongitude = longitude;
@@ -617,28 +621,12 @@ public class collect_tiles : MonoBehaviour {
 
         if (isCenter)
         {
-            /*   
-               float[,] mmap_heights = center.heights;
-               float m_min = float.MaxValue;
-               for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
-                   for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
-                   {
-                       if (mmap_heights[i, j] < m_min)
-                           m_min = mmap_heights[i, j];
-                   }
-               for (int i = 0; i < mTerr.terrainData.heightmapWidth; i++)
-                   for (int j = 0; j < mTerr.terrainData.heightmapHeight; j++)
-                   {
-                       mmap_heights[i, j] = mmap_heights[i, j] - m_min;
-                   }
-
-                       mTerr.terrainData.SetHeights(0, 0, center.heights);
-                      */
-            mTerr.GetComponent<miniMap>().hasChanged = true;
-                    
+            mTerr.GetComponent<miniMap>().hasChanged = true;                 
         }
         Terr.terrainData.splatPrototypes[0].normalMap = tileTex;
-    //    mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
+        //    mTerr.terrainData.splatPrototypes[0].normalMap = tileTex;
+
+        Terr.heightmapPixelError = zoom;
 
     }
     
@@ -805,6 +793,30 @@ public class collect_tiles : MonoBehaviour {
 
         x3 = (int)(tiles * (x2 + pi)/ diameter);
         y3 = (int)(tiles * (pi - y2)/ diameter);
+    }
+
+    /// <summary>
+    /// Modified Code from Daniel Earwick
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+     class Helper<T>
+    {
+        internal readonly Dictionary<string, T> cache = new Dictionary<string, T>();
+    }
+    private static void AddToCache<T>(Helper<T> helper , string key, T value)
+    {
+        helper.cache[key] = value;
+    }
+    private static T GetFromCache<T>(Helper<T> helper, string key)
+    {
+        try
+        {
+            return helper.cache[key];
+        }
+        catch(KeyNotFoundException e)
+        {
+            return default(T);
+        }
     }
 
     public void watch_lat(float l)

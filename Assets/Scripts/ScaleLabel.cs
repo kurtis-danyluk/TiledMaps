@@ -13,6 +13,6 @@ public class ScaleLabel : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        tMesh.text = (map.center.collect.mRes * map.map_width).ToString() + "M";
+        tMesh.text = "1:" + (map.center.collect.mRes /* map.map_width*/).ToString() + "M";
 	}
 }
