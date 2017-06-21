@@ -7,15 +7,31 @@ public class oneKMLabel : MonoBehaviour {
     private TextMesh tMesh;
     public Generate_Terrain map;
     public miniMap mMap;
-
-    GameObject myLine;
+    GameObject kmBar;
+    float baseBarLength;
+    float barLength;
+    Vector3 basePos;
+    //GameObject myLine;
 
     // Use this for initialization
     void Start () {
+        /*
         myLine = new GameObject();
         myLine.transform.position = this.transform.position;
         myLine.AddComponent<LineRenderer>();
         myLine.transform.parent = mMap.transform;
+        */
+
+        basePos = new Vector3(this.transform.localPosition.x, this.transform.localPosition.y, this.transform.localPosition.z);
+
+        tMesh = this.GetComponent<TextMesh>();
+
+        kmBar = Instantiate(Resources.Load<GameObject>("kmBarPrefab"));
+        kmBar.name = "kmBar";
+        kmBar.transform.parent = this.transform;
+        kmBar.transform.localPosition = new Vector3(0.5f, 0, 0);
+        baseBarLength = kmBar.transform.localScale.x;
+
         //tMesh = this.GetComponent<TextMesh>();
 
     }
@@ -31,19 +47,47 @@ public class oneKMLabel : MonoBehaviour {
         if (collect_tiles.center_changed)
         {
             //GameObject.Destroy(myLine);
-            float map_width = map.center.collect.mRes;
-            float laser_length = 1/ map_width;
+            float map_width_per_unit = map.center.collect.mRes;
+            float map_width = map_width_per_unit * map.map_width;
 
+            int scale = nearestMagnitude(map_width);
+
+            tMesh.text = scale.ToString() + " M";
+
+            float ratio = ((float)scale / map_width);
+            barLength = ratio * baseBarLength;
+
+            //Debug.Log(barLength);
+
+            kmBar.transform.localPosition = new Vector3(ratio/2, 0, 0);
+            kmBar.transform.localScale = new Vector3(barLength, kmBar.transform.localScale.y, kmBar.transform.localScale.z);
+
+            this.transform.localPosition = basePos +  new Vector3(0, mMap.yOffset, 0);
+
+            /*
             Vector3 line_start = this.transform.position + new Vector3(0.5f, 0, 0);
             Vector3 line_end = line_start + new Vector3(laser_length, 0, 0);
-
             DrawLine(line_start, line_end , new Color(1, 0, 0));
-
+            */
         }
 
     }
 
+    int nearestMagnitude(float x)
+    {
+        int magnitude = 1;
 
+        while (true) {
+
+            if (x / magnitude < 1)
+                return magnitude / 10;
+            else
+                magnitude *= 10;
+        }
+        return magnitude;
+    }
+
+    /*
     void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
     {
         myLine.transform.position = start;
@@ -57,6 +101,7 @@ public class oneKMLabel : MonoBehaviour {
         lr.endWidth = 0.01f;
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
-        //GameObject.Destroy(myLine, duration);
+        GameObject.Destroy(myLine, duration);
     }
+*/
 }

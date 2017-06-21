@@ -8,11 +8,13 @@ public class miniMap : MonoBehaviour {
     public float scale;
     public Generate_Terrain map;
     public bool hasChanged = false;
+    public float yOffset;
     Terrain mMap ;
 
     // Use this for initialization
     void Start () {
         //
+        yOffset = 0;
         scale = 256;
         mMap = this.gameObject.GetComponent<Terrain>();
     }
@@ -33,7 +35,8 @@ public class miniMap : MonoBehaviour {
                 detail = 1;
             mMap.heightmapPixelError = detail;
             //Debug.Log(yheight);
-            mMap.gameObject.transform.localPosition  = new Vector3(mMap.gameObject.transform.localPosition.x, (1 - (min * yheight)), mMap.gameObject.transform.localPosition.z);
+            yOffset = (min * yheight);
+            mMap.gameObject.transform.localPosition  = new Vector3(mMap.gameObject.transform.localPosition.x, (1 - yOffset), mMap.gameObject.transform.localPosition.z);
             hasChanged = false;
         }
     }
