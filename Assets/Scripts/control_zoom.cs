@@ -45,7 +45,10 @@ public class control_zoom : MonoBehaviour {
     void Update()
     {
         if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+        {
             isActive = !isActive;
+            lockInput();
+        }
 
         if (!inputLock)
             if (isActive)

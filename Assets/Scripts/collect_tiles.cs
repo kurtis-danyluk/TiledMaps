@@ -158,8 +158,10 @@ public class collect_tiles : MonoBehaviour {
         //elvCache.Get(key);
          {
             string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
+            byte[] elv;
+            /*
             string key = "elv&" + zoom.ToString() + "&" + merc_long.ToString() + "&" + merc_lat.ToString() + "&end";
-            byte[] elv = (byte[])elvCache[key];//GetFromCache<byte[]>(elvCache,key);
+            elv = (byte[])elvCache[key];//GetFromCache<byte[]>(elvCache,key);
             if (elv != null)
             {
                 //Debug.Log(this.name + " Grabbed Tile from Cache:" + key);
@@ -168,7 +170,7 @@ public class collect_tiles : MonoBehaviour {
             }
             else
             {
-
+            */
                 try
                 {
                     //Debug.Log(elvFilename);
@@ -177,7 +179,7 @@ public class collect_tiles : MonoBehaviour {
                     File.WriteAllBytes(elvFilename, elv);
                     //AddToCache<byte[]>(elvCache ,key, elv);
                     //Debug.Log(this.name + " Added to cache: " + key);
-                    elvCache.Insert(key, elv, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null);
+                    //elvCache.Insert(key, elv, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null);
 
                 }
                 catch (WebException e)
@@ -189,7 +191,7 @@ public class collect_tiles : MonoBehaviour {
                     Debug.Log("Zoom:" + zoom);
                     Debug.Log(eQuery);
                 }
-            }
+            //}
         }
 
     }
@@ -276,26 +278,28 @@ public class collect_tiles : MonoBehaviour {
 
 
         }
+        byte[] img;
+        /*
         string key = "img&"+ qKey + "&" + texture_mode.ToString() + "end";
         //string 
         //string 
         //Debug.Log(bQuery);
 
-        byte[] img = (byte[])imgCache[key];//GetFromCache<byte[]>(imgCache,key); //
+        img = (byte[])imgCache[key];//GetFromCache<byte[]>(imgCache,key); //
         if (img != null)
         {
             //Debug.Log(this.name + " Grabbed Tile from Cache: " + key);
             File.WriteAllBytes(aerImageFilename, img);
         }
         else
-        {
+        {*/
             try
             {
                 img = client.DownloadData(bQuery);
                 File.WriteAllBytes(aerImageFilename, img);
                 //AddToCache<byte[]>(imgCache,key, img);
                 //Debug.Log(this.name + " Added to cache: " + key);
-                imgCache.Insert(key, img, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null );
+                //imgCache.Insert(key, img, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null );
                 //client.DownloadFile(bQuery, aerImageFilename);
 
                 return true;
@@ -306,7 +310,7 @@ public class collect_tiles : MonoBehaviour {
                 Debug.LogException(e);
                 Debug.Log(bQuery);
             };
-        }
+        //}
         return false;
     }
 

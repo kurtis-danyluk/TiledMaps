@@ -43,11 +43,11 @@ public class GoogleStyleMovement : MonoBehaviour {
                 {
                     if (angle > 0)
                     {
-                        cameraRigTransform.Translate(this.transform.forward);
+                        cameraRigTransform.Translate(this.transform.forward.normalized);
                     }
                     else if (angle < 0)
                     {
-                        cameraRigTransform.Translate(-this.transform.forward);
+                        cameraRigTransform.Translate(-this.transform.forward.normalized);
                     }
                 }
                 else

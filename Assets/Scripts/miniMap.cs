@@ -24,6 +24,7 @@ public class miniMap : MonoBehaviour {
             float[,] heights = createHeightmap(map, map.terrains_width, map.terrains_height);
             heights = scaleHeightmap(heights, map.map_width, mMap.terrainData.heightmapWidth);
             setHeightMap(heights, mMap);
+            float min = minHeight(heights);
             //Debug.Log(map.center.Terr.terrainData.size.z);
             float yheight = (mMap.terrainData.heightmapWidth / map.map_width   )* (map.center.Terr.GetComponent<collect_tiles>().terrBaseHeight / (scale * map.terrains_width));
             mMap.terrainData.size = new Vector3(mMap.terrainData.size.x, yheight , mMap.terrainData.size.z);
@@ -31,8 +32,8 @@ public class miniMap : MonoBehaviour {
             if (detail <= 0)
                 detail = 1;
             mMap.heightmapPixelError = detail;
-            Debug.Log(yheight);
-            mMap.gameObject.transform.localPosition  = new Vector3(mMap.gameObject.transform.localPosition.x, 0.5f-yheight, mMap.gameObject.transform.localPosition.z);
+            //Debug.Log(yheight);
+            mMap.gameObject.transform.localPosition  = new Vector3(mMap.gameObject.transform.localPosition.x, (1 - (min * yheight)), mMap.gameObject.transform.localPosition.z);
             hasChanged = false;
         }
     }
@@ -72,6 +73,15 @@ public class miniMap : MonoBehaviour {
 
         return nHeights;
     }
+    float minHeight(float [,] heights)
+    {
+        float min = float.MaxValue;
+        foreach (float i in heights)
+            if (i < min)
+                min = i;
+        return min;
+    }
+
 
     void setHeightMap(float [,] heights , Terrain map)
     {
