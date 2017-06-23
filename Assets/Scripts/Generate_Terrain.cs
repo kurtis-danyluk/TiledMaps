@@ -11,14 +11,23 @@ using UnityEngine;
  * 
  */
 public class Generate_Terrain : MonoBehaviour {
-    //Width of a single tile in game units
+    /// <summary>
+    /// Width of a single tile in game units eg. 256
+    /// </summary>
     public const int tile_width = 256;
-    //Height of a Single tile in game units
+    /// <summary>
+    /// Height of a Single tile in game units eg. 256
+    /// </summary>
     public const int tile_height = 256;
-    
-    ///Width of the total map in game units
+
+    /// <summary>
+    ///Width of the total map in game units eg 768 (256 x 3)
+    /// </summary>
     public int map_width;
-    ///Height of the total map in game units
+
+    /// <summary>
+    ///Height of the total map in game units eg 768 (256 x 3)
+    /// </summary>
     public int map_height;
 
     //2D list of all the terrains in the scene
@@ -47,11 +56,15 @@ public class Generate_Terrain : MonoBehaviour {
     //r for road maps or a for aerial maps
     public char map_style = 'r';
 
-    //Number of terrains tall (must be odd number)
+    /// <summary>
+    /// Number of terrains tall (must be odd number) eg 3.
+    /// </summary>
     public int terrains_height;
     private int centerY;
 
-    //Number of terrains wide (must be odd number)
+    /// <summary>
+    ///  Number of terrains wide (should be odd number) eg. 3
+    /// </summary>
     public int terrains_width;
     private int centerX;
 
@@ -121,6 +134,7 @@ public class Generate_Terrain : MonoBehaviour {
         mMapTerrData.baseMapResolution = 1024;
         SplatPrototype[] mSplats = new SplatPrototype[2];
         mSplats[0] = new SplatPrototype();
+
         Texture2D circleTex = new Texture2D(256, 256);
         circleTex.LoadImage(File.ReadAllBytes(@"assets/transparent256x256.png"));
             

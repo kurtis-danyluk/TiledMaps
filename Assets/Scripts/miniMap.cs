@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
+
 public class miniMap : MonoBehaviour {
 
     public float scale;
@@ -37,6 +38,25 @@ public class miniMap : MonoBehaviour {
             //Debug.Log(yheight);
             yOffset = (min * yheight);
             mMap.gameObject.transform.localPosition  = new Vector3(mMap.gameObject.transform.localPosition.x, (1 - yOffset), mMap.gameObject.transform.localPosition.z);
+
+            SplatPrototype[] splats = new SplatPrototype[2];
+            splats[1] = new SplatPrototype();
+            Texture2D tex = combineTextures(map, 256, 256);
+            splats[1].texture = tex;
+            splats[1].tileSize = new Vector2(1, 1);
+            splats[0] = mMap.terrainData.splatPrototypes[0];
+            mMap.terrainData.splatPrototypes = splats;
+            try
+            {
+                UnityEditor.AssetDatabase.Refresh();
+            }
+            catch (System.Exception e)
+            {
+
+            }
+
+
+
             hasChanged = false;
         }
     }
@@ -85,9 +105,60 @@ public class miniMap : MonoBehaviour {
         return min;
     }
 
-
     void setHeightMap(float [,] heights , Terrain map)
     {
         map.terrainData.SetHeights(0, 0, heights);
     }
+
+    private Texture2D combineTextures(Generate_Terrain map, int width, int height)
+    {
+        Texture2D ret = new Texture2D(width, height, TextureFormat.ARGB32, true);
+
+        Texture2D [,] texs = new Texture2D[map.terrains_width, map.terrains_height];
+        for (int i = 0; i < map.terrains_width; i++)
+            for (int j = 0; j < map.terrains_height; j++)
+                texs[i, j] = new Texture2D(256, 256);
+
+
+
+                int piece_width = width / map.terrains_width;
+        int piece_height = height / map.terrains_height;
+
+        //Scale down each texture to the wanted size
+        for (int i = 0; i < map.terrains_width; i++)
+            for(int j = 0; j < map.terrains_height; j++)
+            {
+                    Graphics.CopyTexture(map.terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes[0].texture, texs[i, j]);
+                    TextureScale.Point(texs[i, j], piece_width, piece_height);
+                
+                
+            }
+
+        for (int i = 0; i < map.terrains_width; i++)
+            for (int j = 0; j < map.terrains_height; j++)
+                for(int k =0; k < piece_width; k++)
+                    for(int q = 0; q < piece_height; q++)
+                    {
+                        ret.SetPixel((i * piece_width) + k, (j * piece_height) + q, ComplementColour(texs[i, j].GetPixel(k, q))); 
+                    }
+        ret.Apply();
+       return ret;
+    }
+
+    
+    Color InvertColour(Color ColourToInvert)
+    {
+        float RGBMAX = ColourToInvert.maxColorComponent;
+        return new Color(RGBMAX - ColourToInvert.r, RGBMAX - ColourToInvert.g, RGBMAX - ColourToInvert.b);
+    }
+
+    Color ComplementColour(Color Col)
+    {
+        float h, s, v;
+        Color.RGBToHSV(Col, out h, out s, out v);
+        h = ((h + 0.5f) % 1);
+
+        return Color.HSVToRGB(h, s, v);
+    }
+
 }
