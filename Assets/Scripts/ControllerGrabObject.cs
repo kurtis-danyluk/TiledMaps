@@ -62,14 +62,18 @@ public class ControllerGrabObject : MonoBehaviour {
         // 1
         objectInHand = collidingObject;
         collidingObject = null;
-    //    if (objectInHand.name == "tracker")
-            target.isGrabbed = true;
-        iGrabbed = true;
-        // 2
-     //   Debug.Log("Grabbed:" + objectInHand.name);
-     //   var joint = AddFixedJoint();
-     //   joint.connectedBody = objectInHand.GetComponent<Rigidbody>();
-        
+        if (objectInHand.GetComponent<tracker_guide>() != null)
+        {
+            target = objectInHand.GetComponent<tracker_guide>();
+            target.isGrabbed = true;       
+            iGrabbed = true;
+        }
+
+        if(objectInHand.GetComponent<basicToken>() != null)
+        {
+            objectInHand.GetComponent<basicToken>().isGrabbed = true;
+        }
+         
     }
 
     // 3
@@ -82,23 +86,13 @@ public class ControllerGrabObject : MonoBehaviour {
     }
     private void ReleaseObject()
     {
-        // 1
-        if (GetComponent<FixedJoint>())
-        {
-            // 2
-            GetComponent<FixedJoint>().connectedBody = null;
-            Destroy(GetComponent<FixedJoint>());
-            // 3
-       //     objectInHand.GetComponent<Rigidbody>().velocity = Controller.velocity;
-       //     objectInHand.GetComponent<Rigidbody>().angularVelocity = Controller.angularVelocity;
-        }
-        // 4
         objectInHand = null;
         target.isGrabbed = false;
         iGrabbed = false;
     }
     // Update is called once per frame
     void Update () {
+
         if (Controller.GetHairTriggerDown())
         {
             if (collidingObject)
