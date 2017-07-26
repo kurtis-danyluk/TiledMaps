@@ -139,7 +139,7 @@ public class miniMap : MonoBehaviour {
                 for(int k =0; k < piece_width; k++)
                     for(int q = 0; q < piece_height; q++)
                     {
-                        ret.SetPixel((i * piece_width) + k, (j * piece_height) + q, ComplementColour(texs[i, j].GetPixel(k, q))); 
+                        ret.SetPixel((i * piece_width) + k, (j * piece_height) + q, (texs[i, j].GetPixel(k, q))); 
                     }
         ret.Apply();
        return ret;
@@ -156,7 +156,7 @@ public class miniMap : MonoBehaviour {
     {
         float h, s, v;
         Color.RGBToHSV(Col, out h, out s, out v);
-        h = ((h + 0.5f) % 1);
+        h = ((h + 0.66f) % 1);
 
         return Color.HSVToRGB(h, s, v);
     }
