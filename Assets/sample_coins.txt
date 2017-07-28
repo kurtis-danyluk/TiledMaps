@@ -1,0 +1,7 @@
+#Simple coin setup
+
+@coin	id	01	x	10	z	00.00	offset	2
+@coin	id	02	x	11	z	00.00	offset	2
+@coin	id	03	x	12	z	00.00	offset	2
+@coin	id	04	x	13	z	00.00	offset	2
+@coin	id	05	x	14	z	00.00	offset	2

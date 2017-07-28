@@ -11,7 +11,7 @@ public class basicToken : MonoBehaviour {
 
     public coinBank bank;
     public float time_grabbed;
-    public int coin_id;
+    public string coin_id;
 
     // Use this for initialization
     void Start () {
