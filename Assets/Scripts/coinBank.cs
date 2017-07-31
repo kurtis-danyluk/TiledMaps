@@ -7,10 +7,11 @@ public class coinBank : MonoBehaviour {
 
     private List<GameObject> tokens;
     public GameObject tokenPrefab;
-    public string init_filename = @"assets/sample_coins.txt";
+    string init_filename = @"Assets/sample_coins.txt";
     private string result_filename;
     public int count;
     public TextMesh counter;
+    public GameObject beaconPrefab;
 
 
 	// Use this for initialization
@@ -26,10 +27,15 @@ public class coinBank : MonoBehaviour {
                 GameObject tToken = Instantiate(tokenPrefab);
                 tToken.GetComponent<basicToken>().bank = this;
                 tToken.GetComponent<basicToken>().coin_id = i.ToString();
+               
                 tToken.transform.position = new Vector3(-128, 128 , -128 + i);
                 tokens.Add(tToken);
             }
 
+        }
+     else if(init_filename != null)
+        {
+            loadCoins(init_filename, out tokens);
         }	
 	}
 	
@@ -62,11 +68,14 @@ public class coinBank : MonoBehaviour {
                 tToken.GetComponent<basicToken>().coin_id = e[2];
                 float x = float.Parse(e[4]);
                 float z = float.Parse(e[6]);
-                RaycastHit hit;
-                Physics.Raycast(new Vector3(x, 1000 ,z), Vector3.down, out hit);
-                float y = hit.point.y + float.Parse(e[8]);
+                float y = float.Parse(e[8]);
+                //RaycastHit hit;
+                //Physics.Raycast(new Vector3(x, 1000 ,z), Vector3.down, out hit);
+                //float y = hit.point.y +
+
                 tToken.transform.position = new Vector3(x, y, z);
                 tToken.name = "coin" + tToken.GetComponent<basicToken>().coin_id;
+                tToken.GetComponent<basicToken>().laserPrefab = beaconPrefab;
                 tokens.Add(tToken);
             }
         }

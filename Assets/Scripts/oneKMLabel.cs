@@ -84,7 +84,6 @@ public class oneKMLabel : MonoBehaviour {
             else
                 magnitude *= 10;
         }
-        return magnitude;
     }
 
     /*

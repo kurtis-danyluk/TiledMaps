@@ -20,6 +20,8 @@ public class Generate_Terrain : MonoBehaviour {
     /// </summary>
     public const int tile_height = 256;
 
+    public static string init_filename = @"Assets/sample_coins.txt";
+
     /// <summary>
     ///Width of the total map in game units eg 768 (256 x 3)
     /// </summary>
@@ -40,7 +42,9 @@ public class Generate_Terrain : MonoBehaviour {
     //A reference to the tracker object
     public GameObject posTracker;
 
-    //A reference to the minimap we'll use in our scene
+    /// <summary>
+    ///A reference to the minimap we'll use in our scene
+    /// </summary>
     public GameObject miniMap;
     //And the terrain data we'll use to create
     private TerrainData mMapTerrData;
@@ -52,8 +56,10 @@ public class Generate_Terrain : MonoBehaviour {
     //The basic data we'll use for all of our terrain tiles.
     private TerrainData terrainPrefab;
 
-    //The style of visual tiles we want to grab such as
-    //r for road maps or a for aerial maps
+
+    /// <summary>
+    ///The style of visual tiles we want to grab such as 'r' for road maps or 'a' for aerial maps
+    /// </summary>
     public char map_style = 'r';
 
     /// <summary>
@@ -103,7 +109,9 @@ public class Generate_Terrain : MonoBehaviour {
 
                 SplatPrototype[] splats = new SplatPrototype[1];
                 splats[0] = new SplatPrototype();
-                Texture2D tex= new Texture2D(tile_width, tile_height);
+                Texture2D tex= new Texture2D(tile_width, tile_height, TextureFormat.ARGB32, true);
+                if (!File.Exists((@"Assets/Textures/" + terrains[i, j].name + "aerImage.jpeg")))
+                    collect_tiles.dlImgFile(0, 0, 0, @"Assets/Textures/" + terrains[i, j].name + "aerImage.jpeg", 'r', null);
                 tex.LoadImage(File.ReadAllBytes(@"Assets/Textures/" + terrains[i,j].name + "aerImage.jpeg"));
                 splats[0].texture = tex;
                 splats[0].tileSize = new Vector2(tile_width, tile_height);
@@ -127,6 +135,8 @@ public class Generate_Terrain : MonoBehaviour {
                 
             }
         
+       
+
         mMapTerrData = new TerrainData();
         mMapTerrData.heightmapResolution = tile_width * terrains_width + 1;
         mMapTerrData.size = new Vector3(1, 1, 1);
@@ -135,7 +145,7 @@ public class Generate_Terrain : MonoBehaviour {
         SplatPrototype[] mSplats = new SplatPrototype[2];
         mSplats[0] = new SplatPrototype();
 
-        Texture2D circleTex = new Texture2D(256, 256);
+        Texture2D circleTex = new Texture2D(256, 256, TextureFormat.ARGB32, true);
         circleTex.LoadImage(File.ReadAllBytes(@"assets/transparent256x256.png"));
             
         circleTex.Apply();
@@ -145,7 +155,7 @@ public class Generate_Terrain : MonoBehaviour {
         mSplats[0].tileSize = new Vector2(255, 255);
         
         mSplats[1] = new SplatPrototype();
-        mSplats[1].texture = new Texture2D(256, 256);
+        mSplats[1].texture = new Texture2D(256, 256, TextureFormat.ARGB32, true);
         mMapTerrData.splatPrototypes = mSplats;
         
         miniMap = Terrain.CreateTerrainGameObject(mMapTerrData);
@@ -190,6 +200,9 @@ public class Generate_Terrain : MonoBehaviour {
         center.collect = terrains[centerX, centerY].GetComponent<collect_tiles>();
 
         terrains[centerX, centerY].GetComponent<collect_tiles>().isCenter = true;
+
+        loadLatLonZ(init_filename, out center.collect.latitude, out center.collect.longitude, out collect_tiles.zoom);
+
         terrains[centerX, centerY].GetComponent<collect_tiles>().mTerr = miniMap;
 
         posTracker = Instantiate(trackerPrefab);
@@ -228,4 +241,29 @@ public class Generate_Terrain : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    void loadLatLonZ(string filename, out float lat, out float lon, out int zoom)
+    {
+        lat = lon = zoom = 0;
+        string[] fileTex = File.ReadAllLines(filename);
+
+        foreach (string line in fileTex)
+        {
+            if (line.StartsWith("@Lat"))
+            {
+                string[] e = line.Split('\t');
+                lat = float.Parse(e[1]);
+            }
+            else if (line.StartsWith("@Lon")){
+                string[] e = line.Split('\t');
+                lon = float.Parse(e[1]);
+            }
+            else if (line.StartsWith("@Zoom"))
+            {
+                string[] e = line.Split('\t');
+                zoom = int.Parse(e[1]);
+            }
+        }
+
+    }
 }

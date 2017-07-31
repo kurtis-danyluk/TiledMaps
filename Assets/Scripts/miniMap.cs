@@ -52,7 +52,7 @@ public class miniMap : MonoBehaviour {
             }
             catch (System.Exception e)
             {
-
+                Debug.Log(e.Message);
             }
 
 
@@ -117,7 +117,7 @@ public class miniMap : MonoBehaviour {
         Texture2D [,] texs = new Texture2D[map.terrains_width, map.terrains_height];
         for (int i = 0; i < map.terrains_width; i++)
             for (int j = 0; j < map.terrains_height; j++)
-                texs[i, j] = new Texture2D(256, 256);
+                texs[i, j] = new Texture2D(256, 256, TextureFormat.RGB24, true);
 
 
 
@@ -128,9 +128,18 @@ public class miniMap : MonoBehaviour {
         for (int i = 0; i < map.terrains_width; i++)
             for(int j = 0; j < map.terrains_height; j++)
             {
-                    Graphics.CopyTexture(map.terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes[0].texture, texs[i, j]);
+                try {
+                    //Graphics.CopyTexture(map.terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes[0].texture, texs[i, j]);
+                    texs[i, j].LoadRawTextureData(map.terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes[0].texture.GetRawTextureData());
                     TextureScale.Point(texs[i, j], piece_width, piece_height);
-                
+                }
+                catch(System.Exception e)
+                {
+                    Debug.LogError(map.terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes[0].texture.height);
+                    Debug.LogError(map.terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes[0].texture.width);
+                    Debug.LogError(map.terrains[i, j].GetComponent<Terrain>().terrainData.splatPrototypes[0].texture.format);
+                    Debug.LogError(e.Message);
+                }
                 
             }
 

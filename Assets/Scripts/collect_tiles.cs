@@ -84,7 +84,7 @@ public class collect_tiles : MonoBehaviour {
         aerImageFilename = base_dir + this.name + aerImageFilename;
         tile_type = "Road/";//"Aerial/";//
         //  Debug.Log(elvFilename);
-        
+        dlFile(0, 0, 1);
         //Done statically now
         //elvCache = new System.Web.Caching.Cache();
         //imgCache = new System.Web.Caching.Cache();
@@ -98,9 +98,9 @@ public class collect_tiles : MonoBehaviour {
         heights = Terr.terrainData.GetHeights(0, 0, Terr.terrainData.heightmapWidth, Terr.terrainData.heightmapHeight);
 
         //Setup the textures to be used
-        filetex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+        filetex = new Texture2D(256, 256, TextureFormat.ARGB32, true);
         //oFiletex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
-        tileTex = new Texture2D(256, 256);
+        tileTex = new Texture2D(256, 256, TextureFormat.ARGB32, true);
 
      //   mesh = this.GetComponent<MeshRenderer>();
         //Setup bing maps tile URL
@@ -108,11 +108,13 @@ public class collect_tiles : MonoBehaviour {
         oImageURL = ImageURL;
 
         //Setup default lat, long, zoom
+        
         longitude = -115.31f;
         olongitude = longitude;
         latitude = 51.17f;
         olatitude = latitude;
         zoom = 11;
+        
         ozoom = 2;
         //tile_lat_arc = 90;
         //tile_lon_arc = 180;
@@ -253,7 +255,7 @@ public class collect_tiles : MonoBehaviour {
             Debug.Log(bQuery);
         };
     }
-    static bool dlImgFile(int merc_lat, int merc_lon, int zoom, string aerImageFilename, char texture_mode, System.Web.Caching.Cache imgCache)
+    public static bool dlImgFile(int merc_lat, int merc_lon, int zoom, string aerImageFilename, char texture_mode, System.Web.Caching.Cache imgCache)
     {
         string qKey = TileXYToQuadKey(merc_lat, merc_lon, zoom);
 
@@ -323,7 +325,7 @@ public class collect_tiles : MonoBehaviour {
 
         string bQuery = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/" + tile_type+ latitude.ToString() +","+longitude.ToString()+"?zl="+zoom.ToString()+"&o=xml&key=" + key;
         string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/"+ zoom + "/"+merc_long.ToString()+"/"+merc_lat.ToString() +".png";
-        Debug.Log(Terr.name + " " + eQuery);
+        //Debug.Log(Terr.name + " " + eQuery);
 
         try
         {
@@ -515,7 +517,7 @@ public class collect_tiles : MonoBehaviour {
     {
         SplatPrototype[] splats = new SplatPrototype[1];
         splats[0] = new SplatPrototype();
-        Texture2D tex = new Texture2D(tile_width, tile_height);
+        Texture2D tex = new Texture2D(tile_width, tile_height, TextureFormat.ARGB32, true);
         tex.LoadImage(File.ReadAllBytes(aerImageFilename));
         splats[0].texture = tex;
         splats[0].tileSize = new Vector2(tile_width, tile_height);
@@ -528,7 +530,7 @@ public class collect_tiles : MonoBehaviour {
         }
         catch(System.Exception e)
         {
-           
+            Debug.Log(e.Message);
         }
             
             //}
@@ -819,6 +821,7 @@ public class collect_tiles : MonoBehaviour {
         }
         catch(KeyNotFoundException e)
         {
+            Debug.Log(e.Message);
             return default(T);
         }
     }
