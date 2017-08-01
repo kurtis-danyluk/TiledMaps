@@ -43,6 +43,7 @@ public class basicToken : MonoBehaviour {
             bank.count++;
             time_grabbed = Time.time;
             this.gameObject.SetActive(false);
+            laser.SetActive(false);
         }
             
 	}
