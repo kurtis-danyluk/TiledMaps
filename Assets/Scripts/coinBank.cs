@@ -12,7 +12,7 @@ public class coinBank : MonoBehaviour {
     public int count;
     public TextMesh counter;
     public GameObject beaconPrefab;
-
+    Generate_Terrain terrain;
 
 	// Use this for initialization
 	void Start () {
@@ -42,13 +42,25 @@ public class coinBank : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         counter.text = count.ToString();
+        if(collect_tiles.center_changed)
+            foreach(GameObject t in tokens)
+            {
+                t.GetComponent<basicToken>().hasChanged = true;
+            }
 	}
 
     void OnApplicationQuit()
     {
         Debug.Log("Quiting: Time Scores Are:");
+        string outF = "";
         foreach (GameObject e in tokens)
-            Debug.Log("id:"+e.GetComponent<basicToken>().coin_id + ";Time:" + e.GetComponent<basicToken>().time_grabbed);
+        {
+            string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Time:" + e.GetComponent<basicToken>().time_grabbed;
+            Debug.Log(outl);
+            outF += outl + '\n';
+        }
+        if (result_filename != null)
+            File.AppendAllText(result_filename, outF);
     }
 
     void loadCoins(string filename, out List<GameObject> tokens)
@@ -69,6 +81,8 @@ public class coinBank : MonoBehaviour {
                 float x = float.Parse(e[4]);
                 float z = float.Parse(e[6]);
                 float y = float.Parse(e[8]);
+
+                tToken.GetComponent<basicToken>().offset = y;
                 //RaycastHit hit;
                 //Physics.Raycast(new Vector3(x, 1000 ,z), Vector3.down, out hit);
                 //float y = hit.point.y +
@@ -77,6 +91,10 @@ public class coinBank : MonoBehaviour {
                 tToken.name = "coin" + tToken.GetComponent<basicToken>().coin_id;
                 tToken.GetComponent<basicToken>().laserPrefab = beaconPrefab;
                 tokens.Add(tToken);
+            }
+            if (line.StartsWith("@outfile")){
+                string[] e = line.Split('\t');
+                result_filename = e[1];
             }
         }
 

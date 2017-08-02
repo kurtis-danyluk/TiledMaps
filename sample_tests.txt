@@ -1,0 +1,10 @@
+id:01;Time:37.92685
+id:02;Time:0
+id:03;Time:0
+id:04;Time:0
+id:05;Time:73.90508
+id:01;Time:62.52305
+id:02;Time:88.41031
+id:03;Time:33.43726
+id:04;Time:123.3442
+id:05;Time:74.26128

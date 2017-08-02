@@ -4,8 +4,10 @@
 
 #Simple coin setup
 
-@coin	id	01	x	10	z	00.00	offset	128
-@coin	id	02	x	11	z	00.00	offset	124
-@coin	id	03	x	12	z	00.00	offset	116
-@coin	id	04	x	13	z	00.00	offset	110
-@coin	id	05	x	14	z	00.00	offset	84
+@coin	id	01	x	-91	z	423	offset	0.2
+@coin	id	02	x	49	z	249	offset	0.6
+@coin	id	03	x	40	z	-46	offset	1.3
+@coin	id	04	x	-139	z	-114	offset	1.7
+@coin	id	05	x	-86	z	479	offset	1.0
+
+@outfile	sample_tests.txt
