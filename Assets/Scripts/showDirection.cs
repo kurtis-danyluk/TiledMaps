@@ -90,7 +90,21 @@ public class showDirection : MonoBehaviour {
 
         changeTex(default_texture);
     }
-	
+	/// <summary>
+    /// Changes given mesh to a ttexture from the list
+    /// d is default for nesw
+    /// n is north
+    /// e is east
+    /// s is south
+    /// w is west
+    /// i is zoom in
+    /// o is zoom out
+    /// z is default zoom
+    /// f is forward move
+    /// b is backwards move
+    /// m is default move
+    /// </summary>
+    /// <param name="d"></param>
     public void changeTex(char d)
     {
         switch (d) {
@@ -127,6 +141,7 @@ public class showDirection : MonoBehaviour {
             case 'm':
                 mesh.material.mainTexture = fbTex;
                 break;
+
         }
     }
 

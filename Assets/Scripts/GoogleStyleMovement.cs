@@ -9,7 +9,7 @@ public class GoogleStyleMovement : MonoBehaviour {
 
     public Transform cameraRigTransform;
     public Transform headTransform;
-    private bool isActive = false;
+    private bool isActive = true;
 
 
     // Use this for initialization
@@ -30,6 +30,13 @@ public class GoogleStyleMovement : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (this.gameObject.GetComponent<ControllerGrabObject>().iGrabbed)
+            indicator.gameObject.SetActive(false);
+        else
+        {
+            indicator.gameObject.SetActive(true);
+        }
+
         if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
             isActive = !isActive;
 

@@ -9,7 +9,7 @@ public class ControllerGrabObject : MonoBehaviour {
     private GameObject objectInHand;
     public tracker_guide target;
     public Transform trackerTransform;
-    private bool iGrabbed;
+    public bool iGrabbed;
     public Generate_Terrain map;
 
     private SteamVR_Controller.Device Controller

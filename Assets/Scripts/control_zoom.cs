@@ -9,7 +9,7 @@ public class control_zoom : MonoBehaviour {
     private bool inputLock;
     private float lockTime = 1f;
     private collect_tiles collector;
-    private bool isActive = true;
+    private bool isActive = false;
 
     public Generate_Terrain map;
 
@@ -44,6 +44,12 @@ public class control_zoom : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (this.gameObject.GetComponent<ControllerGrabObject>().iGrabbed)
+            indicator.gameObject.SetActive(false);
+        else
+        {       
+            indicator.gameObject.SetActive(true);
+        }
         if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
         {
             isActive = !isActive;

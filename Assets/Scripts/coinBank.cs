@@ -55,7 +55,7 @@ public class coinBank : MonoBehaviour {
         string outF = "";
         foreach (GameObject e in tokens)
         {
-            string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Time:" + e.GetComponent<basicToken>().time_grabbed;
+            string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Time:" + e.GetComponent<basicToken>().time_grabbed + "Beacon: " + e.GetComponent<basicToken>().time_entered;
             Debug.Log(outl);
             outF += outl + '\n';
         }
@@ -77,6 +77,7 @@ public class coinBank : MonoBehaviour {
 
                 GameObject tToken = Instantiate(tokenPrefab);
                 tToken.GetComponent<basicToken>().bank = this;
+                tToken.GetComponent<basicToken>().lightHouseTransform = GameObject.Find("[CameraRig]").transform;
                 tToken.GetComponent<basicToken>().coin_id = e[2];
                 float x = float.Parse(e[4]);
                 float z = float.Parse(e[6]);

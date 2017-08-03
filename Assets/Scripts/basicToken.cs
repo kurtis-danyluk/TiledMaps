@@ -18,8 +18,12 @@ public class basicToken : MonoBehaviour {
 
     public coinBank bank;
     public float time_grabbed;
+    public float time_entered;
+    public bool beaconEntered = false;
     public string coin_id;
     public bool hasChanged = false;
+
+    public Transform lightHouseTransform;
 
     // Use this for initialization
     void Start () {
@@ -41,9 +45,9 @@ public class basicToken : MonoBehaviour {
         }
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
 
         if (showBeacon && hasChanged)
         {
@@ -52,6 +56,14 @@ public class basicToken : MonoBehaviour {
             Vector3 start = new Vector3(this.transform.position.x + disp.x, this.transform.position.y, this.transform.position.z + disp.y);
             Vector3 end = start + new Vector3(0, 1000, 0);
             ShowLaser(start, end, 1000);
+        }
+
+        if (showBeacon && !beaconEntered) {
+            if (laser.GetComponent<CapsuleCollider>().bounds.Contains(lightHouseTransform.position))
+            {
+                beaconEntered = true;
+                time_entered = Time.time;
+            }           
         }
 
         if (hasChanged)

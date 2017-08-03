@@ -13,6 +13,7 @@ public class Control_lat_long : MonoBehaviour {
 
     public showDirection indicator;
 
+    private bool isActive = false;
     private bool inputLock;
     private float lockTime = 1f;
     // Use this for initialization
@@ -44,63 +45,76 @@ public class Control_lat_long : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (!inputLock)
-            if (Controller.GetAxis() != Vector2.zero)
+        if (this.gameObject.GetComponent<ControllerGrabObject>().iGrabbed)
+            indicator.gameObject.SetActive(false);
+        else
+        {
+            if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
             {
-                
-                float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
-
-                if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                isActive = !isActive;
+            }
+            indicator.gameObject.SetActive(isActive);
+        }
+        if (isActive)
+        {
+            if (!inputLock)
+                if (Controller.GetAxis() != Vector2.zero)
                 {
-                    lockInput();
-                    //Debug.Log("Angle: " + angle);
 
-                    if (angle > 45 && angle <= 135)
+                    float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
+
+                    if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
                     {
-                        collector.latitude += 90 / (Mathf.Pow(2, collect_tiles.zoom));
-                        //Debug.Log("Up");
+                        lockInput();
+                        //Debug.Log("Angle: " + angle);
+
+                        if (angle > 45 && angle <= 135)
+                        {
+                            collector.latitude += 90 / (Mathf.Pow(2, collect_tiles.zoom));
+                            //Debug.Log("Up");
+                        }
+                        else if (angle > -135 && angle <= -45)
+                        {
+                            collector.latitude -= 4 * (90 / (Mathf.Pow(2, collect_tiles.zoom)));
+                            //Debug.Log("Down");
+                        }
+                        else if (angle > 135 && angle <= 180 || angle > -180 && angle < -135)
+                        {
+                            collector.longitude -= 180 / (Mathf.Pow(2, collect_tiles.zoom));
+                            //Debug.Log("Left");
+                        }
+                        else if (angle > 0 && angle <= 45 || angle > -45 && angle < 0)
+                        {
+                            collector.longitude += 4 * (180 / (Mathf.Pow(2, collect_tiles.zoom)));
+                            //Debug.Log("Right");
+                        }
                     }
-                    else if (angle > -135 && angle <= -45)
+                    else
                     {
-                        collector.latitude -= 4 * (90 / (Mathf.Pow(2, collect_tiles.zoom)));
-                        //Debug.Log("Down");
+                        if (angle > 45 && angle <= 135)
+                        {
+                            indicator.changeTex('n');
+                        }
+                        else if (angle > -135 && angle <= -45)
+                        {
+                            indicator.changeTex('s');
+                        }
+                        else if (angle > 135 && angle <= 180 || angle > -180 && angle < -135)
+                        {
+                            indicator.changeTex('w');
+
+                        }
+                        else if (angle > 0 && angle <= 45 || angle > -45 && angle < 0)
+                        {
+                            indicator.changeTex('e');
+
+                        }
                     }
-                    else if (angle > 135 && angle <= 180 || angle > -180 && angle < -135)
-                    {
-                        collector.longitude -= 180 / (Mathf.Pow(2, collect_tiles.zoom));
-                        //Debug.Log("Left");
-                    }
-                    else if (angle > 0 && angle <= 45 || angle > -45 && angle < 0)
-                    {
-                        collector.longitude += 4 * (180 / (Mathf.Pow(2, collect_tiles.zoom)));
-                        //Debug.Log("Right");
-                    }
+                    // collector.latitude = Controller.GetAxis().y * lat_range;
+                    // collector.longitude = Controller.GetAxis().x * long_range;
                 }
                 else
-                {
-                    if (angle > 45 && angle <= 135)
-                    {
-                        indicator.changeTex('n');
-                    }
-                    else if (angle > -135 && angle <= -45)
-                    {
-                        indicator.changeTex('s');
-                    }
-                    else if (angle > 135 && angle <= 180 || angle > -180 && angle < -135)
-                    {
-                        indicator.changeTex('w');
-
-                    }
-                    else if (angle > 0 && angle <= 45 || angle > -45 && angle < 0)
-                    {
-                        indicator.changeTex('e');
-
-                    }
-                }
-                // collector.latitude = Controller.GetAxis().y * lat_range;
-                // collector.longitude = Controller.GetAxis().x * long_range;
-            }
-            else
-                indicator.changeTex('d');
+                    indicator.changeTex('d');
+        }
 	}
 }
