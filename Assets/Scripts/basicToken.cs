@@ -31,6 +31,8 @@ public class basicToken : MonoBehaviour {
         laser = Instantiate(laserPrefab);
         laserTransform = laser.transform;
 
+        this.gameObject.GetComponent<Rigidbody>().maxDepenetrationVelocity = 0;
+
         count = 0;
         isGrabbed = false;
         showBeacon = true;
@@ -59,7 +61,7 @@ public class basicToken : MonoBehaviour {
         }
 
         if (showBeacon && !beaconEntered) {
-            if (laser.GetComponent<CapsuleCollider>().bounds.Contains(lightHouseTransform.position))
+            if (Vector3.Distance(laser.transform.position,lightHouseTransform.position) < laser.transform.localScale.x/2)
             {
                 beaconEntered = true;
                 time_entered = Time.time;
