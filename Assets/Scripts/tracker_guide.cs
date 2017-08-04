@@ -52,7 +52,7 @@ public class tracker_guide : MonoBehaviour {
 
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         RaycastHit hit;
 
@@ -87,16 +87,6 @@ public class tracker_guide : MonoBehaviour {
             temp.y = ((trackerTransform.localPosition.y - 0.05f) * map.map_width);// - Generate_Terrain.tile_width;
 
             Vector3 difference = cameraRigTransform.position - headTransform.position;
-            // Keep tracker on the ground
-            //     difference.y = Terr.transform.position.y;
-            
-
-            //Let tracker roam
-            //temp.y = (trackerTransform.transform.localPosition.y);// );
-            //temp.y *= Generate_Terrain.tile_height;
-            //temp.y += map.center.Terr.GetComponent<Terrain>().terrainData.size.y;
-            //difference.y = map.center.Terr.transform.position.y + map.center.Terr.terrainData.heightmapHeight + (trackerTransform.localPosition.y - 0.1f);
-
             
             cameraRigTransform.position = temp + difference;
 

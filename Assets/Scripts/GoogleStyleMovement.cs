@@ -11,6 +11,10 @@ public class GoogleStyleMovement : MonoBehaviour {
     public Transform headTransform;
     private bool isActive = true;
 
+    private float velocity = 0;
+    private float maxVelocity = 2;
+    private float minVelocity = 0.1f;
+    private float acceleration = 0.01f;
 
     // Use this for initialization
     private SteamVR_Controller.Device Controller
@@ -48,17 +52,26 @@ public class GoogleStyleMovement : MonoBehaviour {
 
                 if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
                 {
+                    if (velocity < minVelocity)
+                        velocity = minVelocity;
+
+                    velocity += acceleration;
+
+                    if (velocity > maxVelocity)
+                        velocity = maxVelocity;
+
                     if (angle > 0)
                     {
-                        cameraRigTransform.Translate(this.transform.forward.normalized);
+                        cameraRigTransform.Translate(this.transform.forward.normalized * velocity);
                     }
                     else if (angle < 0)
                     {
-                        cameraRigTransform.Translate(-this.transform.forward.normalized);
+                        cameraRigTransform.Translate(-this.transform.forward.normalized * velocity);
                     }
                 }
                 else
                 {
+                    velocity = 0;
                     if (angle > 0)
                     {
                         indicator.changeTex('f');
