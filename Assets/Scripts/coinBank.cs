@@ -5,17 +5,22 @@ using System.IO;
 
 public class coinBank : MonoBehaviour {
 
-    private List<GameObject> tokens;
+    public List<GameObject> tokens;
     public GameObject tokenPrefab;
     string init_filename = @"Assets/sample_coins.txt";
     private string result_filename;
     public int count;
     public TextMesh counter;
     public GameObject beaconPrefab;
+    public GameObject beaconPinPrefab;
     Generate_Terrain terrain;
+    int active_coin;
+
 
 	// Use this for initialization
 	void Start () {
+
+    active_coin = 0;
 
     tokens = new List<GameObject>();
 
@@ -25,10 +30,12 @@ public class coinBank : MonoBehaviour {
             for (int i = 0; i < 10; i++)
             {
                 GameObject tToken = Instantiate(tokenPrefab);
+                tToken.SetActive(false);
                 tToken.GetComponent<basicToken>().bank = this;
                 tToken.GetComponent<basicToken>().coin_id = i.ToString();
                
                 tToken.transform.position = new Vector3(-128, 128 , -128 + i);
+                
                 tokens.Add(tToken);
             }
 
@@ -47,6 +54,14 @@ public class coinBank : MonoBehaviour {
             {
                 t.GetComponent<basicToken>().hasChanged = true;
             }
+        if (active_coin < tokens.Count)
+        {
+            if (tokens[active_coin].GetComponent<basicToken>().isGrabbed)
+                active_coin++;
+
+            if (tokens[active_coin].activeSelf == false)
+                tokens[active_coin].SetActive(true);
+        }
 	}
 
     void OnApplicationQuit()

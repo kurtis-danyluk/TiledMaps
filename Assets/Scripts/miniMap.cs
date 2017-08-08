@@ -11,6 +11,8 @@ public class miniMap : MonoBehaviour {
     public bool hasChanged = false;
     public float yOffset;
     Terrain mMap ;
+    public coinBank bank;
+    public Dictionary<string , GameObject> beacons;
 
     // Use this for initialization
     void Start () {
@@ -18,6 +20,7 @@ public class miniMap : MonoBehaviour {
         yOffset = 0;
         scale = 256;
         mMap = this.gameObject.GetComponent<Terrain>();
+        beacons = new Dictionary<string, GameObject>();
     }
 	void LateUpdate()
     {
@@ -26,6 +29,7 @@ public class miniMap : MonoBehaviour {
             //Debug.Log(map.name);
             float[,] heights = createHeightmap(map, map.terrains_width, map.terrains_height);
             heights = scaleHeightmap(heights, map.map_width, mMap.terrainData.heightmapWidth);
+            float scaler = (float)map.map_width / (float)mMap.terrainData.heightmapWidth;
             setHeightMap(heights, mMap);
             float min = minHeight(heights);
             //Debug.Log(map.center.Terr.terrainData.size.z);
@@ -55,13 +59,58 @@ public class miniMap : MonoBehaviour {
                 Debug.Log(e.Message);
             }
 
-
+            
 
             hasChanged = false;
         }
+
+        foreach (GameObject t in bank.tokens)
+        {
+            string tKey = t.GetComponent<basicToken>().coin_id;
+            if (!beacons.ContainsKey(tKey))
+            {
+
+                GameObject nBeacon = Instantiate(bank.beaconPinPrefab);
+                nBeacon.transform.SetParent(this.transform);
+                //  nBeacon.transform.localScale = new Vector3(nBeacon.transform.localScale.x * ( scaler/scale), 1, nBeacon.transform.localScale.z * ( scaler / scale));
+                //  nBeacon.transform.localScale = new Vector3(nBeacon.transform.localScale.x / 2, nBeacon.transform.localScale.y / 2, nBeacon.transform.localScale.z / 2);
+                nBeacon.transform.localPosition = new Vector3(0, 0, 0);
+                beacons.Add(tKey, nBeacon);
+            }
+
+            if (t.activeSelf == true)
+            {
+                beacons[tKey].SetActive(true);
+                //if (hasChanged)
+                {
+                    Vector3 beaconPos;
+                    tracker_guide.translateMaptoMMap(out beaconPos, t.GetComponent<basicToken>().laserTransform.position, map);
+                    beacons[tKey].transform.localPosition = beaconPos - new Vector3(0, 1.0f, 0);
+                }
+                //basicToken.ShowLaser(beacons[tKey], beacons[tKey].transform, beacons[tKey].transform.position, beacons[tKey].transform.position + new Vector3(0, 1, 0), 1);
+            }
+            else
+            {
+                beacons[tKey].SetActive(false);
+            }
+
+        }
+
+        foreach (GameObject t in bank.tokens)
+        {
+            string tKey = t.GetComponent<basicToken>().coin_id;
+            if (t.activeSelf == false)
+                beacons[tKey].SetActive(false);
+        }
+
+
+
+
+
+
     }
-	// Update is called once per frame
-	void Update () {
+        // Update is called once per frame
+        void Update () {
         
 
 	}

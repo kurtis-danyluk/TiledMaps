@@ -51,6 +51,18 @@ public class tracker_guide : MonoBehaviour {
     }
 
 
+    public static void translateMaptoMMap(out Vector3 localPos, Vector3 GlobalPose, Generate_Terrain map)
+    {
+        localPos = new Vector3();
+        localPos.x = GlobalPose.x + Generate_Terrain.tile_width;
+        localPos.z = GlobalPose.z + Generate_Terrain.tile_height;
+        localPos = localPos / map.map_width;
+
+        localPos.y = (GlobalPose.y / map.map_width);
+       
+    }
+
+
     // Update is called once per frame
     void LateUpdate()
     {

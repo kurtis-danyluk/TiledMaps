@@ -69,6 +69,11 @@ public class Generate_Terrain : MonoBehaviour {
     private int centerY;
 
     /// <summary>
+    /// The bank that holds all of the trials beacons and coins
+    /// </summary>
+    public coinBank bank;
+
+    /// <summary>
     ///  Number of terrains wide (should be odd number) eg. 3
     /// </summary>
     public int terrains_width;
@@ -161,6 +166,7 @@ public class Generate_Terrain : MonoBehaviour {
         miniMap = Terrain.CreateTerrainGameObject(mMapTerrData);
         miniMap.AddComponent<miniMap>();
         miniMap.GetComponent<miniMap>().map = this;
+        miniMap.GetComponent<miniMap>().bank = bank;
         miniMap.name = "miniMap";
         miniMap.transform.parent = this.gameObject.transform;
         miniMap.transform.localPosition = new Vector3(-0.5f, 1, -0.5f);
@@ -173,7 +179,7 @@ public class Generate_Terrain : MonoBehaviour {
 
         float[,,] splatMapAlphas = miniMap.GetComponent<Terrain>().terrainData.GetAlphamaps(0,0, miniMap.GetComponent<Terrain>().terrainData.alphamapWidth, miniMap.GetComponent<Terrain>().terrainData.alphamapHeight) ;
 
-        float radius = 0.9f;
+        float radius = 0.98f;
         for (int i = 0; i < miniMap.GetComponent<Terrain>().terrainData.alphamapHeight; i++)
             for (int j = 0; j < miniMap.GetComponent<Terrain>().terrainData.alphamapWidth; j++)
             {
