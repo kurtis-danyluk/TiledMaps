@@ -151,7 +151,14 @@ public class collect_tiles : MonoBehaviour {
     //template for an aws elevation tile request. z is zoom level and x and y refer to a tile in mercantor format
     //https://s3.amazonaws.com/elevation-tiles-prod/normal/{z}/{x}/{y}.png
 
-
+    /// <summary>
+    /// Downloads an elevation file for specified lat/lon/zoom and stores it at the path specified by elvFilename
+    /// </summary>
+    /// <param name="merc_long"></param>
+    /// <param name="merc_lat"></param>
+    /// <param name="zoom"></param>
+    /// <param name="elvFilename"></param>
+    /// <param name="elvCache"></param>
      static void dlElvFile(int merc_long, int merc_lat, int zoom, string elvFilename, System.Web.Caching.Cache elvCache)
     {
         //Debug.Log(Terr.name);
@@ -255,6 +262,16 @@ public class collect_tiles : MonoBehaviour {
             Debug.Log(bQuery);
         };
     }
+    /// <summary>
+    /// Downloads a terrain texture file of location merc_lat, merc_lon, and zoom and stores it at the filepath specified by aerImageFilename, using format 'a' or 'r' to determine what type of texture
+    /// </summary>
+    /// <param name="merc_lat"></param>
+    /// <param name="merc_lon"></param>
+    /// <param name="zoom"></param>
+    /// <param name="aerImageFilename"></param>
+    /// <param name="texture_mode"></param>
+    /// <param name="imgCache"></param>
+    /// <returns></returns>
     public static bool dlImgFile(int merc_lat, int merc_lon, int zoom, string aerImageFilename, char texture_mode, System.Web.Caching.Cache imgCache)
     {
         string qKey = TileXYToQuadKey(merc_lat, merc_lon, zoom);

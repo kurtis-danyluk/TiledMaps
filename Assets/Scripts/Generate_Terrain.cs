@@ -140,7 +140,7 @@ public class Generate_Terrain : MonoBehaviour {
                 
             }
         
-       
+        
 
         mMapTerrData = new TerrainData();
         mMapTerrData.heightmapResolution = tile_width * terrains_width + 1;
@@ -239,7 +239,15 @@ public class Generate_Terrain : MonoBehaviour {
         oneKMLabel.AddComponent<oneKMLabel>();
         oneKMLabel.GetComponent<oneKMLabel>().map = this;
         oneKMLabel.GetComponent<oneKMLabel>().mMap = miniMap.GetComponent<miniMap>();
-        
+
+        TerrainData testTerr = new TerrainData();
+        testTerr.heightmapResolution = tile_width + 1;
+        testTerr.size = new Vector3(tile_width, 1, tile_height);
+        testTerr.SetDetailResolution(1024, 8);
+        testTerr.baseMapResolution = 1024;
+        GameObject test_map_tile = Terrain.CreateTerrainGameObject(testTerr);
+        test_map_tile.AddComponent<mapTile>();
+        test_map_tile.GetComponent<mapTile>().SetupMapTile(1, test_map_tile.GetComponent<Terrain>());
 
     }
 	
