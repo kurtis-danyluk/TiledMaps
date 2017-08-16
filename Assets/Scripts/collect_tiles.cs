@@ -38,8 +38,8 @@ public class collect_tiles : MonoBehaviour {
     public bool isCenter;
     // string webPath = "s3.amazonaws.com/elevation-tiles-prod/";
 
-    
 
+    static string cache_dir = "Assets/Cache/";
     static string base_dir = @"Assets/Textures/";
     string elvFilename = "elvTile.png";
     string aerImageFilename = "aerImage.jpeg";
@@ -159,15 +159,21 @@ public class collect_tiles : MonoBehaviour {
     /// <param name="zoom"></param>
     /// <param name="elvFilename"></param>
     /// <param name="elvCache"></param>
-     static void dlElvFile(int merc_long, int merc_lat, int zoom, string elvFilename, System.Web.Caching.Cache elvCache)
+     public static void dlElvFile(int merc_long, int merc_lat, int zoom, string elvFilename, System.Web.Caching.Cache elvCache)
     {
         //Debug.Log(Terr.name);
         //Debug.Log("lat lon " + merc_lat + " " + merc_long);
-        //string key = merc_long +" " + merc_lat + " " + zoom;
+        string key = "elv&" + merc_long +"&" + merc_lat + "&" + zoom+".png";
         //elvCache.Get(key);
          {
             string eQuery = "http://s3.amazonaws.com/elevation-tiles-prod/normal/" + zoom + "/" + merc_long.ToString() + "/" + merc_lat.ToString() + ".png";
             byte[] elv;
+            if (System.IO.File.Exists(cache_dir + key))
+            {
+                elv = File.ReadAllBytes(cache_dir + key);
+                File.WriteAllBytes(elvFilename, elv);
+                return;
+            }
             /*
             string key = "elv&" + zoom.ToString() + "&" + merc_long.ToString() + "&" + merc_lat.ToString() + "&end";
             elv = (byte[])elvCache[key];//GetFromCache<byte[]>(elvCache,key);
@@ -186,6 +192,7 @@ public class collect_tiles : MonoBehaviour {
                     //client.DownloadFile(eQuery, elvFilename);
                     elv = client.DownloadData(eQuery);
                     File.WriteAllBytes(elvFilename, elv);
+                    File.WriteAllBytes(cache_dir + key, elv);
                     //AddToCache<byte[]>(elvCache ,key, elv);
                     //Debug.Log(this.name + " Added to cache: " + key);
                     //elvCache.Insert(key, elv, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null);
@@ -298,12 +305,19 @@ public class collect_tiles : MonoBehaviour {
 
         }
         byte[] img;
-        /*
-        string key = "img&"+ qKey + "&" + texture_mode.ToString() + "end";
+        
+        string key = "img&"+ qKey + "&" + texture_mode.ToString()+".jpeg";
+        if (System.IO.File.Exists(cache_dir + key))
+        {
+            img = File.ReadAllBytes(cache_dir + key);
+            File.WriteAllBytes(aerImageFilename, img);
+
+            return true;
+        }
         //string 
         //string 
         //Debug.Log(bQuery);
-
+        /*
         img = (byte[])imgCache[key];//GetFromCache<byte[]>(imgCache,key); //
         if (img != null)
         {
@@ -316,6 +330,7 @@ public class collect_tiles : MonoBehaviour {
             {
                 img = client.DownloadData(bQuery);
                 File.WriteAllBytes(aerImageFilename, img);
+                File.WriteAllBytes(cache_dir + key, img);
                 //AddToCache<byte[]>(imgCache,key, img);
                 //Debug.Log(this.name + " Added to cache: " + key);
                 //imgCache.Insert(key, img, null, System.Web.Caching.Cache.NoAbsoluteExpiration, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, null );
