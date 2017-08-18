@@ -239,7 +239,7 @@ public class Generate_Terrain : MonoBehaviour {
         oneKMLabel.AddComponent<oneKMLabel>();
         oneKMLabel.GetComponent<oneKMLabel>().map = this;
         oneKMLabel.GetComponent<oneKMLabel>().mMap = miniMap.GetComponent<miniMap>();
-
+        
         TerrainData testTerr = new TerrainData();
         testTerr.heightmapResolution = tile_width + 1;
         testTerr.size = new Vector3(tile_width, 1, tile_height);
@@ -247,8 +247,8 @@ public class Generate_Terrain : MonoBehaviour {
         testTerr.baseMapResolution = 1024;
         GameObject test_map_tile = Terrain.CreateTerrainGameObject(testTerr);
         test_map_tile.AddComponent<mapTile>();
-        test_map_tile.GetComponent<mapTile>().SetupMapTile(4, test_map_tile.GetComponent<Terrain>(), 683, 367, 11);
-
+        test_map_tile.GetComponent<mapTile>().SetupMapTile(6, test_map_tile.GetComponent<Terrain>(), 367, 684, 11);
+        
     }
 	
 	// Update is called once per frame

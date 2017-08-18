@@ -114,14 +114,17 @@ public class mapTile : MonoBehaviour {
             splats[i].tileOffset = new Vector2((i % detail) * splats[i].tileSize.x, ((i / detail) * splats[i].tileSize.y));
             //for (float p = splats[i].tileOffset.x; p < splats[i].tileOffset.x + splats[i].tileSize.x; p++)
 
-            for (int p = (int)(Terr.terrainData.alphamapResolution - splats[i].tileOffset.x) - 1; p > (Terr.terrainData.alphamapResolution - splats[i].tileOffset.x) - splats[i].tileSize.x -1; p--)
-                for (float q = splats[i].tileOffset.y; q < splats[i].tileOffset.y + splats[i].tileSize.y; q++)
-                //for (int q = (int)(Terr.terrainData.alphamapResolution - splats[i].tileOffset.y) - 1; q > (Terr.terrainData.alphamapResolution - splats[i].tileOffset.y) - splats[i].tileSize.y; q--)
-                    splatMapAlphas[(int)p, (int)q, i] = 1;
+            for (int p = (int)(Terr.terrainData.alphamapResolution - 1 - splats[i].tileOffset.x) ; p >= (Terr.terrainData.alphamapResolution - splats[i].tileOffset.x) - splats[i].tileSize.x; p--)
+                for (int q = (int)splats[i].tileOffset.y; q < splats[i].tileOffset.y + splats[i].tileSize.y; q++)
+                {
+                    //for (int q = (int)(Terr.terrainData.alphamapResolution - splats[i].tileOffset.y) - 1; q > (Terr.terrainData.alphamapResolution - splats[i].tileOffset.y) - splats[i].tileSize.y; q--)
+                    splatMapAlphas[p, q, i] = 1;
+                }
+
         }
         Terr.terrainData.splatPrototypes = splats;
         
-        //Terr.terrainData.heightmapResolution = 256 * detail;
+        //Terr.terrainData.heightmapResolution = (int)(256 * 0.25) * detail ;
         Terr.terrainData.SetAlphamaps(0, 0, splatMapAlphas);
 
        
@@ -172,21 +175,25 @@ public class mapTile : MonoBehaviour {
         //Grab a heightmap and throw it in our heights list
 
         //Grab a texture and throw it in our splats
+        SplatPrototype[] nSplats = new SplatPrototype[pieces];
         for(int i =0; i< pieces; i++)
         {
             int merc_lon = mercX + (i / detail);
             int merc_lat = mercY + (i % detail);
-            int tZoom = zoom - (int)Mathf.Log((float)detail, 4f);
+            int tZoom = zoom;// + (int)Mathf.Log((float)pieces, 4f);
             //Debug.Log("Grabbing tile " + merc_lon + " " + merc_lat + " " + tZoom);
             collect_tiles.dlImgFile(merc_lon, merc_lat, tZoom, texNames[i], 'a', null);
             Texture2D tex = new Texture2D(256, 256);
             tex.LoadImage(File.ReadAllBytes(texNames[i]));
-            Terr.terrainData.splatPrototypes[i].texture = tex;
+            nSplats[i] = Terr.terrainData.splatPrototypes[i];
+            nSplats[i].texture = tex;
+            //Terr.terrainData.splatPrototypes[i].texture = tex;
             yield return null;
         }
         try
         {
             UnityEditor.AssetDatabase.Refresh();
+            Terr.terrainData.splatPrototypes = nSplats;
         }
         catch (System.Exception e)
         {
@@ -197,7 +204,11 @@ public class mapTile : MonoBehaviour {
 
         for (int i = 0; i < pieces; i++)
         {
-            collect_tiles.dlElvFile(mercY, mercX, zoom + (detail-1), elvNames[i], null);
+
+            int merc_lon = mercX + (i / detail);
+            int merc_lat = mercY + (i % detail);
+            int tZoom = zoom;// + (int)Mathf.Log((float)pieces, 4f);
+            collect_tiles.dlElvFile(merc_lon, merc_lat, tZoom, elvNames[i], null);
             Texture2D tex = new Texture2D(256, 256);
             tex.LoadImage(File.ReadAllBytes(texNames[i]));
             heights[i] = tex;
