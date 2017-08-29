@@ -4,15 +4,15 @@
 
 #Simple coin setup
 
-@coin	id	01	x	-91	z	423	offset	0.2
-@coin	id	02	x	49	z	249	offset	0.6
-@coin	id	03	x	40	z	-46	offset	1.3
-@coin	id	04	x	203	z	61	offset	1.7
-@coin	id	05	x	261	z	-76	offset	2.4
-@coin	id	06	x	337	z	387	offset	0.2
-@coin	id	07	x	221.77	z	268.74	offset	2.4
-@coin	id	08	x	126	z	502	offset	0.3
-@coin	id	09	x	317	z	-35	offset	1.2
-@coin	id	10	x	427	z	107	offset	0.3
+@coin	id	01	x	-91	z	423	offset	1.2	b
+@coin	id	02	x	49	z	249	offset	1.6	c
+@coin	id	03	x	40	z	-46	offset	1.3	bc
+@coin	id	04	x	203	z	61	offset	1.7	c
+@coin	id	05	x	261	z	-76	offset	2.4	b
+@coin	id	06	x	337	z	387	offset	1.2	b
+@coin	id	07	x	221.77	z	268.74	offset	2.4	c
+@coin	id	08	x	126	z	502	offset	1.3	bc
+@coin	id	09	x	317	z	-35	offset	1.2	b
+@coin	id	10	x	427	z	107	offset	1.3	b
 
 @outfile	sample_tests.txt

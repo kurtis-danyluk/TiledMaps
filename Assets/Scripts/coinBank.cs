@@ -9,12 +9,13 @@ public class coinBank : MonoBehaviour {
     public GameObject tokenPrefab;
     string init_filename = @"Assets/sample_coins.txt";
     private string result_filename;
+    public string participant_name;
     public int count;
     public TextMesh counter;
     public GameObject beaconPrefab;
     public GameObject beaconPinPrefab;
     Generate_Terrain terrain;
-    int active_coin;
+    public int active_coin;
 
 
 	// Use this for initialization
@@ -54,26 +55,31 @@ public class coinBank : MonoBehaviour {
             {
                 t.GetComponent<basicToken>().hasChanged = true;
             }
+
         if (active_coin < tokens.Count)
         {
-            if (tokens[active_coin].GetComponent<basicToken>().isGrabbed)
+            if (tokens[active_coin].GetComponent<basicToken>().isGrabbed && tokens[active_coin].GetComponent<basicToken>().beaconEntered)
                 active_coin++;
 
-            if (tokens[active_coin].activeSelf == false)
-                tokens[active_coin].SetActive(true);
+            if (active_coin < tokens.Count)
+                if (tokens[active_coin].activeSelf == false)
+                    tokens[active_coin].SetActive(true);
         }
 	}
 
     void OnApplicationQuit()
     {
         Debug.Log("Quiting: Time Scores Are:");
-        string outF = "";
+        if (participant_name == null)
+            participant_name = "Anon";
+        string outF = participant_name +"\t"+ System.DateTime.Now.ToString() +" :\n";
         foreach (GameObject e in tokens)
         {
-            string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Time:" + e.GetComponent<basicToken>().time_grabbed + "Beacon: " + e.GetComponent<basicToken>().time_entered;
+            string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Coin Time:" + e.GetComponent<basicToken>().time_grabbed + ";Beacon: " + e.GetComponent<basicToken>().time_entered + ";Point Back Angle: " + e.GetComponent<basicToken>().point_back_angle+ "\n";
             Debug.Log(outl);
-            outF += outl + '\n';
+            outF += outl + "\n";
         }
+        outF += "\n\n";
         if (result_filename != null)
             File.AppendAllText(result_filename, outF);
     }
@@ -97,6 +103,7 @@ public class coinBank : MonoBehaviour {
                 float x = float.Parse(e[4]);
                 float z = float.Parse(e[6]);
                 float y = float.Parse(e[8]);
+                string bcid = e[9];
 
                 tToken.GetComponent<basicToken>().offset = y;
                 //RaycastHit hit;
@@ -106,7 +113,26 @@ public class coinBank : MonoBehaviour {
                 tToken.transform.position = new Vector3(x, y, z);
                 tToken.name = "coin" + tToken.GetComponent<basicToken>().coin_id;
                 tToken.GetComponent<basicToken>().laserPrefab = beaconPrefab;
-                tokens.Add(tToken);
+
+                if (bcid == "c")
+                {
+                    tToken.GetComponent<basicToken>().showCoin = true;
+                    tToken.GetComponent<basicToken>().showBeacon = false;
+                }                   
+                else if (bcid == "b")
+                {
+
+                    tToken.GetComponent<basicToken>().showCoin = false;
+                    tToken.GetComponent<basicToken>().showBeacon = true;
+                }
+                else if (bcid == "bc" || bcid == "cb")
+                {
+
+                    tToken.GetComponent<basicToken>().showCoin = true;
+                    tToken.GetComponent<basicToken>().showBeacon = true;
+                }
+
+                    tokens.Add(tToken);
             }
             if (line.StartsWith("@outfile")){
                 string[] e = line.Split('\t');

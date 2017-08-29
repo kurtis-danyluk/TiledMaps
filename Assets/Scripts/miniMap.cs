@@ -69,7 +69,7 @@ public class miniMap : MonoBehaviour {
             string tKey = t.GetComponent<basicToken>().coin_id;
             if (!beacons.ContainsKey(tKey))
             {
-
+                Physics.IgnoreCollision(this.GetComponent<Collider>(), t.GetComponent<Collider>());
                 GameObject nBeacon = Instantiate(bank.beaconPinPrefab);
                 nBeacon.transform.SetParent(this.transform);
                 //  nBeacon.transform.localScale = new Vector3(nBeacon.transform.localScale.x * ( scaler/scale), 1, nBeacon.transform.localScale.z * ( scaler / scale));
@@ -78,7 +78,7 @@ public class miniMap : MonoBehaviour {
                 beacons.Add(tKey, nBeacon);
             }
 
-            if (t.activeSelf == true)
+            if (t.activeSelf == true && t.GetComponent<basicToken>().showBeacon)
             {
                 beacons[tKey].SetActive(true);
                 //if (hasChanged)
