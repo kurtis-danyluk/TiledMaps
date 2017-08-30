@@ -32,7 +32,7 @@ public class GoogleStyleMovement : MonoBehaviour {
 	}
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (this.gameObject.GetComponent<ControllerGrabObject>().iGrabbed)
             indicator.gameObject.SetActive(false);

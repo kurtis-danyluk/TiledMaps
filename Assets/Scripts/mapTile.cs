@@ -87,7 +87,10 @@ public class mapTile : MonoBehaviour {
 
         texNames = new List<string>(pieces);
         elvNames = new List<string>(pieces);
-        Terr.terrainData.size = new Vector3(256 * detail * scale, 100, 256 * detail * scale);
+
+
+        Terr.terrainData.heightmapResolution = 256 * detail;
+        Terr.terrainData.size = new Vector3(256 * detail * scale, 185.75f, 256 * detail * scale);
         float[,,] splatMapAlphas = new float[256*detail,256*detail, pieces];
 
         Terr.terrainData.alphamapResolution = 256 * detail;
@@ -124,15 +127,13 @@ public class mapTile : MonoBehaviour {
         }
         Terr.terrainData.splatPrototypes = splats;
         
-        //Terr.terrainData.heightmapResolution = (int)(256 * 0.25) * detail ;
         Terr.terrainData.SetAlphamaps(0, 0, splatMapAlphas);
+        
 
-       
 
+        //
 
-            //
-
-            for (int i = 0; i < pieces; i++)
+        for (int i = 0; i < pieces; i++)
         {
             string fileName = base_tex_dir + i.ToString() + this.name + "height.png";
             elvNames.Insert(i,fileName);
@@ -210,20 +211,11 @@ public class mapTile : MonoBehaviour {
             int tZoom = zoom;// + (int)Mathf.Log((float)pieces, 4f);
             collect_tiles.dlElvFile(merc_lon, merc_lat, tZoom, elvNames[i], null);
             Texture2D tex = new Texture2D(256, 256);
-            tex.LoadImage(File.ReadAllBytes(texNames[i]));
+            tex.LoadImage(File.ReadAllBytes(elvNames[i]));
             heights[i] = tex;
             yield return null;
         }
-        /*
-        float[,] heightM = Terr.terrainData.GetHeights(0, 0, Terr.terrainData.heightmapWidth, Terr.terrainData.heightmapHeight);
-        for(int i =0; i<heights.Count; i++)
-            for(int j = 0; j < heights[i].width; j++)
-                for (int k = 0; k < heights[i].height; k++)
-                {
-                    heightM[j + ((i%detail)*256), k + ((i / detail) * 256)] = heights[i].GetPixel(j, k).a;
-                }
-        Terr.terrainData.SetHeights(0, 0, heightM);
-        */
+
         try
         {
             UnityEditor.AssetDatabase.Refresh();
@@ -232,6 +224,72 @@ public class mapTile : MonoBehaviour {
         {
             Debug.Log(e.Message);
         }
+
+
+        List<float[,]> heightArrays = new List<float[,]>();
+
+        for (int i = 0; i < heights.Count; i++)
+        {
+            heightArrays.Insert(i, new float[256, 256]);
+            for (int j = 0; j < heights[i].width; j++)
+                for (int k = 0; k < heights[i].height; k++)
+                    heightArrays[i][j, k] = heights[i].GetPixel(j, k).a;
+            heightArrays[i] = collect_tiles.flipMatrix(heightArrays[i], 256);
+            heightArrays[i] = collect_tiles.RotateMatrix(heightArrays[i], 256);
+            heightArrays[i] = collect_tiles.flipMatrix(heightArrays[i], 256);
+            heightArrays[i] = collect_tiles.flattenMatrixEdge(heightArrays[i], 256);
+
+        }
+
+
+        float[,] heightM = new float[256*detail,256*detail];//Terr.terrainData.GetHeights(0, 0, 256*detail, 256*detail);
+        float minHeight = float.MaxValue;
+        float maxHeight = float.MinValue;
+
+        for (int i =0; i<heights.Count; i++)
+            for(int j = 0; j < heights[i].width; j++)
+                for (int k = 0; k < heights[i].height; k++)
+                {
+                    float heightID = (1 - heightArrays[i][j,k]) * 255;
+                    float qHeight = collect_tiles.quantized_height((int)heightID);
+
+                    if (qHeight > maxHeight)
+                        maxHeight = qHeight;
+                    if (qHeight < minHeight)
+                        minHeight = qHeight;
+
+                    heightM[j + ((i%detail)*256), k + ((i / detail) * 256)] = qHeight;
+                }
+
+        for (int i = 0; i < 256*detail; i++)
+            for (int j = 0; j < 256*detail; j++)
+            {
+                heightM[i, j] = heightM[i, j] - minHeight;
+                heightM[i, j] = heightM[i, j] / (maxHeight - minHeight);
+            }
+
+
+
+        heightM = miniMap.scaleHeightmap(heightM, 256*detail, Terr.terrainData.heightmapResolution);
+
+        //heightM = collect_tiles.RotateMatrix(heightM, Terr.terrainData.heightmapResolution);
+        //heightM = collect_tiles.RotateMatrix(heightM, Terr.terrainData.heightmapResolution);
+        //heightM = collect_tiles.RotateMatrix(heightM, Terr.terrainData.heightmapResolution);
+        heightM = collect_tiles.flipMatrix(heightM, Terr.terrainData.heightmapResolution);
+
+        Terr.terrainData.SetHeights(0, 0, heightM);
+        Terr.heightmapPixelError = zoom;
+
+
+
+        float latitude;
+        float longitude;
+        collect_tiles.inverse_mercator(out latitude, out longitude, zoom, mercX, mercY);
+
+        float mRes = collect_tiles.ground_resolution(latitude , zoom);
+        float TerrHeight =  (maxHeight - minHeight) / mRes;
+
+        Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, TerrHeight, Terr.terrainData.size.z);
 
 
     }

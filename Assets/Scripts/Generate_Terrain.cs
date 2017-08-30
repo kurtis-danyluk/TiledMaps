@@ -247,7 +247,7 @@ public class Generate_Terrain : MonoBehaviour {
         testTerr.baseMapResolution = 1024;
         GameObject test_map_tile = Terrain.CreateTerrainGameObject(testTerr);
         test_map_tile.AddComponent<mapTile>();
-        test_map_tile.GetComponent<mapTile>().SetupMapTile(6, test_map_tile.GetComponent<Terrain>(), 367, 684, 11);
+        test_map_tile.GetComponent<mapTile>().SetupMapTile(4, test_map_tile.GetComponent<Terrain>(), 367, 683, 11);
         
     }
 	

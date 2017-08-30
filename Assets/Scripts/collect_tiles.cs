@@ -66,6 +66,7 @@ public class collect_tiles : MonoBehaviour {
     public char texture_mode = 'r';
 
     public float terrBaseHeight;
+    private static bool qTableMade = false;
     static System.Collections.Generic.List<float> qMappingTable;
     float[,,] map;
     float[,,] mapB;
@@ -671,14 +672,14 @@ public class collect_tiles : MonoBehaviour {
 
 
     //Gives ratio of meters per pixel at given zoom level and latitude
-    private float ground_resolution(float latitude, int zoom)
+    public static float ground_resolution(float latitude, int zoom)
     {
         float ground_resolution = (Mathf.Cos(latitude * Mathf.PI / 180) * 2 * Mathf.PI * earthCircumference)
             / (256 * Mathf.Pow(2,zoom));
 
         return ground_resolution;
     }
-    private System.Collections.Generic.List<float> generate_quantized_table()
+    private static System.Collections.Generic.List<float> generate_quantized_table()
     {
         System.Collections.Generic.List<float> table = new System.Collections.Generic.List<float>();
         for (int i = 0; i <= 11; i++)
@@ -694,11 +695,16 @@ public class collect_tiles : MonoBehaviour {
             table.Add(3000 + 50 * i);
         for (int i = 0; i <= 29; i++)
             table.Add(6000 + 100 * i);
-
+        qTableMade = true;
         return table;
     }
-    private static float quantized_height(int h)
+    public static float quantized_height(int h)
     {
+        if (!qTableMade)
+        {
+            qMappingTable = generate_quantized_table();
+            qTableMade = true;
+        }
         return qMappingTable[h];
     }
 
@@ -738,7 +744,7 @@ public class collect_tiles : MonoBehaviour {
     }
 
     //Auther: Nick Berardi
-    static float[,] RotateMatrix(float[,] matrix, int n)
+    public static float[,] RotateMatrix(float[,] matrix, int n)
     {
         float[,] ret = new float[n, n];
 
@@ -753,7 +759,7 @@ public class collect_tiles : MonoBehaviour {
         return ret;
     }
 
-    static float [,] flipMatrix(float[,] matrix, int dims)
+    public static float [,] flipMatrix(float[,] matrix, int dims)
     {
         float[,] ret = new float[dims, dims];
         for(int i = 0; i < dims; i++)
@@ -764,7 +770,7 @@ public class collect_tiles : MonoBehaviour {
             }
         return ret;
     }
-    static float [,] flattenMatrixEdge(float [,] matrix, int dims)
+    public static float [,] flattenMatrixEdge(float [,] matrix, int dims)
     {
         float[,] ret;
         ret = matrix;
@@ -790,7 +796,7 @@ public class collect_tiles : MonoBehaviour {
 
 
 
-    private static void inverse_mercator(out float lat, out float lon, int zoom, int x3, int y3)
+    public static void inverse_mercator(out float lat, out float lon, int zoom, int x3, int y3)
     {
         float pi = Mathf.PI;
 

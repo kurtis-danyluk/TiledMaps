@@ -134,7 +134,7 @@ public class miniMap : MonoBehaviour {
         return heights;
     }
 
-    float [,] scaleHeightmap(float [,] oHeights, int oSize, int nSize)
+    public static float [,] scaleHeightmap(float [,] oHeights, int oSize, int nSize)
     {
         float[,] nHeights = new float[nSize, nSize];
         float scale = (float)oSize / (float)nSize;
