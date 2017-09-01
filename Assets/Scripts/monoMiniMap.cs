@@ -45,15 +45,19 @@ public class monoMiniMap : MonoBehaviour {
                 mainMap.GetComponent<mapTile>().detail);
 
             TextureScale.Point(nTex, monoMini.terrainData.alphamapWidth, monoMini.terrainData.alphamapHeight);
-            nTex.Apply();
-            SplatPrototype splat = new SplatPrototype();
-            splat.texture = nTex;
-            splat.tileSize = new Vector2(monoMini.terrainData.alphamapWidth, monoMini.terrainData.alphamapWidth);
-            splat.tileOffset = new Vector2(0, 0);
-
             
 
-            monoMini.terrainData.splatPrototypes[1] = splat;
+            SplatPrototype splat = new SplatPrototype();
+            splat.texture = new Texture2D(monoMini.terrainData.alphamapWidth, monoMini.terrainData.alphamapHeight, TextureFormat.RGB24, true);
+            Graphics.CopyTexture(nTex, splat.texture);
+
+            splat.tileSize = new Vector2(1, 1);
+
+            SplatPrototype [] splats = new SplatPrototype[2];
+            splats[0] = monoMini.terrainData.splatPrototypes[0];
+            splats[1] = splat;
+
+            monoMini.terrainData.splatPrototypes = splats;
             
 
             //miniMap.terrainData.alphamapResolution = mainMap.terrainData.alphamapResolution;
@@ -66,17 +70,17 @@ public class monoMiniMap : MonoBehaviour {
 
     Texture2D combineSplatTextures(SplatPrototype [] splats, float [,,] AlphaMap, int AlphaMapResolution, int width)
     {
-        Texture2D retTex = new Texture2D(AlphaMapResolution, AlphaMapResolution, TextureFormat.RGB24, false);
-        
-        for (int i = 0; i<AlphaMapResolution; i++)
-            for (int j = 0; j < AlphaMapResolution; j++)
-                for(int k =0; k < splats.Length; k++)
+        Texture2D retTex = new Texture2D(AlphaMapResolution, AlphaMapResolution, TextureFormat.RGB24, true);
+        for (int k = 0; k < splats.Length; k++)
+            for (int i = 0; i<AlphaMapResolution; i++)
+                for (int j = 0; j < AlphaMapResolution; j++)
                 {
-                    if (AlphaMap[i, j, k] > 0)
+                    if (AlphaMap[i, j, k]  == 1)
                     {
-                        
-                        Color c = splats[k].texture.GetPixel((int)(i % splats[k].tileSize.x), (int)(j % splats[k].tileSize.y));
-                        c = c * k;
+                        int x= (int)(i % splats[k].tileSize.x);
+                        int y= (int)(j % splats[k].tileSize.y);
+                        Color c = splats[k].texture.GetPixel(x, y);
+                        //c = c * k;
                         retTex.SetPixel(i, j, c);
                     }               
                 }

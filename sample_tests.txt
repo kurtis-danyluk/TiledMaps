@@ -951,3 +951,532 @@ id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
 
 
 
+anon	9/1/2017 12:36:23 PM :
+id:01;Coin Time:33.27806;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 12:39:16 PM :
+id:01;Coin Time:145.4547;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 12:40:48 PM :
+id:01;Coin Time:75.83958;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 12:43:28 PM :
+id:01;Coin Time:136.6046;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 12:43:59 PM :
+id:01;Coin Time:13.98979;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 3:52:24 PM :
+id:01;Coin Time:26.28006;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 3:54:29 PM :
+id:01;Coin Time:5.623049;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 3:55:33 PM :
+id:01;Coin Time:5.777503;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 3:56:29 PM :
+id:01;Coin Time:17.10928;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 3:57:32 PM :
+id:01;Coin Time:5.581347;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 3:59:52 PM :
+id:01;Coin Time:107.7433;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:01:51 PM :
+id:01;Coin Time:28.50241;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:07:05 PM :
+id:01;Coin Time:253.2966;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:08:17 PM :
+id:01;Coin Time:57.89608;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:10:01 PM :
+id:01;Coin Time:52.51287;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:13:30 PM :
+id:01;Coin Time:154.2585;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:14:15 PM :
+id:01;Coin Time:20.7403;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:15:56 PM :
+id:01;Coin Time:65.68024;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:18:18 PM :
+id:01;Coin Time:78.08514;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:21:03 PM :
+id:01;Coin Time:31.89635;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:22:36 PM :
+id:01;Coin Time:23.21053;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:24:53 PM :
+id:01;Coin Time:52.56488;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+
+anon	9/1/2017 4:29:40 PM :
+id:01;Coin Time:23.12672;Beacon: 0;Point Back Angle: 361
+
+id:02;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:03;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:04;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:05;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:06;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:07;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:08;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:09;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+id:10;Coin Time:0;Beacon: 0;Point Back Angle: 361
+
+
+

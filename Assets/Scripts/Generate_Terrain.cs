@@ -247,7 +247,7 @@ public class Generate_Terrain : MonoBehaviour {
         testTerr.baseMapResolution = 1024;
         GameObject test_map_tile = Terrain.CreateTerrainGameObject(testTerr);
         test_map_tile.AddComponent<mapTile>();
-        test_map_tile.GetComponent<mapTile>().SetupMapTile(4, test_map_tile.GetComponent<Terrain>(), 367, 683, 11);
+        test_map_tile.GetComponent<mapTile>().SetupMapTile(3, test_map_tile.GetComponent<Terrain>(), 367, 683, 11);
         
 
 
@@ -291,9 +291,9 @@ public class Generate_Terrain : MonoBehaviour {
         testmMap.GetComponent<monoMiniMap>().mainMap = test_map_tile.GetComponent<Terrain>();
         testmMap.GetComponent<monoMiniMap>().bank = bank;
         testmMap.transform.parent = this.gameObject.transform;
-        testmMap.transform.localPosition = new Vector3(0, 0, 0);
+        testmMap.transform.localPosition = new Vector3(0, 1, 0);
         testmMap.GetComponent<Terrain>().detailObjectDistance = 250;
-        testmMap.GetComponent<Terrain>().heightmapPixelError = 3;
+        testmMap.GetComponent<Terrain>().heightmapPixelError = 1;
         //miniMap.GetComponent<Terrain>().basemapDistance = 10;
 
         testmMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;

@@ -122,7 +122,6 @@ public class mapTile : MonoBehaviour {
             for (int p = (int)(Terr.terrainData.alphamapResolution - 1 - splats[i].tileOffset.x) ; p >= (Terr.terrainData.alphamapResolution - splats[i].tileOffset.x) - splats[i].tileSize.x; p--)
                 for (int q = (int)splats[i].tileOffset.y; q < splats[i].tileOffset.y + splats[i].tileSize.y; q++)
                 {
-                    //for (int q = (int)(Terr.terrainData.alphamapResolution - splats[i].tileOffset.y) - 1; q > (Terr.terrainData.alphamapResolution - splats[i].tileOffset.y) - splats[i].tileSize.y; q--)
                     splatMapAlphas[p, q, i] = 1;
                 }
 
@@ -273,16 +272,11 @@ public class mapTile : MonoBehaviour {
 
 
         heightM = miniMap.scaleHeightmap(heightM, 256*detail, Terr.terrainData.heightmapResolution);
-
-        //heightM = collect_tiles.RotateMatrix(heightM, Terr.terrainData.heightmapResolution);
-        //heightM = collect_tiles.RotateMatrix(heightM, Terr.terrainData.heightmapResolution);
-        //heightM = collect_tiles.RotateMatrix(heightM, Terr.terrainData.heightmapResolution);
+        
         heightM = collect_tiles.flipMatrix(heightM, Terr.terrainData.heightmapResolution);
 
         Terr.terrainData.SetHeights(0, 0, heightM);
         Terr.heightmapPixelError = zoom;
-
-
 
         float latitude;
         float longitude;
