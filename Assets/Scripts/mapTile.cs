@@ -17,6 +17,8 @@ public class mapTile : MonoBehaviour {
     /// </summary>
     Terrain Terr;
 
+    public monoMiniMap monoMini;
+
     /// <summary>
     /// The X coordinate of the top left tile section in mercantor coordinates
     /// </summary>
@@ -34,7 +36,7 @@ public class mapTile : MonoBehaviour {
     /// Described as tiles across
     /// Must be positive
     /// </summary>
-    private int detail;
+    public int detail;
 
     /// <summary>
     /// The relative scale of the map compared to its pieces
@@ -45,7 +47,7 @@ public class mapTile : MonoBehaviour {
     /// The number of textures and heightmaps
     /// this si derived from detail
     /// </summary>
-    int pieces;
+    public int pieces;
 
     /// <summary>
     /// The directory we'll store formated textures for this tile
@@ -292,6 +294,7 @@ public class mapTile : MonoBehaviour {
         Terr.terrainData.size = new Vector3(Terr.terrainData.size.x, TerrHeight, Terr.terrainData.size.z);
 
 
+        monoMini.hasChanged = true;
     }
 
 

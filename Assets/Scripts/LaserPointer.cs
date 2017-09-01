@@ -89,6 +89,15 @@ public class LaserPointer : MonoBehaviour {
                     Physics.Raycast(new Vector3(hitPoint.x, 3000, hitPoint.z), Vector3.down, out findHit);
                     hitPoint.y = findHit.point.y;
                 }
+                else if(hit.collider.gameObject.GetComponent<monoMiniMap>() != null)
+                {
+                    monoMiniMap miniMap = hit.collider.gameObject.GetComponent<monoMiniMap>();
+                    hitPoint = hit.collider.gameObject.transform.InverseTransformPoint(hitPoint);
+                    hitPoint = (hitPoint * miniMap.mainMap.terrainData.size.x);
+
+                    hitPoint.y = miniMap.mainMap.terrainData.GetHeight((int)hitPoint.x, (int)hitPoint.z);
+
+                }
                 //Debug.Log(hitPoint.x + " " + hitPoint.y + " " + hitPoint.z);
                 teleportReticleTransform.position = hitPoint + teleportReticleOffset;
                 shouldTeleport = true;

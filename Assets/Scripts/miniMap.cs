@@ -170,7 +170,7 @@ public class miniMap : MonoBehaviour {
 
 
 
-                int piece_width = width / map.terrains_width;
+        int piece_width = width / map.terrains_width;
         int piece_height = height / map.terrains_height;
 
         //Scale down each texture to the wanted size

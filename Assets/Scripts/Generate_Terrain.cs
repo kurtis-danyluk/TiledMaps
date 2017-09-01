@@ -249,6 +249,58 @@ public class Generate_Terrain : MonoBehaviour {
         test_map_tile.AddComponent<mapTile>();
         test_map_tile.GetComponent<mapTile>().SetupMapTile(4, test_map_tile.GetComponent<Terrain>(), 367, 683, 11);
         
+
+
+        TerrainData testMMapTerr = new TerrainData();
+        testMMapTerr.heightmapResolution = test_map_tile.GetComponent<Terrain>().terrainData.heightmapResolution;
+        testMMapTerr.SetDetailResolution(1024, 8);
+        testMMapTerr.baseMapResolution = 1024;
+        testMMapTerr.size = new Vector3(1, 1, 1);
+        testMMapTerr.splatPrototypes = mSplats;
+
+        testMMapTerr.alphamapResolution = 1024;
+
+        float[,,] splatMapAlphasMono = testMMapTerr.GetAlphamaps(0, 0, testMMapTerr.alphamapWidth, testMMapTerr.alphamapHeight);
+
+        radius = 0.98f;
+        for (int i = 0; i < testMMapTerr.alphamapHeight; i++)
+            for (int j = 0; j < testMMapTerr.alphamapWidth; j++)
+            {
+                int height = testMMapTerr.alphamapHeight;
+                int width = testMMapTerr.alphamapWidth;
+                if (Mathf.Sqrt(Mathf.Pow(i - (height / 2), 2) + Mathf.Pow(j - (width / 2), 2)) > (radius * height * 0.5))
+                {
+                    splatMapAlphasMono[i, j, 0] = 1;
+                    splatMapAlphasMono[i, j, 1] = 0;
+                }
+                else
+                {
+
+                    splatMapAlphasMono[i, j, 0] = 0;
+                    splatMapAlphasMono[i, j, 1] = 1;
+                }
+
+            }
+
+
+        testMMapTerr.SetAlphamaps(0, 0, splatMapAlphasMono);
+
+        GameObject testmMap = Terrain.CreateTerrainGameObject(testMMapTerr);
+        testmMap.name = "monoMiniMap";
+        testmMap.AddComponent<monoMiniMap>();
+        testmMap.GetComponent<monoMiniMap>().mainMap = test_map_tile.GetComponent<Terrain>();
+        testmMap.GetComponent<monoMiniMap>().bank = bank;
+        testmMap.transform.parent = this.gameObject.transform;
+        testmMap.transform.localPosition = new Vector3(0, 0, 0);
+        testmMap.GetComponent<Terrain>().detailObjectDistance = 250;
+        testmMap.GetComponent<Terrain>().heightmapPixelError = 3;
+        //miniMap.GetComponent<Terrain>().basemapDistance = 10;
+
+        testmMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;
+        testmMap.GetComponent<Terrain>().materialTemplate = tranMat;
+
+        test_map_tile.GetComponent<mapTile>().monoMini = testmMap.GetComponent<monoMiniMap>();
+
     }
 	
 	// Update is called once per frame
