@@ -22,15 +22,15 @@ public class mapTile : MonoBehaviour {
     /// <summary>
     /// The X coordinate of the top left tile section in mercantor coordinates
     /// </summary>
-    private int mercX;
+    public int mercX;
     /// <summary>
     /// The Y coordinate of the top left tile section in mercantor coordinates
     /// </summary>
-    private int mercY;
+    public int mercY;
     /// <summary>
     /// The current zoom level of the total tile
     /// </summary>
-    private int zoom;
+    public int zoom;
     /// <summary>
     /// The detail level of the tile
     /// Described as tiles across
@@ -291,5 +291,21 @@ public class mapTile : MonoBehaviour {
         monoMini.hasChanged = true;
     }
 
+
+    public void ChangeZoom(int val)
+    {
+        if (val == 0)
+            return;
+
+        float latitude;
+        float longitude;
+
+        collect_tiles.inverse_mercator(out latitude, out longitude, zoom, mercX, mercY);
+        this.zoom += val;
+        collect_tiles.mercator(latitude, longitude, zoom, out mercX, out mercY);
+
+        hasChanged = true;
+
+    }
 
 }

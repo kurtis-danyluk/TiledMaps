@@ -7,6 +7,7 @@ public class tracker_guide : MonoBehaviour {
     public bool isGrabbed;
     private SteamVR_TrackedObject trackedObj;
     public Generate_Terrain map;
+    public monoMiniMap monoMini;
     private GameObject tracker;
     private Transform trackerTransform;
     private MeshRenderer mesh;
@@ -62,7 +63,65 @@ public class tracker_guide : MonoBehaviour {
        
     }
 
+    public static Vector3 translateMaptoMMap(Vector3 GlobalPose, monoMiniMap mMap)
+    {
+        Vector3 localPose = new Vector3();
+        localPose.x = GlobalPose.x;
+        localPose.z = GlobalPose.z;
+        localPose.y = GlobalPose.y;
+        localPose = localPose / mMap.mainMap.terrainData.size.x;
 
+        return localPose;
+    }
+
+    public static Vector3 translateMMaptoMap(Vector3 localPose, monoMiniMap mMap)
+    {
+        Vector3 GlobalPose = new Vector3();
+        GlobalPose.x = localPose.x * mMap.mainMap.terrainData.size.x;
+        GlobalPose.z = localPose.z * mMap.mainMap.terrainData.size.z;
+        GlobalPose.y = localPose.y * mMap.mainMap.terrainData.size.x;
+        return GlobalPose;
+    }
+
+
+    void LateUpdate()
+    {
+        RaycastHit hit;
+
+        if (!isGrabbed)
+        {
+
+
+            Vector3 trackPos = translateMaptoMMap(cameraRigTransform.position, monoMini);
+            
+            Physics.Raycast(cameraRigTransform.position, Vector3.down, out hit);
+
+            trackPos.y += 0.05f;
+            trackerTransform.localPosition = trackPos;
+
+
+            if (Physics.Raycast(trackerTransform.position, new Vector3(0, -1, 0), out hit, 1000))
+            {
+                hitPoint = hit.point;
+                ShowLaser(hit);
+            }
+            mesh.material.color = Color.red;
+        }
+        else
+        {
+            Vector3 temp = translateMMaptoMap(trackerTransform.localPosition + new Vector3(0,-0.05f,0), monoMini);
+            
+            Vector3 difference = cameraRigTransform.position - headTransform.position;
+
+            cameraRigTransform.position = temp + difference;
+
+            mesh.material.color = Color.green;
+        }
+
+    }
+
+
+    /*
     // Update is called once per frame
     void LateUpdate()
     {
@@ -105,5 +164,5 @@ public class tracker_guide : MonoBehaviour {
             mesh.material.color = Color.green;
         }
         
-    }
+    }*/
 }

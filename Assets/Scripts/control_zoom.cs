@@ -68,16 +68,16 @@ public class control_zoom : MonoBehaviour {
                         lockInput();
                         //Debug.Log("Angle: " + angle);
 
-                        int zoom = collect_tiles.zoom; ;
-
+                        
                         if (angle > 0)
                         {
-                            collector.watch_zoom(zoom + 1);
+                            map.mainMap.GetComponent<mapTile>().ChangeZoom(1);
                             //Debug.Log("Zoom In to "+ collect_tiles.zoom);
                         }
                         else if (angle < 0)
                         {
-                            collector.watch_zoom(zoom - 1);
+
+                            map.mainMap.GetComponent<mapTile>().ChangeZoom(-1);
                             //Debug.Log("Zoom Out to " + collect_tiles.zoom);
                         }
                     }

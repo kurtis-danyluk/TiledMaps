@@ -819,7 +819,7 @@ public class collect_tiles : MonoBehaviour {
         //Debug.Log("Lat for " + y3 + " is " + lat); 
     }
 
-    private static void mercator(float lat, float lon, int zoom, out int x3, out int y3)
+    public static void mercator(float lat, float lon, int zoom, out int x3, out int y3)
     {
         float pi = Mathf.PI;
 

@@ -49,6 +49,9 @@ public class Generate_Terrain : MonoBehaviour {
     //And the terrain data we'll use to create
     private TerrainData mMapTerrData;
 
+    public GameObject mainMap;
+    public GameObject monoMiniMap;
+
     //A text mesh we're making to show how long the minimap is
     private GameObject scaleLabel;
     private GameObject oneKMLabel;
@@ -169,7 +172,7 @@ public class Generate_Terrain : MonoBehaviour {
         miniMap.GetComponent<miniMap>().bank = bank;
         miniMap.name = "miniMap";
         miniMap.transform.parent = this.gameObject.transform;
-        miniMap.transform.localPosition = new Vector3(-0.5f, 1, -0.5f);
+        miniMap.transform.localPosition = new Vector3(1, 1, 1);
         miniMap.GetComponent<Terrain>().detailObjectDistance = 250;
         miniMap.GetComponent<Terrain>().heightmapPixelError = 3;
         //miniMap.GetComponent<Terrain>().basemapDistance = 10;
@@ -213,10 +216,7 @@ public class Generate_Terrain : MonoBehaviour {
 
         posTracker = Instantiate(trackerPrefab);
 
-        posTracker.GetComponent<tracker_guide>().map = this;
-        posTracker.GetComponent<tracker_guide>().cameraRigTransform = GameObject.Find("[CameraRig]").transform;
-        posTracker.GetComponent<tracker_guide>().headTransform = GameObject.Find("Camera (eye)").transform;
-        posTracker.transform.parent = miniMap.transform;
+        
 
         scaleLabel = new GameObject("Scale_Label");
         scaleLabel.AddComponent<TextMesh>();
@@ -245,29 +245,29 @@ public class Generate_Terrain : MonoBehaviour {
         testTerr.size = new Vector3(tile_width, 1, tile_height);
         testTerr.SetDetailResolution(1024, 8);
         testTerr.baseMapResolution = 1024;
-        GameObject test_map_tile = Terrain.CreateTerrainGameObject(testTerr);
-        test_map_tile.AddComponent<mapTile>();
-        test_map_tile.GetComponent<mapTile>().SetupMapTile(3, test_map_tile.GetComponent<Terrain>(), 367, 683, 11);
+        mainMap = Terrain.CreateTerrainGameObject(testTerr);
+        mainMap.AddComponent<mapTile>();
+        mainMap.GetComponent<mapTile>().SetupMapTile(4, mainMap.GetComponent<Terrain>(), 367, 683, 11);
         
 
 
-        TerrainData testMMapTerr = new TerrainData();
-        testMMapTerr.heightmapResolution = test_map_tile.GetComponent<Terrain>().terrainData.heightmapResolution;
-        testMMapTerr.SetDetailResolution(1024, 8);
-        testMMapTerr.baseMapResolution = 1024;
-        testMMapTerr.size = new Vector3(1, 1, 1);
-        testMMapTerr.splatPrototypes = mSplats;
+        TerrainData monoMiniTerr = new TerrainData();
+        monoMiniTerr.heightmapResolution = mainMap.GetComponent<Terrain>().terrainData.heightmapResolution;
+        monoMiniTerr.SetDetailResolution(1024, 8);
+        monoMiniTerr.baseMapResolution = 1024;
+        monoMiniTerr.size = new Vector3(1, 1, 1);
+        monoMiniTerr.splatPrototypes = mSplats;
 
-        testMMapTerr.alphamapResolution = 1024;
+        monoMiniTerr.alphamapResolution = 1024;
 
-        float[,,] splatMapAlphasMono = testMMapTerr.GetAlphamaps(0, 0, testMMapTerr.alphamapWidth, testMMapTerr.alphamapHeight);
+        float[,,] splatMapAlphasMono = monoMiniTerr.GetAlphamaps(0, 0, monoMiniTerr.alphamapWidth, monoMiniTerr.alphamapHeight);
 
         radius = 0.98f;
-        for (int i = 0; i < testMMapTerr.alphamapHeight; i++)
-            for (int j = 0; j < testMMapTerr.alphamapWidth; j++)
+        for (int i = 0; i < monoMiniTerr.alphamapHeight; i++)
+            for (int j = 0; j < monoMiniTerr.alphamapWidth; j++)
             {
-                int height = testMMapTerr.alphamapHeight;
-                int width = testMMapTerr.alphamapWidth;
+                int height = monoMiniTerr.alphamapHeight;
+                int width = monoMiniTerr.alphamapWidth;
                 if (Mathf.Sqrt(Mathf.Pow(i - (height / 2), 2) + Mathf.Pow(j - (width / 2), 2)) > (radius * height * 0.5))
                 {
                     splatMapAlphasMono[i, j, 0] = 1;
@@ -283,23 +283,31 @@ public class Generate_Terrain : MonoBehaviour {
             }
 
 
-        testMMapTerr.SetAlphamaps(0, 0, splatMapAlphasMono);
+        monoMiniTerr.SetAlphamaps(0, 0, splatMapAlphasMono);
 
-        GameObject testmMap = Terrain.CreateTerrainGameObject(testMMapTerr);
-        testmMap.name = "monoMiniMap";
-        testmMap.AddComponent<monoMiniMap>();
-        testmMap.GetComponent<monoMiniMap>().mainMap = test_map_tile.GetComponent<Terrain>();
-        testmMap.GetComponent<monoMiniMap>().bank = bank;
-        testmMap.transform.parent = this.gameObject.transform;
-        testmMap.transform.localPosition = new Vector3(0, 1, 0);
-        testmMap.GetComponent<Terrain>().detailObjectDistance = 250;
-        testmMap.GetComponent<Terrain>().heightmapPixelError = 1;
+        monoMiniMap = Terrain.CreateTerrainGameObject(monoMiniTerr);
+        monoMiniMap.name = "monoMiniMap";
+        monoMiniMap.AddComponent<monoMiniMap>();
+        monoMiniMap.GetComponent<monoMiniMap>().mainMap = mainMap.GetComponent<Terrain>();
+        monoMiniMap.GetComponent<monoMiniMap>().bank = bank;
+        monoMiniMap.transform.parent = this.gameObject.transform;
+        monoMiniMap.transform.localPosition = new Vector3(-0.5f, 1, -0.5f);
+        monoMiniMap.GetComponent<Terrain>().detailObjectDistance = 250;
+        monoMiniMap.GetComponent<Terrain>().heightmapPixelError = 1;
         //miniMap.GetComponent<Terrain>().basemapDistance = 10;
 
-        testmMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;
-        testmMap.GetComponent<Terrain>().materialTemplate = tranMat;
+        monoMiniMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;
+        monoMiniMap.GetComponent<Terrain>().materialTemplate = tranMat;
 
-        test_map_tile.GetComponent<mapTile>().monoMini = testmMap.GetComponent<monoMiniMap>();
+        mainMap.GetComponent<mapTile>().monoMini = monoMiniMap.GetComponent<monoMiniMap>();
+
+        posTracker.GetComponent<tracker_guide>().map = this;
+        posTracker.GetComponent<tracker_guide>().monoMini = monoMiniMap.GetComponent<monoMiniMap>();
+        posTracker.GetComponent<tracker_guide>().cameraRigTransform = GameObject.Find("[CameraRig]").transform;
+        posTracker.GetComponent<tracker_guide>().headTransform = GameObject.Find("Camera (eye)").transform;
+        posTracker.transform.parent = monoMiniMap.transform;
+
+
 
     }
 	
