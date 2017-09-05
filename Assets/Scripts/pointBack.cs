@@ -7,6 +7,9 @@ public class pointBack : MonoBehaviour
 
     private SteamVR_TrackedObject trackedObj;
     public GameObject laserPrefab;
+    public GameObject pointerPrefab;
+    public GameObject pointer;
+    private Transform pointerTransform;
     private GameObject laser;
     private Transform laserTransform;
     private Vector3 hitPoint;
@@ -20,6 +23,14 @@ public class pointBack : MonoBehaviour
         laser = Instantiate(laserPrefab);
         laser.GetComponent<MeshRenderer>().material.color = Color.blue;
         laserTransform = laser.transform;
+
+        pointer = Instantiate(pointerPrefab);
+        //pointer.GetComponent<MeshRenderer>().material.color = Color.blue;
+        pointer.transform.parent = this.gameObject.transform;
+        pointer.transform.localPosition = new Vector3(0,0,1);
+        pointerTransform = pointer.transform;
+        pointer.SetActive(false);
+        
 
     }
 
@@ -40,6 +51,7 @@ public class pointBack : MonoBehaviour
         laserTransform.LookAt(hitPoint);
         laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y,
             hit.distance);
+
     }
 
     // Update is called once per frame
@@ -53,13 +65,14 @@ public class pointBack : MonoBehaviour
 
         if (isActive && Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
         {
-            RaycastHit hit;
+            pointer.SetActive(true);
+            //RaycastHit hit;
 
             // 2
-            if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 1000))
+            //if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 1000))
             {
-                hitPoint = hit.point;
-                ShowLaser(hit);
+                //hitPoint = hit.point;
+                //ShowLaser(hit);
 
                 Vector3 truePath;
                 if (bank.active_coin > 1)
@@ -67,23 +80,28 @@ public class pointBack : MonoBehaviour
                 else
                     truePath = new Vector3(0, 0, 0) - cameraRigTransform.position;
 
-                Vector3 beamPath = hitPoint - cameraRigTransform.position;
+                Vector3 pointerPath = this.transform.forward;
+                //Vector3 beamPath = hitPoint - cameraRigTransform.position;
 
                 truePath.Normalize();
-                beamPath.Normalize();
+                //beamPath.Normalize();
+                pointerPath.Normalize();
 
-                float angle = Vector3.Angle(truePath, beamPath);
-                if(bank.active_coin > 0)
+                float angle = Vector3.Angle(truePath, pointerPath);
+                if (bank.active_coin > 0)
                     bank.tokens[bank.active_coin - 1].GetComponent<basicToken>().point_back_angle = angle;
 
                 //Debug.Log("Angle between paths: " + angle);
-                
+
             }
 
 
 
         }
         else
+        {
             laser.SetActive(false);
+            pointer.SetActive(false);
+        }
     }
 }

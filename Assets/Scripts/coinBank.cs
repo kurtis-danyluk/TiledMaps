@@ -16,6 +16,7 @@ public class coinBank : MonoBehaviour {
     public GameObject beaconPinPrefab;
     Generate_Terrain terrain;
     public int active_coin;
+    public bool hasChanged;
 
 
 	// Use this for initialization
@@ -50,12 +51,14 @@ public class coinBank : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         counter.text = count.ToString();
-        if(collect_tiles.center_changed)
-            foreach(GameObject t in tokens)
+        if (collect_tiles.center_changed || hasChanged)
+        {
+            foreach (GameObject t in tokens)
             {
                 t.GetComponent<basicToken>().hasChanged = true;
             }
-
+            hasChanged = false;
+        }
         if (active_coin < tokens.Count)
         {
             if (tokens[active_coin].GetComponent<basicToken>().isGrabbed && tokens[active_coin].GetComponent<basicToken>().beaconEntered)

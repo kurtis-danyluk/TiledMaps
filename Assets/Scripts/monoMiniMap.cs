@@ -27,6 +27,7 @@ public class monoMiniMap : MonoBehaviour {
         
         if (hasChanged)
         {
+            bank.hasChanged = true;
             hasChanged = false;
 
             scale = mainMap.terrainData.size.x / mapWidth;
@@ -68,6 +69,9 @@ public class monoMiniMap : MonoBehaviour {
             //miniMap.terrainData.splatPrototypes = mainMap.terrainData.splatPrototypes;
 
         }
+
+        manageBeacons();
+
     }
 
 
@@ -107,4 +111,47 @@ public class monoMiniMap : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    void manageBeacons()
+    {
+        foreach (GameObject t in bank.tokens)
+        {
+            string tKey = t.GetComponent<basicToken>().coin_id;
+            if (!beacons.ContainsKey(tKey))
+            {
+                Physics.IgnoreCollision(this.GetComponent<Collider>(), t.GetComponent<Collider>());
+                GameObject nBeacon = Instantiate(bank.beaconPinPrefab);
+                nBeacon.transform.SetParent(this.transform);
+                //  nBeacon.transform.localScale = new Vector3(nBeacon.transform.localScale.x * ( scaler/scale), 1, nBeacon.transform.localScale.z * ( scaler / scale));
+                //  nBeacon.transform.localScale = new Vector3(nBeacon.transform.localScale.x / 2, nBeacon.transform.localScale.y / 2, nBeacon.transform.localScale.z / 2);
+                nBeacon.transform.localPosition = new Vector3(0, 0, 0);
+                beacons.Add(tKey, nBeacon);
+            }
+
+            if (t.activeSelf == true && t.GetComponent<basicToken>().showBeacon)
+            {
+                beacons[tKey].SetActive(true);
+                //if (hasChanged)
+                {
+                    Vector3 beaconPos;
+                    beaconPos = tracker_guide.translateMaptoMMap(t.GetComponent<basicToken>().laserTransform.position, this);
+                    beacons[tKey].transform.localPosition = beaconPos - new Vector3(0, 1.0f, 0);
+                }
+                //basicToken.ShowLaser(beacons[tKey], beacons[tKey].transform, beacons[tKey].transform.position, beacons[tKey].transform.position + new Vector3(0, 1, 0), 1);
+            }
+            else
+            {
+                beacons[tKey].SetActive(false);
+            }
+
+        }
+
+        foreach (GameObject t in bank.tokens)
+        {
+            string tKey = t.GetComponent<basicToken>().coin_id;
+            if (t.activeSelf == false)
+                beacons[tKey].SetActive(false);
+        }
+    }
+
 }

@@ -93,6 +93,7 @@ public class Generate_Terrain : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        /*
         map_width = tile_width * terrains_width;
         map_height = tile_height * terrains_height;
 
@@ -143,13 +144,15 @@ public class Generate_Terrain : MonoBehaviour {
                 
             }
         
-        
+        */
 
+        /*
         mMapTerrData = new TerrainData();
         mMapTerrData.heightmapResolution = tile_width * terrains_width + 1;
         mMapTerrData.size = new Vector3(1, 1, 1);
         mMapTerrData.SetDetailResolution(1024, 8);
         mMapTerrData.baseMapResolution = 1024;
+        */    
         SplatPrototype[] mSplats = new SplatPrototype[2];
         mSplats[0] = new SplatPrototype();
 
@@ -164,8 +167,10 @@ public class Generate_Terrain : MonoBehaviour {
         
         mSplats[1] = new SplatPrototype();
         mSplats[1].texture = new Texture2D(256, 256, TextureFormat.ARGB32, true);
-        mMapTerrData.splatPrototypes = mSplats;
+
+        //mMapTerrData.splatPrototypes = mSplats;
         
+        /*
         miniMap = Terrain.CreateTerrainGameObject(mMapTerrData);
         miniMap.AddComponent<miniMap>();
         miniMap.GetComponent<miniMap>().map = this;
@@ -179,7 +184,7 @@ public class Generate_Terrain : MonoBehaviour {
         
         miniMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;
         miniMap.GetComponent<Terrain>().materialTemplate = tranMat;
-
+        
         float[,,] splatMapAlphas = miniMap.GetComponent<Terrain>().terrainData.GetAlphamaps(0,0, miniMap.GetComponent<Terrain>().terrainData.alphamapWidth, miniMap.GetComponent<Terrain>().terrainData.alphamapHeight) ;
 
         float radius = 0.98f;
@@ -203,8 +208,10 @@ public class Generate_Terrain : MonoBehaviour {
             }
         miniMap.GetComponent<Terrain>().terrainData.SetAlphamaps(0, 0, splatMapAlphas);
 
+        miniMap.SetActive(false);
+        */
 
-
+        /*
         center.Terr = terrains[centerX, centerY].GetComponent<Terrain>();
         center.collect = terrains[centerX, centerY].GetComponent<collect_tiles>();
 
@@ -214,10 +221,9 @@ public class Generate_Terrain : MonoBehaviour {
 
         terrains[centerX, centerY].GetComponent<collect_tiles>().mTerr = miniMap;
 
-        posTracker = Instantiate(trackerPrefab);
-
+      */  
         
-
+        /*
         scaleLabel = new GameObject("Scale_Label");
         scaleLabel.AddComponent<TextMesh>();
         scaleLabel.transform.parent = miniMap.transform;
@@ -239,13 +245,14 @@ public class Generate_Terrain : MonoBehaviour {
         oneKMLabel.AddComponent<oneKMLabel>();
         oneKMLabel.GetComponent<oneKMLabel>().map = this;
         oneKMLabel.GetComponent<oneKMLabel>().mMap = miniMap.GetComponent<miniMap>();
-        
-        TerrainData testTerr = new TerrainData();
-        testTerr.heightmapResolution = tile_width + 1;
-        testTerr.size = new Vector3(tile_width, 1, tile_height);
-        testTerr.SetDetailResolution(1024, 8);
-        testTerr.baseMapResolution = 1024;
-        mainMap = Terrain.CreateTerrainGameObject(testTerr);
+    */    
+
+        TerrainData mapTerr = new TerrainData();
+        mapTerr.heightmapResolution = tile_width + 1;
+        mapTerr.size = new Vector3(tile_width, 1, tile_height);
+        mapTerr.SetDetailResolution(1024, 8);
+        mapTerr.baseMapResolution = 1024;
+        mainMap = Terrain.CreateTerrainGameObject(mapTerr);
         mainMap.AddComponent<mapTile>();
         mainMap.GetComponent<mapTile>().SetupMapTile(4, mainMap.GetComponent<Terrain>(), 367, 683, 11);
         
@@ -262,7 +269,7 @@ public class Generate_Terrain : MonoBehaviour {
 
         float[,,] splatMapAlphasMono = monoMiniTerr.GetAlphamaps(0, 0, monoMiniTerr.alphamapWidth, monoMiniTerr.alphamapHeight);
 
-        radius = 0.98f;
+        float radius = 0.98f;
         for (int i = 0; i < monoMiniTerr.alphamapHeight; i++)
             for (int j = 0; j < monoMiniTerr.alphamapWidth; j++)
             {
@@ -301,6 +308,7 @@ public class Generate_Terrain : MonoBehaviour {
 
         mainMap.GetComponent<mapTile>().monoMini = monoMiniMap.GetComponent<monoMiniMap>();
 
+        posTracker = Instantiate(trackerPrefab);
         posTracker.GetComponent<tracker_guide>().map = this;
         posTracker.GetComponent<tracker_guide>().monoMini = monoMiniMap.GetComponent<monoMiniMap>();
         posTracker.GetComponent<tracker_guide>().cameraRigTransform = GameObject.Find("[CameraRig]").transform;
