@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class ControllerGrabObject : MonoBehaviour {
 
-    private SteamVR_TrackedObject trackedObj;
-    private GameObject collidingObject;
-    private GameObject objectInHand;
+    protected SteamVR_TrackedObject trackedObj;
+    protected GameObject collidingObject;
+    protected GameObject objectInHand;
     public tracker_guide target;
     public Transform trackerTransform;
     public bool iGrabbed;
     public Generate_Terrain map;
 
-    private SteamVR_Controller.Device Controller
+    protected SteamVR_Controller.Device Controller
     {
         get { return SteamVR_Controller.Input((int)trackedObj.index); }
     }
@@ -27,7 +27,7 @@ public class ControllerGrabObject : MonoBehaviour {
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
-    private void SetCollidingObject(Collider col)
+    protected void SetCollidingObject(Collider col)
     {
         if (collidingObject || !col.GetComponent<Rigidbody>())
         {
@@ -57,18 +57,21 @@ public class ControllerGrabObject : MonoBehaviour {
 
         collidingObject = null;
     }
-    private void GrabObject()
+    protected void GrabObject()
     {
         // 1
         objectInHand = collidingObject;
         collidingObject = null;
-        if (objectInHand.GetComponent<tracker_guide>() != null)
-        {
-            target = objectInHand.GetComponent<tracker_guide>();
-            target.isGrabbed = true;       
-            iGrabbed = true;
-        }
 
+        if (FunctionController.enableTokenMove)
+        {
+            if (objectInHand.GetComponent<tracker_guide>() != null)
+            {
+                target = objectInHand.GetComponent<tracker_guide>();
+                target.isGrabbed = true;
+                iGrabbed = true;
+            }
+        }
         if(objectInHand.GetComponent<basicToken>() != null)
         {
             objectInHand.GetComponent<basicToken>().isGrabbed = true;
@@ -77,21 +80,21 @@ public class ControllerGrabObject : MonoBehaviour {
     }
 
     // 3
-    private FixedJoint AddFixedJoint()
+    protected FixedJoint AddFixedJoint()
     {
         FixedJoint fx = gameObject.AddComponent<FixedJoint>();
         fx.breakForce = 20000;
         fx.breakTorque = 20000;
         return fx;
     }
-    private void ReleaseObject()
+    protected void ReleaseObject()
     {
         objectInHand = null;
         target.isGrabbed = false;
         iGrabbed = false;
     }
     // Update is called once per frame
-    void Update () {
+    public void Update () {
 
         if (Controller.GetHairTriggerDown())
         {

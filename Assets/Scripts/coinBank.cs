@@ -17,6 +17,7 @@ public class coinBank : MonoBehaviour {
     Generate_Terrain terrain;
     public int active_coin;
     public bool hasChanged;
+    public FunctionController funcController;
 
 
 	// Use this for initialization
@@ -72,17 +73,19 @@ public class coinBank : MonoBehaviour {
 
     void OnApplicationQuit()
     {
+
         Debug.Log("Quiting: Time Scores Are:");
         if (participant_name == null)
             participant_name = "Anon";
-        string outF = participant_name +"\t"+ System.DateTime.Now.ToString() +" :\n";
+        string outF = string.Format("{0},Finish Time,{1}\n", participant_name, System.DateTime.Now.ToString());
+        outF += string.Format(",name,,tokenID,,Token Time,,Beacon time,,Point back Angle\n");
         foreach (GameObject e in tokens)
         {
             string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Coin Time:" + e.GetComponent<basicToken>().time_grabbed + ";Beacon: " + e.GetComponent<basicToken>().time_entered + ";Point Back Angle: " + e.GetComponent<basicToken>().point_back_angle+ "\n";
+            outl = string.Format("name,{0},tokenID,{1},tokenTime,{2},beaconTime,{3},pointAngle,{4}\n", participant_name, e.GetComponent<basicToken>().coin_id, e.GetComponent<basicToken>().time_grabbed, e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle);
             Debug.Log(outl);
-            outF += outl + "\n";
+            outF += outl;
         }
-        outF += "\n\n";
         if (result_filename != null)
             File.AppendAllText(result_filename, outF);
     }
@@ -100,6 +103,7 @@ public class coinBank : MonoBehaviour {
                 string[] e = line.Split('\t');
 
                 GameObject tToken = Instantiate(tokenPrefab);
+                tToken.transform.parent = this.transform;
                 tToken.GetComponent<basicToken>().bank = this;
                 tToken.GetComponent<basicToken>().lightHouseTransform = GameObject.Find("[CameraRig]").transform;
                 tToken.GetComponent<basicToken>().coin_id = e[2];
@@ -140,6 +144,44 @@ public class coinBank : MonoBehaviour {
             if (line.StartsWith("@outfile")){
                 string[] e = line.Split('\t');
                 result_filename = e[1];
+            }
+            if (line.StartsWith("@pname"))
+            {
+                string[] e = line.Split('\t');
+                participant_name = e[1];
+            }
+            if (line.StartsWith("@functions"))
+            {
+                string [] e =  line.Split('\t');
+                string fs = e[1];
+
+                if (fs.Contains("f"))
+                    funcController.toggleFlying(true);
+                else
+                    funcController.toggleFlying(false);
+                if (fs.Contains("r"))
+                {
+                    FunctionController.enableTokenMove = true;
+                }
+                else
+                    FunctionController.enableTokenMove = false;
+                if (fs.Contains("t"))
+                {
+                    funcController.toggleTeleportation(true);
+                }
+                else
+                    funcController.toggleTeleportation(false);
+                if (fs.Contains("m"))
+                {
+                    FunctionController.enableMiniMap = false;
+                    funcController.boolMinimap = true;
+
+                }
+                else
+                {
+                    FunctionController.enableMiniMap = true;
+                    funcController.boolMinimap = true;
+                }
             }
         }
 

@@ -100,7 +100,7 @@ public class basicToken : MonoBehaviour {
             {
                 Vector2 beaconHeart = new Vector2(laser.transform.position.x, laser.transform.position.z);
                 Vector2 lhHeart = new Vector2(lightHouseTransform.position.x, lightHouseTransform.position.z);
-                if (Vector2.Distance(beaconHeart, lhHeart) < (laser.transform.localScale.x) / 2)
+                if (Vector2.Distance(beaconHeart, lhHeart) < (laser.GetComponent<Renderer>().bounds.size.x) / 2)
                 {
                     beaconEntered = true;
                     time_entered = Time.time;
@@ -152,7 +152,7 @@ public class basicToken : MonoBehaviour {
         mask = ~mask;
         Physics.Raycast(this.transform.position + new Vector3(0, 1000, 0), Vector3.down, out hit, 3000f, mask);
 
-        this.transform.position = new Vector3(this.transform.position.x, hit.point.y + offset, this.transform.position.z);
+        this.transform.position = new Vector3(this.transform.position.x, hit.point.y + offset + this.GetComponent<Renderer>().bounds.size.x, this.transform.position.z);
 
     }
 }

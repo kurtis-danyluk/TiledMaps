@@ -11,6 +11,8 @@ using UnityEngine;
  * 
  */
 public class Generate_Terrain : MonoBehaviour {
+
+    public FunctionController funcController;
     /// <summary>
     /// Width of a single tile in game units eg. 256
     /// </summary>
@@ -255,8 +257,8 @@ public class Generate_Terrain : MonoBehaviour {
         mainMap = Terrain.CreateTerrainGameObject(mapTerr);
         mainMap.AddComponent<mapTile>();
         mainMap.GetComponent<mapTile>().SetupMapTile(4, mainMap.GetComponent<Terrain>(), 367, 683, 11);
-        
 
+        funcController.mainMap = mainMap;
 
         TerrainData monoMiniTerr = new TerrainData();
         monoMiniTerr.heightmapResolution = mainMap.GetComponent<Terrain>().terrainData.heightmapResolution;
@@ -306,6 +308,8 @@ public class Generate_Terrain : MonoBehaviour {
         monoMiniMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;
         monoMiniMap.GetComponent<Terrain>().materialTemplate = tranMat;
 
+        funcController.miniMap = monoMiniMap;
+
         mainMap.GetComponent<mapTile>().monoMini = monoMiniMap.GetComponent<monoMiniMap>();
 
         posTracker = Instantiate(trackerPrefab);
@@ -315,7 +319,7 @@ public class Generate_Terrain : MonoBehaviour {
         posTracker.GetComponent<tracker_guide>().headTransform = GameObject.Find("Camera (eye)").transform;
         posTracker.transform.parent = monoMiniMap.transform;
 
-
+        funcController.movementToken = posTracker.GetComponent<tracker_guide>();
 
     }
 	
