@@ -17,6 +17,10 @@ public class pointBack : MonoBehaviour
     private bool isActive = true;
     public coinBank bank;
 
+
+    float downTime;
+    float heldTime;
+
     // Use this for initialization
     void Start()
     {
@@ -30,7 +34,7 @@ public class pointBack : MonoBehaviour
         pointer.transform.localPosition = new Vector3(0,0,1);
         pointerTransform = pointer.transform;
         pointer.SetActive(false);
-        
+        downTime = Time.time;
 
     }
 
@@ -63,17 +67,24 @@ public class pointBack : MonoBehaviour
             isActive = !isActive;
         }
 
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+            downTime = Time.time;
+
+        if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad))
+        {
+            downTime = Time.time;
+            foreach(Transform b in pointer.transform)
+            {
+                b.gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
+            }
+        }
+
         if (isActive && Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
         {
             pointer.SetActive(true);
-            //RaycastHit hit;
-
-            // 2
-            //if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 1000))
-            {
-                //hitPoint = hit.point;
-                //ShowLaser(hit);
-
+            heldTime = Time.time - downTime;
+            
+           
                 Vector3 truePath;
                 if (bank.active_coin > 1)
                     truePath = bank.tokens[bank.active_coin - 2].transform.position - cameraRigTransform.position;
@@ -88,12 +99,23 @@ public class pointBack : MonoBehaviour
                 pointerPath.Normalize();
 
                 float angle = Vector3.Angle(truePath, pointerPath);
+            if (heldTime >= 0.5)
+            {
+                pointer.transform.Find("HSphere").gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
+            }
+            if (heldTime >= 1)
+            {
+                pointer.transform.Find("MSphere").gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
+            }
+            if (heldTime >= 1.5)
+            {
+                pointer.transform.Find("TSphere").gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
                 if (bank.active_coin > 0)
                     bank.tokens[bank.active_coin - 1].GetComponent<basicToken>().point_back_angle = angle;
-
+            }
                 //Debug.Log("Angle between paths: " + angle);
 
-            }
+            
 
 
 

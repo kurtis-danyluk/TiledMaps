@@ -36,6 +36,7 @@ public class basicToken : MonoBehaviour {
     void Start () {
 
         laser = Instantiate(laserPrefab);
+        laser.transform.parent = this.transform;
         laserTransform = laser.transform;
         laser.name = "beacon" + coin_id;
 
@@ -65,6 +66,13 @@ public class basicToken : MonoBehaviour {
     void Update() {
         if (this.gameObject.activeSelf)
         {
+
+            if (hasChanged)
+            {
+                moveOffGround();
+                hasChanged = false;
+
+            }
 
             if (showBeacon)
                 laser.SetActive(true);
@@ -99,12 +107,7 @@ public class basicToken : MonoBehaviour {
                 }
             }
 
-            if (hasChanged)
-            {
-                moveOffGround();
-                hasChanged = false;
-
-            }
+            
 
             if(isGrabbed)
                 time_grabbed = Time.time;

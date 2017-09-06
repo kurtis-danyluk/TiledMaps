@@ -1,8 +1,11 @@
 @Lat	51.17
 @Lon	-115.31
 @Zoom	11
+@mercX	367	
+@mercY	383
 
 #Simple coin setup
+
 
 @coin	id	01	x	447	z	780	offset	1.2	b
 @coin	id	02	x	813	z	187	offset	1.6	b

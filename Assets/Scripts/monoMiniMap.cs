@@ -135,7 +135,7 @@ public class monoMiniMap : MonoBehaviour {
                 {
                     Vector3 beaconPos;
                     beaconPos = tracker_guide.translateMaptoMMap(t.GetComponent<basicToken>().laserTransform.position, this);
-                    beacons[tKey].transform.localPosition = beaconPos - new Vector3(0, 1.0f, 0);
+                    beacons[tKey].transform.localPosition = beaconPos + new Vector3(0, 0.0f, 0);
                 }
                 //basicToken.ShowLaser(beacons[tKey], beacons[tKey].transform, beacons[tKey].transform.position, beacons[tKey].transform.position + new Vector3(0, 1, 0), 1);
             }
