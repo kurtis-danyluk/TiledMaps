@@ -21,4 +21,4 @@
 @coin	id	10	x	198	z	525	offset	1.3	c
 
 @outfile	sample_tests.csv
-@pname	Kurtis
+@pname	Dev

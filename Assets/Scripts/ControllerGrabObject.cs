@@ -12,6 +12,8 @@ public class ControllerGrabObject : MonoBehaviour {
     public bool iGrabbed;
     public Generate_Terrain map;
 
+    Vector2 grabtimes;
+
     protected SteamVR_Controller.Device Controller
     {
         get { return SteamVR_Controller.Input((int)trackedObj.index); }
@@ -21,6 +23,7 @@ public class ControllerGrabObject : MonoBehaviour {
     {
         target = map.posTracker.GetComponent<tracker_guide>();
         trackerTransform = map.posTracker.transform;
+        grabtimes = new Vector2();
     }
 
     void Awake()
@@ -70,6 +73,7 @@ public class ControllerGrabObject : MonoBehaviour {
                 target = objectInHand.GetComponent<tracker_guide>();
                 target.isGrabbed = true;
                 iGrabbed = true;
+                grabtimes.x = Time.time;
             }
         }
         if(objectInHand.GetComponent<basicToken>() != null)
@@ -90,7 +94,12 @@ public class ControllerGrabObject : MonoBehaviour {
     protected void ReleaseObject()
     {
         objectInHand = null;
-        target.isGrabbed = false;
+        if (target.isGrabbed)
+        {
+            grabtimes.y = Time.time;
+            Logger.grabs.Add(grabtimes);
+            target.isGrabbed = false;
+        }
         iGrabbed = false;
     }
     // Update is called once per frame

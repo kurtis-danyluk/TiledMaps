@@ -9,13 +9,13 @@ public class pointBack : MonoBehaviour
     public GameObject laserPrefab;
     public GameObject pointerPrefab;
     public GameObject pointer;
-    private Transform pointerTransform;
+    //private Transform pointerTransform;
     private GameObject laser;
     private Transform laserTransform;
-    private Vector3 hitPoint;
     public Transform cameraRigTransform;
     private bool isActive = true;
     public coinBank bank;
+
 
 
     float downTime;
@@ -32,7 +32,7 @@ public class pointBack : MonoBehaviour
         //pointer.GetComponent<MeshRenderer>().material.color = Color.blue;
         pointer.transform.parent = this.gameObject.transform;
         pointer.transform.localPosition = new Vector3(0,0,1);
-        pointerTransform = pointer.transform;
+        //pointerTransform = pointer.transform;
         pointer.SetActive(false);
         downTime = Time.time;
 
@@ -47,7 +47,7 @@ public class pointBack : MonoBehaviour
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
-
+    /*
     private void ShowLaser(RaycastHit hit)
     {
         laser.SetActive(true);
@@ -57,7 +57,7 @@ public class pointBack : MonoBehaviour
             hit.distance);
 
     }
-
+    */
     // Update is called once per frame
     void Update()
     {
@@ -112,6 +112,7 @@ public class pointBack : MonoBehaviour
                 pointer.transform.Find("TSphere").gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
                 if (bank.active_coin > 0)
                     bank.tokens[bank.active_coin - 1].GetComponent<basicToken>().point_back_angle = angle;
+                bank.funcController.toggleMovement(true);
             }
                 //Debug.Log("Angle between paths: " + angle);
 

@@ -63,8 +63,10 @@ public class coinBank : MonoBehaviour {
         if (active_coin < tokens.Count)
         {
             if (tokens[active_coin].GetComponent<basicToken>().isGrabbed && tokens[active_coin].GetComponent<basicToken>().beaconEntered)
+            {
+                funcController.toggleMovement(false);
                 active_coin++;
-
+            }
             if (active_coin < tokens.Count)
                 if (tokens[active_coin].activeSelf == false)
                     tokens[active_coin].SetActive(true);
@@ -77,12 +79,11 @@ public class coinBank : MonoBehaviour {
         Debug.Log("Quiting: Time Scores Are:");
         if (participant_name == null)
             participant_name = "Anon";
-        string outF = string.Format("{0},Finish Time,{1}\n", participant_name, System.DateTime.Now.ToString());
-        outF += string.Format(",name,,tokenID,,Token Time,,Beacon time,,Point back Angle\n");
+        string outF = "";
         foreach (GameObject e in tokens)
         {
             string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Coin Time:" + e.GetComponent<basicToken>().time_grabbed + ";Beacon: " + e.GetComponent<basicToken>().time_entered + ";Point Back Angle: " + e.GetComponent<basicToken>().point_back_angle+ "\n";
-            outl = string.Format("name,{0},tokenID,{1},tokenTime,{2},beaconTime,{3},pointAngle,{4}\n", participant_name, e.GetComponent<basicToken>().coin_id, e.GetComponent<basicToken>().time_grabbed, e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle);
+            outl = string.Format("name,{0},tokenID,{1},tokenTime,{2},beaconTime,{3},pointAngle,{4},Date,{5}\n", participant_name, e.GetComponent<basicToken>().coin_id, e.GetComponent<basicToken>().time_grabbed, e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle, System.DateTime.Now.ToString());
             Debug.Log(outl);
             outF += outl;
         }

@@ -8,7 +8,7 @@ public class control_zoom : MonoBehaviour {
     public showDirection indicator;
     private bool inputLock;
     private float lockTime = 1f;
-    private collect_tiles collector;
+    //private collect_tiles collector;
     private bool isActive = false;
 
     public Generate_Terrain map;
@@ -27,7 +27,7 @@ public class control_zoom : MonoBehaviour {
     void Start()
     {
         inputLock = false;
-        collector = map.center.collect;
+        //collector = map.center.collect;
     }
 
     void unlockInput()

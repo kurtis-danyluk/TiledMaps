@@ -16,6 +16,8 @@ public class GoogleStyleMovement : MonoBehaviour {
     private float minVelocity = 0.1f;
     private float acceleration = 0.01f;
 
+    private Vector2 touchs;
+
     // Use this for initialization
     private SteamVR_Controller.Device Controller
     {
@@ -28,9 +30,25 @@ public class GoogleStyleMovement : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
-        		
+        touchs = new Vector2();
 	}
 
+    void Update()
+    {
+        if (isActive)
+        {
+            if (Controller.GetAxis() != Vector2.zero)
+            {
+                if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+                    touchs.x = Time.time;
+                if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad))
+                {
+                    touchs.y = Time.time;
+                    Logger.flyTouchs.Add(touchs);
+                }
+            }
+        }
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -50,8 +68,11 @@ public class GoogleStyleMovement : MonoBehaviour {
             {
                 float angle = Mathf.Atan2(Controller.GetAxis().y, Controller.GetAxis().x) * 180 / Mathf.PI;
 
+                
+
                 if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
                 {
+
                     if (velocity < minVelocity)
                         velocity = minVelocity;
 
