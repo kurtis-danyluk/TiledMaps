@@ -20,6 +20,8 @@ public class showDirection : MonoBehaviour {
     Texture2D bTex;
     Texture2D fbTex;
 
+    Texture2D emptyTex;
+
     public char default_texture;
 
     MeshRenderer mesh;
@@ -74,6 +76,14 @@ public class showDirection : MonoBehaviour {
         fbTex = new Texture2D(256, 256);
         fbTex.LoadImage(imageBytes);
 
+        emptyTex = new Texture2D(256, 256);
+        for (int i = 0; i < 256; i++)
+            for (int j = 0; j < 256; j++)
+                emptyTex.SetPixel(i, j, new Color(1, 1, 1, 0));
+
+
+        emptyTex.Apply();
+
         bTex.Apply();
         fTex.Apply();
         fbTex.Apply();
@@ -103,46 +113,58 @@ public class showDirection : MonoBehaviour {
     /// f is forward move
     /// b is backwards move
     /// m is default move
+    /// l is invisible
     /// </summary>
     /// <param name="d"></param>
     public void changeTex(char d)
     {
-        switch (d) {
-            case 'd':
-                mesh.material.mainTexture = dTex;
-                break;
-            case 'n':
-                mesh.material.mainTexture = nTex;
-                break;
-            case 'e':
-                mesh.material.mainTexture = eTex;
-                break;
-            case 's':
-                mesh.material.mainTexture = sTex;
-                break;
-            case 'w':
-                mesh.material.mainTexture = wTex;
-                break;
-            case 'i':
-                mesh.material.mainTexture = ziTex;
-                break;
-            case 'o':
-                mesh.material.mainTexture = zoTex;
-                break;
-            case 'z':
-                mesh.material.mainTexture = zTex;
-                break;
-            case 'f':
-                mesh.material.mainTexture = fTex;
-                break;
-            case 'b':
-                mesh.material.mainTexture = bTex;
-                break;
-            case 'm':
-                mesh.material.mainTexture = fbTex;
-                break;
+        try
+        {
+            switch (d)
+            {
+                case 'd':
+                    mesh.material.mainTexture = dTex;
+                    break;
+                case 'n':
+                    mesh.material.mainTexture = nTex;
+                    break;
+                case 'e':
+                    mesh.material.mainTexture = eTex;
+                    break;
+                case 's':
+                    mesh.material.mainTexture = sTex;
+                    break;
+                case 'w':
+                    mesh.material.mainTexture = wTex;
+                    break;
+                case 'i':
+                    mesh.material.mainTexture = ziTex;
+                    break;
+                case 'o':
+                    mesh.material.mainTexture = zoTex;
+                    break;
+                case 'z':
+                    mesh.material.mainTexture = zTex;
+                    break;
+                case 'f':
+                    mesh.material.mainTexture = fTex;
+                    break;
+                case 'b':
+                    mesh.material.mainTexture = bTex;
+                    break;
+                case 'm':
+                    mesh.material.mainTexture = fbTex;
+                    break;
+                case 'l':
+                    mesh.material.mainTexture = emptyTex;
+                    break;
+            }
+        }
+        catch (System.NullReferenceException e)
+        {
 
         }
+        
     }
 
 	// Update is called once per frame

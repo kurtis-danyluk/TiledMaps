@@ -4,51 +4,96 @@ using UnityEngine;
 
 public class FunctionController : MonoBehaviour {
 
+    /// <summary>
+    /// A check if flight as an option is globally available. This should be setup at initialization
+    /// </summary>
+    public static bool flightGEnabled;
+    /// <summary>
+    /// A check if token movement as an option is globally available. This should be setup at initialization
+    /// </summary>
+    public static bool tokenMoveGEnabled;
+    /// <summary>
+    /// A check if teleportation as an option is globally available. This should be setup at initialization
+    /// </summary>
+    public static bool teleportGEnabled;
+
+    /// <summary>
+    /// Whether the minimap is globally available
+    /// </summary>
+    public static bool miniMapGEnabled;
+
+    /// <summary>
+    /// A reference to the object managing both map and minimap objects
+    /// </summary>
     public Generate_Terrain map;
 
+    //Whether flying is currently available
     private static bool enableFlying;
     public GoogleStyleMovement flyingRight;
 
+
+    //Whether the token or token movement is currently available
     private static bool enableToken;
     public static bool enableTokenMove;
     public tracker_guide movementToken;
 
+    //Whether things can be grabbed
     private bool enableGrab;
     public ControllerGrabObject controllerGrabLeft;
     public ControllerGrabObject controllerGrabRight;
 
+    //Whether teleportation is currently available
     private static bool enableTeleport;
     public LaserPointer laserPointerRight;
 
+    //Whether the minimap is currently available
     public static bool enableMiniMap;
     public GameObject miniMap;
 
+    //Whether the map is currently available
     public static bool enableMap;
     public GameObject mainMap;
 
+    //Whether beacons/coins are currently available
     private static bool enableTasks;
     public coinBank taskBank;
 
+    //Whether the ability to change lat/lon is avaialable
     private static bool enableNavigation;
     public Control_lat_long controlLatLonLeft;
     public control_zoom controlZoomRight;
 
+    //Whether point backs are currently enabled
     private static bool enablePointBack;
     public pointBack pointBackLeft;
 
     public bool boolMovement = false;
     public void toggleMovement(bool state)
     {
-        enableFlying = state;
-        enableTeleport = state;
-        enableGrab = state;
+        if (flightGEnabled)
+            enableFlying = state;
+        else
+            enableFlying = false;
 
-        flyingRight.enabled = state;
+        if (teleportGEnabled)
+            enableTeleport = state;
+        else
+            enableTeleport = false;
 
-        controllerGrabLeft.enabled = state;
-        controllerGrabRight.enabled = state;
+        if (tokenMoveGEnabled)
+            enableGrab = state;
+        else
+            enableGrab = false;
 
-        laserPointerRight.enabled = state;
+        flyingRight.enabled = enableFlying;
+
+
+        controllerGrabLeft.ReleaseObject();
+        controllerGrabRight.ReleaseObject();
+        controllerGrabLeft.enabled = enableGrab;
+        controllerGrabRight.enabled = enableGrab;
+
+        laserPointerRight.enabled = enableTeleport;
 
     }
 
@@ -96,8 +141,14 @@ public class FunctionController : MonoBehaviour {
     public void toggleNavigation(bool state)
     {
         enableNavigation = state;
-        controlLatLonLeft.enabled = state;
-        controlZoomRight.enabled = state;
+        if(!enableNavigation)
+            controlLatLonLeft.indicator.changeTex('l');
+
+        controlLatLonLeft.enabled = enableNavigation;
+        if(!enableNavigation)
+            controlZoomRight.indicator.changeTex('l');
+
+        controlZoomRight.enabled = enableNavigation;
     }
 
 
@@ -112,6 +163,7 @@ public class FunctionController : MonoBehaviour {
     public bool boolMap = false;
     public void toggleMap(bool state)
     {
+
         enableMap = state;
         mainMap.SetActive(state);
     }
@@ -120,8 +172,11 @@ public class FunctionController : MonoBehaviour {
     public bool boolMinimap = false;
     public void toggleMiniMap(bool state)
     {
-        enableMiniMap = state;
-        miniMap.SetActive(state);
+        if (miniMapGEnabled)
+            enableMiniMap = state;
+        else
+            enableMiniMap = false;
+        miniMap.SetActive(enableMiniMap);
     }
 
     void start()

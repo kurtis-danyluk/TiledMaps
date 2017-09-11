@@ -22,17 +22,24 @@ public class control_zoom : MonoBehaviour {
     void Awake()
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
+
     }
 
     void Start()
     {
         inputLock = false;
+        indicator.changeTex('l');
         //collector = map.center.collect;
     }
 
     void unlockInput()
     {
         inputLock = false;
+    }
+
+    void OnDisable()
+    {
+        indicator.changeTex('l');
     }
 
     void lockInput()

@@ -33,6 +33,11 @@ public class GoogleStyleMovement : MonoBehaviour {
         touchs = new Vector2();
 	}
 
+    void OnDisable()
+    {
+        indicator.changeTex('l');
+    }
+
     void Update()
     {
         if (isActive)

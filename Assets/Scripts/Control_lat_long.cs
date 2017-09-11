@@ -25,12 +25,19 @@ public class Control_lat_long : MonoBehaviour {
     void Awake()
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
+
     }
 
     void Start () {
         inputLock = false;
         collector = map.center.collect;
-	}
+        indicator.changeTex('l');
+    }
+
+    void OnDisable()
+    {
+        indicator.changeTex('l');
+    }
 
     void unlockInput()
     {

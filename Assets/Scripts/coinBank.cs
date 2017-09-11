@@ -157,32 +157,58 @@ public class coinBank : MonoBehaviour {
                 string fs = e[1];
 
                 if (fs.Contains("f"))
+                {
                     funcController.toggleFlying(true);
+                    FunctionController.flightGEnabled = true;
+                }
                 else
+                {
                     funcController.toggleFlying(false);
+                    FunctionController.flightGEnabled = false;
+                }
                 if (fs.Contains("r"))
                 {
                     FunctionController.enableTokenMove = true;
+                    FunctionController.tokenMoveGEnabled = true;
                 }
                 else
+                {
                     FunctionController.enableTokenMove = false;
+                    FunctionController.tokenMoveGEnabled = false;
+                }
                 if (fs.Contains("t"))
                 {
                     funcController.toggleTeleportation(true);
+                    FunctionController.teleportGEnabled = true;
                 }
                 else
+                {
                     funcController.toggleTeleportation(false);
+                    FunctionController.teleportGEnabled = false;
+                }
                 if (fs.Contains("m"))
                 {
                     FunctionController.enableMiniMap = false;
                     funcController.boolMinimap = true;
-
+                    FunctionController.miniMapGEnabled = true;
                 }
                 else
                 {
                     FunctionController.enableMiniMap = true;
                     funcController.boolMinimap = true;
+                    FunctionController.miniMapGEnabled = false;
                 }
+                if (fs.Contains("n"))
+                {
+                    funcController.toggleNavigation(false);
+                    funcController.boolNavigation = true;
+                }
+                else
+                {
+                    funcController.toggleNavigation(true);
+                    funcController.boolNavigation = true;
+                }
+
             }
         }
 

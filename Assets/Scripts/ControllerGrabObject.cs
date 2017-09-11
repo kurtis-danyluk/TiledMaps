@@ -76,6 +76,11 @@ public class ControllerGrabObject : MonoBehaviour {
                 grabtimes.x = Time.time;
             }
         }
+        else
+        {
+            ReleaseObject();
+        }
+        
         if(objectInHand.GetComponent<basicToken>() != null)
         {
             objectInHand.GetComponent<basicToken>().isGrabbed = true;
@@ -91,7 +96,7 @@ public class ControllerGrabObject : MonoBehaviour {
         fx.breakTorque = 20000;
         return fx;
     }
-    protected void ReleaseObject()
+    public void ReleaseObject()
     {
         objectInHand = null;
         if (target.isGrabbed)
