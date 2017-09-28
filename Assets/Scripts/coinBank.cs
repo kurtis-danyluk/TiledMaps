@@ -7,8 +7,17 @@ public class coinBank : MonoBehaviour {
 
     public List<GameObject> tokens;
     public GameObject tokenPrefab;
-    string init_filename = @"Assets/sample_coins.txt";
-    private string result_filename;
+    public string init_filename = "none";
+
+    public bool useFly;
+    public bool useTele;
+    public bool useRoom;
+    public bool useMiniMap;
+    public string pName;
+    public int trial_number;
+    public bool beaconTCoinF;
+
+    public string result_filename;
     public string participant_name;
     public int count;
     public TextMesh counter;
@@ -30,6 +39,30 @@ public class coinBank : MonoBehaviour {
     count = 0;
 	if(init_filename == "none")
         {
+            string mString = "";
+            if (!useMiniMap)
+                mString = "NM";
+
+            string trial_controls = "";
+
+            if (useFly && useRoom && useTele)
+                trial_controls = "combined";
+            else if (useFly)
+                trial_controls = "flight";
+            else if (useTele)
+                trial_controls = "tele";
+            else if (useRoom)
+                trial_controls = "room";
+            string cbstring = "";
+            if (beaconTCoinF)
+                cbstring = "Beacons";
+            else
+                cbstring = "Coins";
+            
+
+            init_filename = string.Format(@"Assets/Test_Files/{0}Test{4}{1}{2}{3}.txt", trial_controls, mString, trial_number, pName, cbstring);
+            Debug.Log(init_filename);
+            /*
             for (int i = 0; i < 10; i++)
             {
                 GameObject tToken = Instantiate(tokenPrefab);
@@ -42,8 +75,8 @@ public class coinBank : MonoBehaviour {
                 tokens.Add(tToken);
             }
 
-        }
-     else if(init_filename != null)
+        */}
+     if(init_filename != null)
         {
             loadCoins(init_filename, out tokens);
         }	

@@ -59,7 +59,7 @@ public class Logger : MonoBehaviour {
 
         if (cTimeU > nTimeU)
         {
-            StartCoroutine(logData());
+            StartCoroutine(logData("Log"+bank.result_filename));
             nTimeU = cTimeU + updateRate * 10;
         }
     }
@@ -95,10 +95,10 @@ public class Logger : MonoBehaviour {
 
     void OnApplicationQuit()
     {
-        logDataFull();
+        logDataFull("Log" + bank.result_filename);
     }
 
-    IEnumerator logData()
+    IEnumerator logData(string filename)
     {
         
         if(1/Time.smoothDeltaTime <= 50 )
@@ -148,7 +148,7 @@ public class Logger : MonoBehaviour {
         teleports.Clear();
     }
 
-    void logDataFull()
+    void logDataFull(string filename)
     {
 
         
