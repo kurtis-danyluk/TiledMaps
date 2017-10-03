@@ -86,7 +86,7 @@ public class FunctionController : MonoBehaviour {
             enableGrab = false;
 
         flyingRight.enabled = enableFlying;
-
+        //Debug.Log("Flight from movement set to: " + enableFlying.ToString());
 
         controllerGrabLeft.ReleaseObject();
         controllerGrabRight.ReleaseObject();
@@ -112,6 +112,7 @@ public class FunctionController : MonoBehaviour {
     {
         enableFlying = state;
         flyingRight.enabled = state;
+       // Debug.Log("Flight set to: " + state.ToString());
     }
 
     public bool boolTokenMove = false;

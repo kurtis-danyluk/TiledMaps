@@ -13,7 +13,7 @@ public class coinBank : MonoBehaviour {
     public bool useTele;
     public bool useRoom;
     public bool useMiniMap;
-    public string pName;
+    public string tName;
     public int trial_number;
     public bool beaconTCoinF;
 
@@ -60,7 +60,7 @@ public class coinBank : MonoBehaviour {
                 cbstring = "Coins";
             
 
-            init_filename = string.Format(@"Assets/Test_Files/{0}Test{4}{1}{2}{3}.txt", trial_controls, mString, trial_number, pName, cbstring);
+            init_filename = string.Format(@"Assets/Test_Files/{0}Test{4}{1}{2}{3}.txt", trial_controls, mString, trial_number, tName, cbstring);
             Debug.Log(init_filename);
             /*
             for (int i = 0; i < 10; i++)
@@ -98,6 +98,7 @@ public class coinBank : MonoBehaviour {
             if (tokens[active_coin].GetComponent<basicToken>().isGrabbed && tokens[active_coin].GetComponent<basicToken>().beaconEntered)
             {
                 funcController.toggleMovement(false);
+                Debug.Log("Token " + active_coin + "Grabbed");
                 active_coin++;
             }
             if (active_coin < tokens.Count)
@@ -179,7 +180,7 @@ public class coinBank : MonoBehaviour {
                 string[] e = line.Split('\t');
                 result_filename = e[1];
             }
-            if (line.StartsWith("@pname"))
+            if (line.StartsWith("@pname") && participant_name == "anon")
             {
                 string[] e = line.Split('\t');
                 participant_name = e[1];
@@ -191,13 +192,14 @@ public class coinBank : MonoBehaviour {
 
                 if (fs.Contains("f"))
                 {
-                    funcController.toggleFlying(true);
                     FunctionController.flightGEnabled = true;
+                    funcController.toggleFlying(true);
                 }
                 else
                 {
                     funcController.toggleFlying(false);
                     FunctionController.flightGEnabled = false;
+                    
                 }
                 if (fs.Contains("r"))
                 {
