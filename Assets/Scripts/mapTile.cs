@@ -308,4 +308,14 @@ public class mapTile : MonoBehaviour {
 
     }
 
+    public void ChangeLatLong(int X, int Y)
+    {
+        if (X == 0 && Y == 0)
+            return;
+
+        mercX += X;
+        mercY += Y;
+
+        hasChanged = true;
+    }
 }

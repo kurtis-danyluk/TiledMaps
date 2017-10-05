@@ -30,7 +30,7 @@ public class Control_lat_long : MonoBehaviour {
 
     void Start () {
         inputLock = false;
-        collector = map.center.collect;
+        //collector = map.center.collect;
         indicator.changeTex('l');
     }
 
@@ -77,38 +77,36 @@ public class Control_lat_long : MonoBehaviour {
 
                         if (angle > 45 && angle <= 135)
                         {
-                            collector.latitude += 90 / (Mathf.Pow(2, collect_tiles.zoom));
+                            //collector.latitude += 90 / (Mathf.Pow(2, collect_tiles.zoom));
 
-                            map.mainMap.GetComponent<mapTile>().mercY -= 1;
-                            map.mainMap.GetComponent<mapTile>().hasChanged = true;
+                            map.mainMap.GetComponent<mapTile>().ChangeLatLong(0,-1);
                             //Debug.Log("Up");
                         }
                         else if (angle > -135 && angle <= -45)
                         {
-                            collector.latitude -= 4 * (90 / (Mathf.Pow(2, collect_tiles.zoom)));
+                            //collector.latitude -= 4 * (90 / (Mathf.Pow(2, collect_tiles.zoom)));
 
-                            map.mainMap.GetComponent<mapTile>().mercY += 1;
-                            map.mainMap.GetComponent<mapTile>().hasChanged = true;
+
+                            map.mainMap.GetComponent<mapTile>().ChangeLatLong(0, 1);
                             //Debug.Log("Down");
                         }
                         else if (angle > 135 && angle <= 180 || angle > -180 && angle < -135)
                         {
-                            collector.longitude -= 180 / (Mathf.Pow(2, collect_tiles.zoom));
+                            //collector.longitude -= 180 / (Mathf.Pow(2, collect_tiles.zoom));
 
-                            map.mainMap.GetComponent<mapTile>().mercX -= 1;
-                            map.mainMap.GetComponent<mapTile>().hasChanged = true;
 
+                            map.mainMap.GetComponent<mapTile>().ChangeLatLong(-1, 0);
+ 
 
                             //Debug.Log("Left");
                         }
                         else if (angle > 0 && angle <= 45 || angle > -45 && angle < 0)
                         {
-                            collector.longitude += 4 * (180 / (Mathf.Pow(2, collect_tiles.zoom)));
+                            // collector.longitude += 4 * (180 / (Mathf.Pow(2, collect_tiles.zoom)));
                             //Debug.Log("Right");
 
-                            map.mainMap.GetComponent<mapTile>().mercX += 1;
-                            map.mainMap.GetComponent<mapTile>().hasChanged = true;
-
+                            map.mainMap.GetComponent<mapTile>().ChangeLatLong(1, 0);
+                            
                         }
                     }
                     else

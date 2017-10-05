@@ -81,17 +81,18 @@ public class FunctionController : MonoBehaviour {
             enableTeleport = false;
 
         if (tokenMoveGEnabled)
-            enableGrab = state;
+            enableTokenMove = state;
         else
-            enableGrab = false;
+            enableTokenMove = false;
 
         flyingRight.enabled = enableFlying;
         //Debug.Log("Flight from movement set to: " + enableFlying.ToString());
 
         controllerGrabLeft.ReleaseObject();
         controllerGrabRight.ReleaseObject();
-        controllerGrabLeft.enabled = enableGrab;
-        controllerGrabRight.enabled = enableGrab;
+
+        controllerGrabLeft.enabled = enableTokenMove;
+        controllerGrabRight.enabled = enableTokenMove;
 
         laserPointerRight.enabled = enableTeleport;
 
@@ -101,8 +102,8 @@ public class FunctionController : MonoBehaviour {
     public void toggleGrab(bool state)
     {
         enableGrab = state;
-        controllerGrabLeft.enabled = state;
-        controllerGrabRight.enabled = state;
+        //controllerGrabLeft.enabled = state;
+        //controllerGrabRight.enabled = state;
 
     }
 

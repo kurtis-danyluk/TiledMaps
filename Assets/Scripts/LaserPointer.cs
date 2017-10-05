@@ -20,6 +20,7 @@ public class LaserPointer : MonoBehaviour {
     public Vector3 teleportReticleOffset;
     public LayerMask teleportMask;
     private bool shouldTeleport;
+    private bool triggerDown;
 
     void Start()
     {
@@ -65,8 +66,9 @@ public class LaserPointer : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-        if (Controller.GetPress(SteamVR_Controller.ButtonMask.Grip))
+        if (Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger) || triggerDown)
         {
+            triggerDown = true;
             RaycastHit hit;
 
             // 2
@@ -112,8 +114,9 @@ public class LaserPointer : MonoBehaviour {
             laser.SetActive(false);
             reticle.SetActive(false);
         }
-        if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Grip) && shouldTeleport)
+        if (Controller.GetPressUp (SteamVR_Controller.ButtonMask.Trigger) && shouldTeleport)
         {
+            triggerDown = false;
             Teleport();
         }
     }

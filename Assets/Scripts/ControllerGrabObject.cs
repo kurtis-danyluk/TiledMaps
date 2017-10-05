@@ -80,11 +80,12 @@ public class ControllerGrabObject : MonoBehaviour {
         {
             ReleaseObject();
         }
-        
+       /* 
         if(objectInHand.GetComponent<basicToken>() != null)
         {
             objectInHand.GetComponent<basicToken>().isGrabbed = true;
         }
+        */
          
     }
 
@@ -109,8 +110,8 @@ public class ControllerGrabObject : MonoBehaviour {
     }
     // Update is called once per frame
     public void Update () {
-
-        if (Controller.GetHairTriggerDown())
+        //Controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip)
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
         {
             if (collidingObject)
             {
@@ -118,14 +119,15 @@ public class ControllerGrabObject : MonoBehaviour {
             }
         }
 
-        // 2
-        if (Controller.GetHairTriggerUp())
+        // Controller.GetPressUp(SteamVR_Controller.ButtonMask.Grip)
+        if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
         {
             if (objectInHand)
             {
                 ReleaseObject();
             }
         }
+
         if (target.isGrabbed && iGrabbed)
             trackerTransform.position = this.transform.position + this.transform.forward.normalized * 0.05f;
     }

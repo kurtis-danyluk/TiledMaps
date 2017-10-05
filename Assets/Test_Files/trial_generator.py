@@ -26,7 +26,7 @@ def setup_file(lat, lon, zoom, mercX, mercY, features_string, outfile, pname, ra
 		theta = random() * 2*math.pi
 		x = r * math.cos(theta) + radius
 		z = r * math.sin(theta) + radius
-		o = random() * 2 + 1
+		o = random() + 1
 		outString += "@coin\tid\t{0}\tx\t{1}\tz\t{2}\toffset\t{3}\t{4}\n".format(i,x,z,o,bc_string)
 	
 	return outString
