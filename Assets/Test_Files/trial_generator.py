@@ -21,11 +21,18 @@ def setup_file(lat, lon, zoom, mercX, mercY, features_string, outfile, pname, ra
 	outString += "@outfile\t{0}\n".format(outfile)
 	outString += "@pname\t{0}\n".format(pname);
 	
+	lastX = -128
+	lastY = -128
 	for i in range(num_points):
-		r = randint(0,radius)
-		theta = random() * 2*math.pi
-		x = r * math.cos(theta) + radius
-		z = r * math.sin(theta) + radius
+		while True:
+			r = randint(0,radius)
+			theta = random() * 2*math.pi
+			x = r * math.cos(theta) + radius
+			z = r * math.sin(theta) + radius
+			if abs(math.sqrt(x*x+ z*z) - math.sqrt(lastX*lastX + lastY*lastY)) > (radius/2):
+				break
+		lastX = x
+		lastY = z
 		o = random() + 1
 		outString += "@coin\tid\t{0}\tx\t{1}\tz\t{2}\toffset\t{3}\t{4}\n".format(i,x,z,o,bc_string)
 	
@@ -50,6 +57,8 @@ fileNames =[
 "teleTestBeaconsNM{0}{1}.txt",
 "teleTestCoinsNM{0}{1}.txt"
 ]	
+
+
 	
 for i in range(10):	
 	

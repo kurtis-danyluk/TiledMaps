@@ -113,7 +113,19 @@ public class tracker_guide : MonoBehaviour {
             
             Vector3 difference = cameraRigTransform.position - headTransform.position;
 
+
             cameraRigTransform.position = temp + difference;
+
+
+            if (cameraRigTransform.position.x > 1100)
+                cameraRigTransform.position = new Vector3(1100, cameraRigTransform.position.y, cameraRigTransform.position.z);
+            if (cameraRigTransform.position.z > 1100)
+                cameraRigTransform.position = new Vector3(cameraRigTransform.position.x, cameraRigTransform.position.y, 1100);
+            if (cameraRigTransform.position.x < -128)
+                cameraRigTransform.position = new Vector3(-128, cameraRigTransform.position.y, cameraRigTransform.position.z);
+            if (cameraRigTransform.position.z < -128)
+                cameraRigTransform.position = new Vector3(cameraRigTransform.position.x, cameraRigTransform.position.y, -128);
+
 
             mesh.material.color = Color.green;
         }
