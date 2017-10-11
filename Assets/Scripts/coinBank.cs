@@ -113,11 +113,12 @@ public class coinBank : MonoBehaviour {
         Debug.Log("Quiting: Time Scores Are:");
         if (participant_name == null)
             participant_name = "Anon";
-        string outF = "";
+        string outF = "Coin_ID,Coin_Time,Beacon_Time,Point_Back_Angle\n";
+
         foreach (GameObject e in tokens)
         {
-            string outl = "id:" + e.GetComponent<basicToken>().coin_id + ";Coin Time:" + e.GetComponent<basicToken>().time_grabbed + ";Beacon: " + e.GetComponent<basicToken>().time_entered + ";Point Back Angle: " + e.GetComponent<basicToken>().point_back_angle+ "\n";
-            outl = string.Format("name,{0},tokenID,{1},tokenTime,{2},beaconTime,{3},pointAngle,{4},Date,{5}\n", participant_name, e.GetComponent<basicToken>().coin_id, e.GetComponent<basicToken>().time_grabbed, e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle, System.DateTime.Now.ToString());
+            string outl = string.Format("{0},{1},{2},{3}\n",e.GetComponent<basicToken>().coin_id,  e.GetComponent<basicToken>().time_grabbed,  e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle);
+           // outl = string.Format("name,{0},tokenID,{1},tokenTime,{2},beaconTime,{3},pointAngle,{4},Date,{5}\n", participant_name, e.GetComponent<basicToken>().coin_id, e.GetComponent<basicToken>().time_grabbed, e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle, System.DateTime.Now.ToString());
             Debug.Log(outl);
             outF += outl;
         }
