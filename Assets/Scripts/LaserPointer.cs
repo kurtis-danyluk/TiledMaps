@@ -60,8 +60,8 @@ public class LaserPointer : MonoBehaviour {
         difference.y = 0;
         // 5
         cameraRigTransform.position = hitPoint + difference;
-
-        Logger.teleports.Add(Time.time);
+        if(Logger.teleports != null)
+         Logger.teleports.Add(Time.time);
 
     }
     // Update is called once per frame

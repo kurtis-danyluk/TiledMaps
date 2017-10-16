@@ -20,6 +20,10 @@ public class tracker_guide : MonoBehaviour {
     public Transform cameraRigTransform;
     public Transform headTransform;
 
+    OneEuroFilter<Vector3> posFilter;
+    float filterFrequency = 65f;
+
+
     void Start()
     {
         tracker = this.gameObject;
@@ -30,7 +34,7 @@ public class tracker_guide : MonoBehaviour {
 
         laser = Instantiate(laserPrefab);
         laserTransform = laser.transform;
-
+        posFilter = new OneEuroFilter<Vector3>(filterFrequency);
     }
 
     private SteamVR_Controller.Device Controller
@@ -126,6 +130,7 @@ public class tracker_guide : MonoBehaviour {
             if (cameraRigTransform.position.z < -128)
                 cameraRigTransform.position = new Vector3(cameraRigTransform.position.x, cameraRigTransform.position.y, -128);
 
+            cameraRigTransform.position = posFilter.Filter<Vector3>(cameraRigTransform.position);
 
             mesh.material.color = Color.green;
         }

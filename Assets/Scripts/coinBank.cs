@@ -98,6 +98,7 @@ public class coinBank : MonoBehaviour {
             if (tokens[active_coin].GetComponent<basicToken>().isGrabbed && tokens[active_coin].GetComponent<basicToken>().beaconEntered)
             {
                 funcController.toggleMovement(false);
+                funcController.togglePointBack(true);
                 Debug.Log("Token " + active_coin + "Grabbed");
                 active_coin++;
             }

@@ -62,10 +62,15 @@ public class basicToken : MonoBehaviour {
 
     }
 
+    void onEnable()
+    {
+        moveOffGround();
+    }
+
+
     // Update is called once per frame
     void Update() {
-        if (this.gameObject.activeSelf)
-        {
+        
 
             if (hasChanged)
             {
@@ -94,44 +99,59 @@ public class basicToken : MonoBehaviour {
                 Vector3 end = start + new Vector3(0, 1000, 0);
 
                 ShowLaser(laser, laserTransform, start, end, 1000);
+            hasChanged = false;
             }
 
-            if (showBeacon && !beaconEntered)
+            if (lightHouseTransform.position.x != -128 && lightHouseTransform.position.y != 128 && lightHouseTransform.position.z != -128)
             {
-                Vector2 beaconHeart = new Vector2(laser.transform.position.x, laser.transform.position.z);
-                Vector2 lhHeart = new Vector2(lightHouseTransform.position.x, lightHouseTransform.position.z);
-                if (Vector2.Distance(beaconHeart, lhHeart) < (laser.GetComponent<Renderer>().bounds.size.x) / 2)
+                if (showBeacon && !beaconEntered)
                 {
+                    Vector2 beaconHeart = new Vector2(laser.transform.position.x, laser.transform.position.z);
+                    Vector2 lhHeart = new Vector2(lightHouseTransform.position.x, lightHouseTransform.position.z);
+                    if (Vector2.Distance(beaconHeart, lhHeart) < (laser.GetComponent<Renderer>().bounds.size.x) / 2)
+                    {
+                        beaconEntered = true;
+                        time_entered = Time.time;
+                    }
+                }
+                if(showCoin && !isGrabbed)
+                {
+                    if(Mathf.Abs(lightHouseTransform.position.x - this.transform.position.x) < (this.GetComponent<Renderer>().bounds.size.x) /2
+                      && Mathf.Abs(lightHouseTransform.position.y - this.transform.position.y) < (this.GetComponent<Renderer>().bounds.size.y) / 2
+                      && Mathf.Abs(lightHouseTransform.position.z - this.transform.position.z) < (this.GetComponent<Renderer>().bounds.size.z) / 2
+                      )
+                {
+                    isGrabbed = true;
+                }
+
+                }
+
+
+
+                if (isGrabbed)
+                    time_grabbed = Time.time;
+
+                if (isGrabbed || !showCoin)
+                {
+                    this.gameObject.GetComponent<Renderer>().enabled = false;
+                    isGrabbed = true;
+
+                }
+                if (beaconEntered || !showBeacon)
+                {
+
+                    laser.SetActive(false);
                     beaconEntered = true;
-                    time_entered = Time.time;
+                }
+
+                if (isGrabbed && beaconEntered)
+                {
+
+                    bank.count++;
+                    this.gameObject.SetActive(false);
                 }
             }
-
-            
-
-            if(isGrabbed)
-                time_grabbed = Time.time;
-
-            if (isGrabbed || !showCoin)
-            {
-                this.gameObject.GetComponent<Renderer>().enabled = false;
-                isGrabbed = true;
-
-            }
-            if (beaconEntered || !showBeacon)
-            {
-
-                laser.SetActive(false);
-                beaconEntered = true;
-            }
-
-            if(isGrabbed && beaconEntered)
-            {
-
-                bank.count++;
-                this.gameObject.SetActive(false);
-            }
-        }
+        
 	}
 
     public static void ShowLaser(GameObject laser,Transform laserTransform ,Vector3 startPoint, Vector3 hitPoint, float distance)

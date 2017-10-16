@@ -97,6 +97,7 @@ public class Logger : MonoBehaviour {
 
     void OnApplicationQuit()
     {
+        if(this.enabled == true)
         logDataFull("Log" + bank.result_filename);
     }
 

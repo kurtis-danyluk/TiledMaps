@@ -103,7 +103,8 @@ public class ControllerGrabObject : MonoBehaviour {
         if (target.isGrabbed)
         {
             grabtimes.y = Time.time;
-            Logger.grabs.Add(grabtimes);
+            if(Logger.grabs != null)
+                Logger.grabs.Add(grabtimes);
             target.isGrabbed = false;
         }
         iGrabbed = false;

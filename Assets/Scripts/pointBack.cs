@@ -15,7 +15,7 @@ public class pointBack : MonoBehaviour
     public Transform cameraRigTransform;
     private bool isActive = true;
     public coinBank bank;
-
+    private bool fullRun;
 
 
     float downTime;
@@ -35,6 +35,7 @@ public class pointBack : MonoBehaviour
         //pointerTransform = pointer.transform;
         pointer.SetActive(false);
         downTime = Time.time;
+        fullRun = false;
 
     }
 
@@ -113,6 +114,8 @@ public class pointBack : MonoBehaviour
                 if (bank.active_coin > 0)
                     bank.tokens[bank.active_coin - 1].GetComponent<basicToken>().point_back_angle = angle;
                 bank.funcController.toggleMovement(true);
+                //fullRun = true;
+                
             }
                 //Debug.Log("Angle between paths: " + angle);
 
@@ -125,6 +128,8 @@ public class pointBack : MonoBehaviour
         {
             laser.SetActive(false);
             pointer.SetActive(false);
+           // if(fullRun)
+           //     bank.funcController.togglePointBack(false);
         }
     }
 }

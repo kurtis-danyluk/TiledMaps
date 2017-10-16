@@ -49,7 +49,8 @@ public class GoogleStyleMovement : MonoBehaviour {
                 if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad))
                 {
                     touchs.y = Time.time;
-                    Logger.flyTouchs.Add(touchs);
+                    if(Logger.flyTouchs != null)
+                     Logger.flyTouchs.Add(touchs);
                 }
             }
         }
