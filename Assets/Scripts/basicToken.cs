@@ -70,7 +70,15 @@ public class basicToken : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        
+
+        if (!FunctionController.moveEnabled)
+        {
+            laser.SetActive(false);
+        }
+        else
+        {
+
+
 
             if (hasChanged)
             {
@@ -85,7 +93,7 @@ public class basicToken : MonoBehaviour {
                 laser.SetActive(false);
 
 
-            if(showCoin)
+            if (showCoin)
                 this.gameObject.GetComponent<Renderer>().enabled = true;
             else
                 this.gameObject.GetComponent<Renderer>().enabled = false;
@@ -99,7 +107,7 @@ public class basicToken : MonoBehaviour {
                 Vector3 end = start + new Vector3(0, 1000, 0);
 
                 ShowLaser(laser, laserTransform, start, end, 1000);
-            hasChanged = false;
+                hasChanged = false;
             }
 
             if (lightHouseTransform.position.x != -128 && lightHouseTransform.position.y != 128 && lightHouseTransform.position.z != -128)
@@ -114,15 +122,15 @@ public class basicToken : MonoBehaviour {
                         time_entered = Time.time;
                     }
                 }
-                if(showCoin && !isGrabbed)
+                if (showCoin && !isGrabbed)
                 {
-                    if(Mathf.Abs(lightHouseTransform.position.x - this.transform.position.x) < (this.GetComponent<Renderer>().bounds.size.x) /2
+                    if (Mathf.Abs(lightHouseTransform.position.x - this.transform.position.x) < (this.GetComponent<Renderer>().bounds.size.x) / 2
                       && Mathf.Abs(lightHouseTransform.position.y - this.transform.position.y) < (this.GetComponent<Renderer>().bounds.size.y) / 2
                       && Mathf.Abs(lightHouseTransform.position.z - this.transform.position.z) < (this.GetComponent<Renderer>().bounds.size.z) / 2
                       )
-                {
-                    isGrabbed = true;
-                }
+                    {
+                        isGrabbed = true;
+                    }
 
                 }
 
@@ -151,7 +159,7 @@ public class basicToken : MonoBehaviour {
                     this.gameObject.SetActive(false);
                 }
             }
-        
+        }
 	}
 
     public static void ShowLaser(GameObject laser,Transform laserTransform ,Vector3 startPoint, Vector3 hitPoint, float distance)

@@ -17,6 +17,8 @@ public class coinBank : MonoBehaviour {
     public int trial_number;
     public bool beaconTCoinF;
 
+    public TextMesh controlLabel;
+
     public string result_filename;
     public string participant_name;
     public int count;
@@ -46,13 +48,26 @@ public class coinBank : MonoBehaviour {
             string trial_controls = "";
 
             if (useFly && useRoom && useTele)
+            {
                 trial_controls = "combined";
+                controlLabel.text = "Full Control";
+            }
             else if (useFly)
+            {
+
                 trial_controls = "flight";
+                controlLabel.text = "Flight";
+            }
             else if (useTele)
+            {
                 trial_controls = "tele";
+                controlLabel.text = "Teleportation";
+            }
             else if (useRoom)
+            {
                 trial_controls = "room";
+                controlLabel.text = "Room-in-Miniature";
+            } 
             string cbstring = "";
             if (beaconTCoinF)
                 cbstring = "Beacons";
@@ -97,10 +112,11 @@ public class coinBank : MonoBehaviour {
         {
             if (tokens[active_coin].GetComponent<basicToken>().isGrabbed && tokens[active_coin].GetComponent<basicToken>().beaconEntered)
             {
-                funcController.toggleMovement(false);
-                funcController.togglePointBack(true);
                 Debug.Log("Token " + active_coin + "Grabbed");
                 active_coin++;
+                funcController.toggleMovement(false);
+                funcController.togglePointBack(true);
+
             }
             if (active_coin < tokens.Count)
                 if (tokens[active_coin].activeSelf == false)

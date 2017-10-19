@@ -128,7 +128,7 @@ public class monoMiniMap : MonoBehaviour {
                 beacons.Add(tKey, nBeacon);
             }
 
-            if (t.activeSelf == true && t.GetComponent<basicToken>().showBeacon)
+            if (t.GetComponent<basicToken>().laser.activeSelf == true && t.GetComponent<basicToken>().showBeacon)
             {
                 beacons[tKey].SetActive(true);
                 //if (hasChanged)

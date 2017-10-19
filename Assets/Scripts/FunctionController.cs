@@ -27,6 +27,8 @@ public class FunctionController : MonoBehaviour {
     /// </summary>
     public Generate_Terrain map;
 
+    public TextMesh pointbackLabel;
+
     //Whether flying is currently available
     private static bool enableFlying;
     public GoogleStyleMovement flyingRight;
@@ -67,9 +69,11 @@ public class FunctionController : MonoBehaviour {
     private static bool enablePointBack;
     public pointBack pointBackLeft;
 
+    public static bool moveEnabled = true;
     public bool boolMovement = false;
     public void toggleMovement(bool state)
     {
+        moveEnabled = state;
         if (flightGEnabled)
             enableFlying = state;
         else
@@ -96,6 +100,10 @@ public class FunctionController : MonoBehaviour {
 
         laserPointerRight.enabled = enableTeleport;
 
+
+        pointbackLabel.gameObject.SetActive(!state);
+        taskBank.controlLabel.gameObject.SetActive(state);
+        
     }
 
     public bool boolGrab = false;
