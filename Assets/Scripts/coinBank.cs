@@ -182,6 +182,7 @@ public class coinBank : MonoBehaviour {
                 string[] e = line.Split('\t');
                 result_filename = e[1];
             }
+
             if (line.StartsWith("@pname") && participant_name == "anon")
             {
                 string[] e = line.Split('\t');

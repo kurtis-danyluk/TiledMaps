@@ -22,6 +22,8 @@ public class LaserPointer : MonoBehaviour {
     private bool shouldTeleport;
     private bool triggerDown;
 
+    private Vector2 teleTimeType;
+
     void Start()
     {
         laser = Instantiate(laserPrefab);
@@ -29,6 +31,7 @@ public class LaserPointer : MonoBehaviour {
 
         reticle = Instantiate(teleportReticlePrefab);
         teleportReticleTransform = reticle.transform;
+        teleTimeType = new Vector2();
     }
 
     private SteamVR_Controller.Device Controller
@@ -61,7 +64,11 @@ public class LaserPointer : MonoBehaviour {
         // 5
         cameraRigTransform.position = hitPoint + difference;
         if(Logger.teleports != null)
-         Logger.teleports.Add(Time.time);
+        {
+            teleTimeType.x = Time.time;
+            Logger.teleports.Add(teleTimeType);
+
+        }
 
     }
     // Update is called once per frame
@@ -78,11 +85,7 @@ public class LaserPointer : MonoBehaviour {
                 ShowLaser(hit);
 
                 reticle.SetActive(true);
-                if (hit.collider.gameObject.name == "Terrain")
-                {
-                    //  Debug.Log("Hit main map");
-                }
-                else if (hit.collider.gameObject.name == "miniMap")
+                if (hit.collider.gameObject.name == "miniMap")
                 {
                     
                     hitPoint = hit.collider.gameObject.transform.InverseTransformPoint(hitPoint);
@@ -93,6 +96,7 @@ public class LaserPointer : MonoBehaviour {
                     RaycastHit findHit;
                     Physics.Raycast(new Vector3(hitPoint.x, 3000, hitPoint.z), Vector3.down, out findHit);
                     hitPoint.y = findHit.point.y;
+                    teleTimeType.y = 1;
                 }
                 else if(hit.collider.gameObject.GetComponent<monoMiniMap>() != null)
                 {
@@ -101,7 +105,11 @@ public class LaserPointer : MonoBehaviour {
                     hitPoint = (hitPoint * miniMap.mainMap.terrainData.size.x);
 
                     hitPoint.y = miniMap.mainMap.terrainData.GetHeight((int)hitPoint.x, (int)hitPoint.z);
-
+                    teleTimeType.y = 1;
+                }
+                else
+                {
+                    teleTimeType.y = 0;
                 }
                 //Debug.Log(hitPoint.x + " " + hitPoint.y + " " + hitPoint.z);
                 teleportReticleTransform.position = hitPoint + teleportReticleOffset;

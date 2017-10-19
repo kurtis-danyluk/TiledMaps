@@ -68,12 +68,13 @@ public class ControllerGrabObject : MonoBehaviour {
 
         if (FunctionController.enableTokenMove)
         {
-            if (objectInHand.GetComponent<tracker_guide>() != null)
+            if (objectInHand.GetComponent<tracker_guide>() != null && !iGrabbed)
             {
                 target = objectInHand.GetComponent<tracker_guide>();
+                grabtimes.x = Time.time;
                 target.isGrabbed = true;
                 iGrabbed = true;
-                grabtimes.x = Time.time;
+                
             }
         }
         else
@@ -103,8 +104,11 @@ public class ControllerGrabObject : MonoBehaviour {
         if (target.isGrabbed)
         {
             grabtimes.y = Time.time;
-            if(Logger.grabs != null)
+            if (Logger.grabs != null)
+            {
+                Debug.Log("Grab: " + grabtimes);
                 Logger.grabs.Add(grabtimes);
+            }
             target.isGrabbed = false;
         }
         iGrabbed = false;

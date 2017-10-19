@@ -30,7 +30,7 @@ public class Logger : MonoBehaviour {
 
     public static List<Vector2> grabs;
     public static List<Vector2> flyTouchs;
-    public static List<float> teleports;
+    public static List<Vector2> teleports;
 
     public static List<posTime> rigPositions;
     public static List<posTime> leftHPositions;
@@ -41,19 +41,42 @@ public class Logger : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        //logFile = System.IO.File.Open(filename, System.IO.FileMode.Append);
+
+
+        StartCoroutine(setup_file());
+
         rigPositions = new List<posTime>();
         leftHPositions = new List<posTime>();
         rightHPositions = new List<posTime>();
 
         grabs = new List<Vector2>();
         flyTouchs = new List<Vector2>();
-        teleports = new List<float>();
+        teleports = new List<Vector2>();
         cTime = nTime = cTimeU = nTimeU = Time.time;
 
 
 
 	}
+
+    IEnumerator setup_file()
+    {
+        bool isSetup = false;
+        do
+        {
+            if (bank.result_filename == null || bank.participant_name == null)
+                yield return null;
+            else
+            {
+                filename = "Log" +bank.participant_name + bank.result_filename ;
+                using (StreamWriter sw = File.AppendText(filename))
+                {
+                        sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle\n");
+                }
+                // logFile = File.Open(filename, System.IO.FileMode.Append);
+                isSetup = true;
+            }
+        } while (!isSetup);
+    }
 	
 	void FixedUpdate()
     {
@@ -61,7 +84,7 @@ public class Logger : MonoBehaviour {
 
         if (cTimeU > nTimeU)
         {
-            StartCoroutine(logData("Log"+bank.result_filename));
+            StartCoroutine(logData(filename));
             nTimeU = cTimeU + updateRate * 10;
         }
     }
@@ -98,105 +121,127 @@ public class Logger : MonoBehaviour {
     void OnApplicationQuit()
     {
         if(this.enabled == true)
-        logDataFull("Log" + bank.result_filename);
+        logDataFull(filename);
     }
 
     IEnumerator logData(string filename)
     {
-        if (!File.Exists(filename))
-            File.AppendAllText(filename, "Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle\n");
-        string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
-
-        if(1/Time.smoothDeltaTime <= 50 )
-            yield return null;
-
-        foreach (posTime v in rigPositions)
+        using (StreamWriter sw = File.AppendText(filename))
         {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(),bank.participant_name,"HeadPosition",v.t.ToString(),v.t.ToString(), v.p.x,v.p.y,v.p.z,v.a.x,v.a.y,v.a.z));
-        }
-        rigPositions.Clear();
-        if (1 / Time.smoothDeltaTime <= 50)
-            yield return null;
+            if (!File.Exists(filename))
+                sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle\n");
+            string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
 
-        foreach (posTime v in rightHPositions)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
-        }
-        rightHPositions.Clear();
-        if (1 / Time.smoothDeltaTime <= 50)
-            yield return null;
+            if (1 / Time.smoothDeltaTime <= 50)
+                yield return null;
 
-        foreach (posTime v in leftHPositions)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
-        }
-        leftHPositions.Clear();
-        if (1 / Time.smoothDeltaTime <= 50)
-            yield return null;
+            foreach (posTime v in rigPositions)
+            {
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "HeadPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+            }
+            rigPositions.Clear();
+            if (1 / Time.smoothDeltaTime <= 50)
+                yield return null;
 
-        foreach (Vector2 t in grabs)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", ""));
-        }
-        grabs.Clear();
-        if (1 / Time.smoothDeltaTime <= 50)
-            yield return null;
-        foreach (Vector2 t in flyTouchs)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", ""));
-        }
-        flyTouchs.Clear();
+            foreach (posTime v in rightHPositions)
+            {
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+            }
+            rightHPositions.Clear();
+            if (1 / Time.smoothDeltaTime <= 50)
+                yield return null;
 
-        if (1 / Time.smoothDeltaTime <= 50)
-            yield return null;
-        foreach (float t in teleports)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Teleport", t, t, "", "", "", "", "", ""));
+            foreach (posTime v in leftHPositions)
+            {
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+            }
+            leftHPositions.Clear();
+            if (1 / Time.smoothDeltaTime <= 50)
+                yield return null;
+
+            foreach (Vector2 t in grabs)
+            {
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", ""));
+            }
+            grabs.Clear();
+            if (1 / Time.smoothDeltaTime <= 50)
+                yield return null;
+            foreach (Vector2 t in flyTouchs)
+            {
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", ""));
+            }
+            flyTouchs.Clear();
+
+            if (1 / Time.smoothDeltaTime <= 50)
+                yield return null;
+            foreach (Vector2 t in teleports)
+            {
+                string event_type = "";
+                if (t.y == 1)
+                {
+                    event_type = "TeleportMM";
+                }
+                else
+                {
+                    event_type = "Teleport";
+                }
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, event_type, t.x, t.x, "", "", "", "", "", ""));
+            }
+            teleports.Clear();
         }
-        teleports.Clear();
     }
 
     void logDataFull(string filename)
     {
-
-        if (!File.Exists(filename))
-            File.AppendAllText(filename, "Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle");
-        string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
-
-        foreach (posTime v in rigPositions)
+        using (StreamWriter sw = File.AppendText(filename))
         {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "HeadPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
-        }
-        rigPositions.Clear();
+            if (!File.Exists(filename))
+                sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle");
+            string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
 
-        foreach (posTime v in rightHPositions)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
-        }
-        rightHPositions.Clear();
+            foreach (posTime v in rigPositions)
+            {
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "HeadPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+            }
+            rigPositions.Clear();
 
-        foreach (posTime v in leftHPositions)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
-        }
-        leftHPositions.Clear();
+            foreach (posTime v in rightHPositions)
+            {
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+            }
+            rightHPositions.Clear();
 
-        foreach (Vector2 t in grabs)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", ""));
-        }
-        grabs.Clear();
-        foreach (Vector2 t in flyTouchs)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", ""));
-        }
-        flyTouchs.Clear();
+            foreach (posTime v in leftHPositions)
+            {
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+            }
+            leftHPositions.Clear();
 
-        foreach (float t in teleports)
-        {
-            File.AppendAllText(filename, string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Teleport", t, t, "", "", "", "", "", ""));
+            foreach (Vector2 t in grabs)
+            {
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", ""));
+            }
+            grabs.Clear();
+            foreach (Vector2 t in flyTouchs)
+            {
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", ""));
+            }
+            flyTouchs.Clear();
+
+            foreach (Vector2 t in teleports)
+            {
+                string event_type= "";
+                if(t.y == 1)
+                {
+                    event_type = "TeleportMM";
+                }
+                else
+                {
+                    event_type = "Teleport";
+                }
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, event_type, t.x, t.x, "", "", "", "", "", ""));
+            }
+            teleports.Clear();
         }
-        teleports.Clear();
     }
-
 }
