@@ -16,6 +16,10 @@ public class coinBank : MonoBehaviour {
     public string tName;
     public int trial_number;
     public bool beaconTCoinF;
+    public int block;
+
+    public string condition = "";
+    public string mapCond = "";
 
     public TextMesh controlLabel;
 
@@ -43,30 +47,36 @@ public class coinBank : MonoBehaviour {
         {
             string mString = "";
             if (!useMiniMap)
+            {
                 mString = "NM";
-
+                mapCond = "NM";
+            }
             string trial_controls = "";
 
             if (useFly && useRoom && useTele)
             {
                 trial_controls = "combined";
                 controlLabel.text = "Full Control";
+                condition = "combined";
             }
             else if (useFly)
             {
 
                 trial_controls = "flight";
                 controlLabel.text = "Flight";
+                condition = "flight";
             }
             else if (useTele)
             {
                 trial_controls = "tele";
                 controlLabel.text = "Teleportation";
+                condition = "teleportation";
             }
             else if (useRoom)
             {
                 trial_controls = "room";
                 controlLabel.text = "Room-in-Miniature";
+                condition = "room";
             } 
             string cbstring = "";
             if (beaconTCoinF)
@@ -100,7 +110,7 @@ public class coinBank : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         counter.text = count.ToString();
-        if (collect_tiles.center_changed || hasChanged)
+        if (collect_tiles.center_changed || hasChanged )
         {
             foreach (GameObject t in tokens)
             {
@@ -120,7 +130,10 @@ public class coinBank : MonoBehaviour {
             }
             if (active_coin < tokens.Count)
                 if (tokens[active_coin].activeSelf == false)
+                {
                     tokens[active_coin].SetActive(true);
+                    tokens[active_coin].GetComponent<basicToken>().hasChanged = true;
+                }
         }
 	}
 
@@ -130,11 +143,21 @@ public class coinBank : MonoBehaviour {
         Debug.Log("Quiting: Time Scores Are:");
         if (participant_name == null)
             participant_name = "Anon";
-        string outF = "Coin_ID,Coin_Time,Beacon_Time,Point_Back_Angle\n";
-
+        string outF = "Participant,Condition,Task,Repetition,Block,Fileset,Coin_ID,Coin_Time,Trial Time,Beacon_Time,Point_Back_Angle\n";
+        float trial_time = 0.0f;
+        float last_time = 0.0f;
         foreach (GameObject e in tokens)
         {
-            string outl = string.Format("{0},{1},{2},{3}\n",e.GetComponent<basicToken>().coin_id,  e.GetComponent<basicToken>().time_grabbed,  e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle);
+            string nav_Search;
+            if (beaconTCoinF)
+                nav_Search = "navigation";
+            else
+                nav_Search = "search";
+
+            trial_time = e.GetComponent<basicToken>().time_grabbed - last_time;
+            last_time = e.GetComponent<basicToken>().time_grabbed;
+            string outFormat = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
+            string outl = string.Format(outFormat,participant_name, condition, nav_Search, trial_number, block, tName,  e.GetComponent<basicToken>().coin_id,  e.GetComponent<basicToken>().time_grabbed, trial_time  , e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle);
            // outl = string.Format("name,{0},tokenID,{1},tokenTime,{2},beaconTime,{3},pointAngle,{4},Date,{5}\n", participant_name, e.GetComponent<basicToken>().coin_id, e.GetComponent<basicToken>().time_grabbed, e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle, System.DateTime.Now.ToString());
             Debug.Log(outl);
             outF += outl;
@@ -194,15 +217,17 @@ public class coinBank : MonoBehaviour {
 
                     tokens.Add(tToken);
             }
-            if (line.StartsWith("@outfile")){
-                string[] e = line.Split('\t');
-                result_filename = e[1];
-            }
+            
 
             if (line.StartsWith("@pname") && participant_name == "anon")
             {
                 string[] e = line.Split('\t');
                 participant_name = e[1];
+            }
+            if (line.StartsWith("@outfile"))
+            {
+                string[] e = line.Split('\t');
+                result_filename = participant_name + e[1];
             }
             if (line.StartsWith("@functions"))
             {

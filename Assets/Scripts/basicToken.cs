@@ -159,6 +159,10 @@ public class basicToken : MonoBehaviour {
                     this.gameObject.SetActive(false);
                 }
             }
+            else
+            {
+                moveOffGround();
+            }
         }
 	}
 

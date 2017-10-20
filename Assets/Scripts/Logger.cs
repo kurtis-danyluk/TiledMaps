@@ -67,10 +67,10 @@ public class Logger : MonoBehaviour {
                 yield return null;
             else
             {
-                filename = "Log" +bank.participant_name + bank.result_filename ;
+                filename = "Log" + bank.result_filename ;
                 using (StreamWriter sw = File.AppendText(filename))
                 {
-                        sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle\n");
+                        sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle,condition,repetition,task,block,fileset\n");
                 }
                 // logFile = File.Open(filename, System.IO.FileMode.Append);
                 isSetup = true;
@@ -128,16 +128,22 @@ public class Logger : MonoBehaviour {
     {
         using (StreamWriter sw = File.AppendText(filename))
         {
+            string nav_Search;
+            if (bank.beaconTCoinF)
+                nav_Search = "navigation";
+            else
+                nav_Search = "search";
+
             if (!File.Exists(filename))
-                sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle\n");
-            string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
+                sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle,condition,repetition,task,block,fileset\n");
+            string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15}\n";
 
             if (1 / Time.smoothDeltaTime <= 50)
                 yield return null;
 
             foreach (posTime v in rigPositions)
             {
-                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "HeadPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "HeadPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z, bank.condition+bank.mapCond, bank.trial_number,nav_Search, bank.block ,bank.tName));
             }
             rigPositions.Clear();
             if (1 / Time.smoothDeltaTime <= 50)
@@ -145,7 +151,7 @@ public class Logger : MonoBehaviour {
 
             foreach (posTime v in rightHPositions)
             {
-                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z, bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             rightHPositions.Clear();
             if (1 / Time.smoothDeltaTime <= 50)
@@ -153,7 +159,7 @@ public class Logger : MonoBehaviour {
 
             foreach (posTime v in leftHPositions)
             {
-                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z, bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             leftHPositions.Clear();
             if (1 / Time.smoothDeltaTime <= 50)
@@ -161,14 +167,14 @@ public class Logger : MonoBehaviour {
 
             foreach (Vector2 t in grabs)
             {
-                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", ""));
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             grabs.Clear();
             if (1 / Time.smoothDeltaTime <= 50)
                 yield return null;
             foreach (Vector2 t in flyTouchs)
             {
-                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", ""));
+                sw.Write( string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             flyTouchs.Clear();
 
@@ -185,7 +191,7 @@ public class Logger : MonoBehaviour {
                 {
                     event_type = "Teleport";
                 }
-                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, event_type, t.x, t.x, "", "", "", "", "", ""));
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, event_type, t.x, t.x, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             teleports.Clear();
         }
@@ -195,36 +201,42 @@ public class Logger : MonoBehaviour {
     {
         using (StreamWriter sw = File.AppendText(filename))
         {
+            string nav_Search;
+            if (bank.beaconTCoinF)
+                nav_Search = "navigation";
+            else
+                nav_Search = "search";
+
             if (!File.Exists(filename))
-                sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle");
-            string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
+                sw.Write("Date,Participant_name,Event_type,start_time,end_time,x_pos,y_pos,z_pos,x_angle,y_angle,z_angle,condition,repetition,task,block,fileset\n");
+            string format_string = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15}\n";
 
             foreach (posTime v in rigPositions)
             {
-                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "HeadPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "HeadPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z, bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             rigPositions.Clear();
 
             foreach (posTime v in rightHPositions)
             {
-                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "RightHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z, bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             rightHPositions.Clear();
 
             foreach (posTime v in leftHPositions)
             {
-                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z));
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "LeftHPosition", v.t.ToString(), v.t.ToString(), v.p.x, v.p.y, v.p.z, v.a.x, v.a.y, v.a.z, bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             leftHPositions.Clear();
 
             foreach (Vector2 t in grabs)
             {
-                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", ""));
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "Grab", t.x, t.y, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             grabs.Clear();
             foreach (Vector2 t in flyTouchs)
             {
-                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", ""));
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             flyTouchs.Clear();
 
@@ -239,7 +251,7 @@ public class Logger : MonoBehaviour {
                 {
                     event_type = "Teleport";
                 }
-                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, event_type, t.x, t.x, "", "", "", "", "", ""));
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, event_type, t.x, t.x, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName));
             }
             teleports.Clear();
         }
