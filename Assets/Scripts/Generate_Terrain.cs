@@ -303,7 +303,7 @@ public class Generate_Terrain : MonoBehaviour {
         monoMiniMap.transform.parent = this.gameObject.transform;
         monoMiniMap.transform.localPosition = new Vector3(-0.5f, 1, -0.5f);
         monoMiniMap.GetComponent<Terrain>().detailObjectDistance = 250;
-        monoMiniMap.GetComponent<Terrain>().heightmapPixelError = 1;
+        monoMiniMap.GetComponent<Terrain>().heightmapPixelError = 2;
         //miniMap.GetComponent<Terrain>().basemapDistance = 10;
 
         monoMiniMap.GetComponent<Terrain>().materialType = Terrain.MaterialType.Custom;
