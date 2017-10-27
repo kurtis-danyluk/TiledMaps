@@ -143,7 +143,7 @@ public class coinBank : MonoBehaviour {
         Debug.Log("Quiting: Time Scores Are:");
         if (participant_name == null)
             participant_name = "Anon";
-        string outF = "Participant,Condition,Task,Repetition,Block,Fileset,Coin_ID,Coin_Time,Trial Time,Beacon_Time,Point_Back_Angle\n";
+        string outF = "Participant,Condition,Task,Repetition,Block,Fileset,Coin_ID,Coin_Time,Trial Time,Beacon_Time,Point_Back_Angle,minimap\n";
         float trial_time = 0.0f;
         float last_time = 0.0f;
         foreach (GameObject e in tokens)
@@ -156,8 +156,8 @@ public class coinBank : MonoBehaviour {
 
             trial_time = e.GetComponent<basicToken>().time_grabbed - last_time;
             last_time = e.GetComponent<basicToken>().time_grabbed;
-            string outFormat = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\n";
-            string outl = string.Format(outFormat,participant_name, condition, nav_Search, trial_number, block, tName,  e.GetComponent<basicToken>().coin_id,  e.GetComponent<basicToken>().time_grabbed, trial_time  , e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle);
+            string outFormat = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}\n";
+            string outl = string.Format(outFormat,participant_name, condition, nav_Search, trial_number, block, tName,  e.GetComponent<basicToken>().coin_id,  e.GetComponent<basicToken>().time_grabbed, trial_time  , e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle, FunctionController.miniMapGEnabled);
            // outl = string.Format("name,{0},tokenID,{1},tokenTime,{2},beaconTime,{3},pointAngle,{4},Date,{5}\n", participant_name, e.GetComponent<basicToken>().coin_id, e.GetComponent<basicToken>().time_grabbed, e.GetComponent<basicToken>().time_entered, e.GetComponent<basicToken>().point_back_angle, System.DateTime.Now.ToString());
             Debug.Log(outl);
             outF += outl;
