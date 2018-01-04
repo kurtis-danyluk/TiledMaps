@@ -28,6 +28,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-Assets/Textures/
-Assets/Cache/
+# Assets/Textures/
+Assets/Cache/*
 Results_files/
