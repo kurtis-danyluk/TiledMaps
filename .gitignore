@@ -29,5 +29,4 @@ sysinfo.txt
 *.apk
 *.unitypackage
 # Assets/Textures/
-Assets/Cache/
 Results_files/
