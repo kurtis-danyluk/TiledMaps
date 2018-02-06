@@ -19,6 +19,7 @@ ExportedObj/
 *.svd
 
 
+
 # Unity3D generated meta files
 *.pidb.meta
 
@@ -30,3 +31,4 @@ sysinfo.txt
 *.unitypackage
 # Assets/Textures/
 Results_files/
+*.csv

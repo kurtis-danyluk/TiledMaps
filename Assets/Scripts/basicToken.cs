@@ -59,6 +59,8 @@ public class basicToken : MonoBehaviour {
         //}
         
         this.gameObject.SetActive(false);
+        this.gameObject.GetComponent<Renderer>().enabled = false;
+
 
     }
 
@@ -185,6 +187,7 @@ public class basicToken : MonoBehaviour {
         Physics.Raycast(this.transform.position + new Vector3(0, 1000, 0), Vector3.down, out hit, 3000f, mask);
 
         this.transform.position = new Vector3(this.transform.position.x, hit.point.y + offset + (this.GetComponent<Renderer>().bounds.size.x/2), this.transform.position.z);
+        this.gameObject.GetComponent<Renderer>().enabled = true;
 
     }
 }
