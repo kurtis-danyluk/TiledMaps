@@ -21,6 +21,10 @@ public class coinBank : MonoBehaviour {
     public string condition = "";
     public string mapCond = "";
 
+    public float coinXSize;
+    public float CoinYSize;
+    public float CoinZSize;
+
     public TextMesh controlLabel;
 
     public string result_filename;
@@ -194,6 +198,7 @@ public class coinBank : MonoBehaviour {
                 //float y = hit.point.y +
 
                 tToken.transform.position = new Vector3(x, y, z);
+                tToken.transform.localScale = new Vector3(coinXSize, CoinYSize, CoinZSize);
                 tToken.name = "coin" + tToken.GetComponent<basicToken>().coin_id;
                 tToken.GetComponent<basicToken>().laserPrefab = beaconPrefab;
 
