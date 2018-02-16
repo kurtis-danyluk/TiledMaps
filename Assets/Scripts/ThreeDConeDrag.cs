@@ -18,10 +18,12 @@ public class ThreeDConeDrag : MonoBehaviour {
     private Vector3 grabRot;
     private float lastMovementRatio;
     private float lastRotAngle;
+    private Transform localPlane;
+    private GameObject planeObject;
     //public Terrain Terr;
     //public Generate_Terrain map;
     OneEuroFilter<Vector3> posFilter;
-    float filterFrequency = 60f;
+    float filterFrequency = 120f;
 
 
 
@@ -40,6 +42,9 @@ public class ThreeDConeDrag : MonoBehaviour {
     {
         laser = Instantiate(laserPrefab);
         laserTransform = laser.transform;
+
+        planeObject = new GameObject();
+        localPlane = planeObject.transform;
 
         lastMovementRatio = 0;
 
@@ -95,6 +100,7 @@ public class ThreeDConeDrag : MonoBehaviour {
                 grabForward = trackedObj.transform.forward;
                 grabLoc = new Vector3(headTransform.position.x, cameraRigTransform.position.y, headTransform.position.z);
                 grabRot = trackedObj.transform.right;
+                localPlane.rotation = trackedObj.transform.rotation;
 
                 hitPoint = hit.point;
 
@@ -149,28 +155,45 @@ public class ThreeDConeDrag : MonoBehaviour {
             
             //Determine the new location of the camera rig as moved by that path 
             Vector3 triPath = cameraRigTransform.position + movementPath;
-            
+
             //Move the rig to its new position
-            cameraRigTransform.position = triPath;
-            
+            //cameraRigTransform.position = triPath;
+
+
+
             //Determine how much the controller has been rotated from its starting position
-            float difYAngle = Vector3.Angle(trackedObj.transform.right, grabRot);
-            
-           // cameraRigTransform.transform.right
 
-            //Determine how much its rotated since last frame
-            float rotAngle = difYAngle - lastRotAngle ;
-            //Save this frames rotation
-            lastRotAngle = difYAngle;
-            
-            //Save the local rotation of the camera rig
-            Vector3 tempRot = cameraRigTransform.eulerAngles;
+            contForward = trackedObj.transform.forward;
 
-            //Rotate the entire rig about the center of the cone
-            cameraRigTransform.RotateAround(hitPoint, Vector3.up, rotAngle);
+            contForward = posFilter.Filter<Vector3>(contForward);
+
+            Vector3 pathToTarget =  trackedObj.transform.position - hitPoint ;
+
+            float forAngle = Mathf.Atan(trackedObj.transform.forward.x / trackedObj.transform.forward.z);
+            float pathAngle = Mathf.Atan(pathToTarget.x / pathToTarget.z);
+
+            
+
+            float difYAngle = Mathf.Rad2Deg * forAngle - Mathf.Rad2Deg*pathAngle ;//Vector2.Angle(new Vector2(trackedObj.transform.forward.x, trackedObj.transform.forward.z), new Vector2(pathToTarget.x, pathToTarget.z));
+
+            Debug.Log(difYAngle);
+
+            localPlane.transform.position = triPath;
+
+            
+            if(difYAngle > 1)
+                localPlane.RotateAround(hitPoint, Vector3.up, 1);
+            if(difYAngle < 1)
+                localPlane.RotateAround(hitPoint, Vector3.up, -1);
+
             //Return the orginal local rotation
-            cameraRigTransform.eulerAngles = tempRot;
+            //cameraRigTransform.eulerAngles = tempRot;
+
+            cameraRigTransform.position = localPlane.position;
+
+            //cameraRigTransform.position = posFilter.Filter<Vector3>(cameraRigTransform.position);
             
+
             //Show a laser between controller and grab point
             float distance = Vector3.Distance(trackedObj.transform.position, hitPoint);
             ShowLaser(hitPoint, distance);
