@@ -23,7 +23,8 @@ public class ThreeDConeDrag : MonoBehaviour {
     //public Terrain Terr;
     //public Generate_Terrain map;
     OneEuroFilter<Vector3> posFilter;
-    float filterFrequency = 120f;
+    OneEuroFilter angleFilter;
+    float filterFrequency = 60f;
 
 
 
@@ -51,7 +52,7 @@ public class ThreeDConeDrag : MonoBehaviour {
         reticle = Instantiate(teleportReticlePrefab);
         teleportReticleTransform = reticle.transform;
         posFilter = new OneEuroFilter<Vector3>(filterFrequency);
-
+        angleFilter = new OneEuroFilter(filterFrequency);
         //teleTimeType = new Vector2();
     }
 
@@ -83,6 +84,8 @@ public class ThreeDConeDrag : MonoBehaviour {
             laser.SetActive(false);
             reticle.SetActive(false);
             posFilter = new OneEuroFilter<Vector3>(filterFrequency);
+            angleFilter = new OneEuroFilter(filterFrequency);
+            
             lastMovementRatio = 0;
             lastRotAngle = 0;
             return;
@@ -112,24 +115,22 @@ public class ThreeDConeDrag : MonoBehaviour {
         if (triggerDown)
         {
          
+            //Part 1: Setup needed constants
             float baseAngle = Vector3.Angle(grabForward, Vector3.up);
             Vector3 contForward = trackedObj.transform.forward;
-            //contForward = posFilter.Filter<Vector3>(contForward);
-            float contAngle = Vector3.Angle(/*trackedObj.transform.forward*/contForward, Vector3.up);       
+
+            float contAngle = Vector3.Angle(contForward, Vector3.up);       
             float difAngle = (baseAngle - contAngle) ;
 
             float movementRatio = 0;
+            //Prevent divide by 0 case
             if(baseAngle != 0)
-                movementRatio = (difAngle / baseAngle);
+                movementRatio = -(difAngle / baseAngle);
 
-            if (movementRatio < 0)
-                movementRatio = 0;
-
-            if(movementRatio > 0.8)
-            {
-                movementRatio += (0.5f* (1 - movementRatio));
-            }
-
+            //If we should move backwards- stop instead
+            //if (movementRatio < 0)
+            //    movementRatio = 0;
+            
             
 
             float posRatio = movementRatio - lastMovementRatio;
@@ -162,38 +163,42 @@ public class ThreeDConeDrag : MonoBehaviour {
 
 
             //Determine how much the controller has been rotated from its starting position
+            Vector3 pathToTarget =  (trackedObj.transform.position - hitPoint).normalized ;
+            contForward = trackedObj.transform.forward.normalized;
 
-            contForward = trackedObj.transform.forward;
+            Vector2 cont2DForward = new Vector2(contForward.x, contForward.z);
+            Vector2 pathToTarget2D = new Vector2(pathToTarget.x, pathToTarget.z); 
 
-            contForward = posFilter.Filter<Vector3>(contForward);
-
-            Vector3 pathToTarget =  trackedObj.transform.position - hitPoint ;
-
-            float forAngle = Mathf.Atan(trackedObj.transform.forward.x / trackedObj.transform.forward.z);
-            float pathAngle = Mathf.Atan(pathToTarget.x / pathToTarget.z);
+            /*
+            if (Vector2.Dot(new Vector2(contForward.z, contForward.x), new Vector2(pathToTarget.z, pathToTarget.x)) > 0)
+            {
+                Debug.Log("I'm backwards!");    
+            }
+            else
+            {
+                Debug.Log("I'm proper");
+            }
+            */
+            //3D math
+            //float forAngle = Mathf.Asin(contForward.z / contForward.x);
+            //float pathAngle = Mathf.Atan(pathToTarget.z / pathToTarget.x);
+            //2D Math
+            float forAngle = Mathf.Asin(cont2DForward.x / cont2DForward.magnitude);
+            float pathAngle = Mathf.Asin(pathToTarget2D.x / pathToTarget2D.magnitude);
+            
+            float difYAngle =   (Mathf.Rad2Deg*pathAngle) - (Mathf.Rad2Deg * forAngle);//Vector2.Angle(new Vector2(trackedObj.transform.forward.x, trackedObj.transform.forward.z), new Vector2(pathToTarget.x, pathToTarget.z));
+            
 
             
 
-            float difYAngle = Mathf.Rad2Deg * forAngle - Mathf.Rad2Deg*pathAngle ;//Vector2.Angle(new Vector2(trackedObj.transform.forward.x, trackedObj.transform.forward.z), new Vector2(pathToTarget.x, pathToTarget.z));
-
-            Debug.Log(difYAngle);
 
             localPlane.transform.position = triPath;
-
-            
-            if(difYAngle > 1)
-                localPlane.RotateAround(hitPoint, Vector3.up, 1);
-            if(difYAngle < 1)
-                localPlane.RotateAround(hitPoint, Vector3.up, -1);
-
+            localPlane.RotateAround(hitPoint, Vector3.up, difYAngle);
+           
             //Return the orginal local rotation
-            //cameraRigTransform.eulerAngles = tempRot;
-
             cameraRigTransform.position = localPlane.position;
 
-            //cameraRigTransform.position = posFilter.Filter<Vector3>(cameraRigTransform.position);
-            
-
+           
             //Show a laser between controller and grab point
             float distance = Vector3.Distance(trackedObj.transform.position, hitPoint);
             ShowLaser(hitPoint, distance);
