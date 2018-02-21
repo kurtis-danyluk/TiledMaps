@@ -163,11 +163,9 @@ public class ThreeDConeDrag : MonoBehaviour {
 
 
             //Determine how much the controller has been rotated from its starting position
-            Vector3 pathToTarget =  (trackedObj.transform.position - hitPoint).normalized ;
+            Vector3 pathToTarget =  (hitPoint - trackedObj.transform.position ).normalized ;
             contForward = trackedObj.transform.forward.normalized;
 
-            Vector2 cont2DForward = new Vector2(contForward.x, contForward.z);
-            Vector2 pathToTarget2D = new Vector2(pathToTarget.x, pathToTarget.z); 
 
             /*
             if (Vector2.Dot(new Vector2(contForward.z, contForward.x), new Vector2(pathToTarget.z, pathToTarget.x)) > 0)
@@ -180,20 +178,33 @@ public class ThreeDConeDrag : MonoBehaviour {
             }
             */
             //3D math
-            //float forAngle = Mathf.Asin(contForward.z / contForward.x);
+            //float forAngle = Mathf.Atan(contForward.z / contForward.x);
             //float pathAngle = Mathf.Atan(pathToTarget.z / pathToTarget.x);
             //2D Math
-            float forAngle = Mathf.Asin(cont2DForward.x / cont2DForward.magnitude);
-            float pathAngle = Mathf.Asin(pathToTarget2D.x / pathToTarget2D.magnitude);
-            
-            float difYAngle =   (Mathf.Rad2Deg*pathAngle) - (Mathf.Rad2Deg * forAngle);//Vector2.Angle(new Vector2(trackedObj.transform.forward.x, trackedObj.transform.forward.z), new Vector2(pathToTarget.x, pathToTarget.z));
-            
+
+            Vector2 cont2DForward = new Vector2(contForward.x, contForward.z);
+            Vector2 pathToTarget2D = new Vector2(pathToTarget.x, pathToTarget.z);
+
+
+            float forAngle =Mathf.Acos(cont2DForward.x / cont2DForward.magnitude);
+            float pathAngle = Mathf.Acos(pathToTarget2D.x / pathToTarget2D.magnitude);
 
             
+            
+            if (cont2DForward.y < 0)
+                forAngle = (2 * (Mathf.PI)) - forAngle;
+            if(pathToTarget2D.y < 0)
+                pathAngle = (2 * (Mathf.PI)) - pathAngle;
+              
 
+            //Debug.Log("Forward Angle: " + forAngle + "Path Angle: " + pathAngle);
+              
+            float difYAngle = (Mathf.Rad2Deg * forAngle) - (Mathf.Rad2Deg * pathAngle);
+
+            //difYAngle = Mathf.Acos(Vector2.Dot(cont2DForward, pathToTarget2D) / (cont2DForward.magnitude * pathToTarget2D.magnitude));
 
             localPlane.transform.position = triPath;
-            localPlane.RotateAround(hitPoint, Vector3.up, difYAngle);
+            localPlane.RotateAround(hitPoint, Vector3.up, -difYAngle);
            
             //Return the orginal local rotation
             cameraRigTransform.position = localPlane.position;
