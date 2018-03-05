@@ -292,6 +292,16 @@ public class coinBank : MonoBehaviour {
                     funcController.toggleNavigation(true);
                     funcController.boolNavigation = true;
                 }
+                if (fs.Contains("c"))
+                {
+                    funcController.toggleConeDrag(true);
+                    FunctionController.coneDragGEnabled = true;
+                }
+                else
+                {
+                    funcController.toggleConeDrag(false);
+                    FunctionController.coneDragGEnabled = false;
+                }
 
             }
         }

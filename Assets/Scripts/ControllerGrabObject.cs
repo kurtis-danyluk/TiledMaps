@@ -116,7 +116,7 @@ public class ControllerGrabObject : MonoBehaviour {
     // Update is called once per frame
     public void Update () {
         //Controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip)
-        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
         {
             if (collidingObject)
             {
@@ -125,7 +125,7 @@ public class ControllerGrabObject : MonoBehaviour {
         }
 
         // Controller.GetPressUp(SteamVR_Controller.ButtonMask.Grip)
-        if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
+        if (Controller.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
         {
             if (objectInHand)
             {

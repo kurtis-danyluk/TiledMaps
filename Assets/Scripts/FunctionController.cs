@@ -18,6 +18,11 @@ public class FunctionController : MonoBehaviour {
     public static bool teleportGEnabled;
 
     /// <summary>
+    /// A check if 3D cone drag is globally available. This should be setup at initialization
+    /// </summary>
+    public static bool coneDragGEnabled;
+
+    /// <summary>
     /// Whether the minimap is globally available
     /// </summary>
     public static bool miniMapGEnabled;
@@ -33,6 +38,8 @@ public class FunctionController : MonoBehaviour {
     private static bool enableFlying;
     public GoogleStyleMovement flyingRight;
 
+    private static bool enableConeDrag;
+    public ThreeDConeDrag coneDrag;
 
     //Whether the token or token movement is currently available
     private static bool enableToken;
@@ -48,7 +55,9 @@ public class FunctionController : MonoBehaviour {
     private static bool enableTeleport;
     public LaserPointer laserPointerRight;
 
-    //Whether the minimap is currently available
+    /// <summary>
+    ///Whether the minimap is currently available
+    /// </summary>
     public static bool enableMiniMap;
     public GameObject miniMap;
 
@@ -79,6 +88,11 @@ public class FunctionController : MonoBehaviour {
         else
             enableFlying = false;
 
+        if (coneDragGEnabled)
+            enableConeDrag = state;
+        else
+            enableConeDrag = false;
+
         if (teleportGEnabled)
             enableTeleport = state;
         else
@@ -90,16 +104,15 @@ public class FunctionController : MonoBehaviour {
             enableTokenMove = false;
 
         flyingRight.enabled = enableFlying;
-        //Debug.Log("Flight from movement set to: " + enableFlying.ToString());
 
-        //controllerGrabLeft.ReleaseObject();
+        coneDrag.enabled = enableConeDrag;
+
         controllerGrabRight.ReleaseObject();
 
         controllerGrabLeft.enabled = enableTokenMove;
         controllerGrabRight.enabled = enableTokenMove;
 
         laserPointerRight.enabled = enableTeleport;
-
 
         pointbackLabel.gameObject.SetActive(!state);
         taskBank.controlLabel.gameObject.SetActive(state);
@@ -122,6 +135,13 @@ public class FunctionController : MonoBehaviour {
         enableFlying = state;
         flyingRight.enabled = state;
        // Debug.Log("Flight set to: " + state.ToString());
+    }
+
+    public bool boolCone = false;
+    public void toggleConeDrag(bool state)
+    {
+        enableConeDrag = state;
+        coneDrag.enabled = state;
     }
 
     public bool boolTokenMove = false;
@@ -211,6 +231,11 @@ public class FunctionController : MonoBehaviour {
         {
             toggleTeleportation(!enableTeleport);
             boolTeleportation = false;
+        }
+        if (boolCone)
+        {
+            toggleConeDrag(!enableConeDrag);
+            boolCone = false;
         }
         if(boolMovement)
         {

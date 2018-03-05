@@ -70,7 +70,7 @@ public class controllerGrabToken : MonoBehaviour {
     public void Update()
     {
 
-        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
+        if (Controller.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
         {
             if (collidingObject)
             {

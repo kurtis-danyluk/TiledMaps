@@ -39,7 +39,7 @@ public class ThreeDConeDrag : MonoBehaviour {
     OneEuroFilter stepFilter;
     float filterFrequency = 60f;
 
-    
+    private Vector2 teleTimeType;
 
     public Transform cameraRigTransform;
     public Transform headTransform;
@@ -50,6 +50,8 @@ public class ThreeDConeDrag : MonoBehaviour {
 
     void Start()
     {
+        teleTimeType = new Vector2();
+
         laser = Instantiate(laserPrefab);
         laser.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         laserTransform = laser.transform;
@@ -89,6 +91,8 @@ public class ThreeDConeDrag : MonoBehaviour {
         laserTransform.position = Vector3.Lerp(trackedObj.transform.position, hitPoint, .5f);
         laserTransform.LookAt(hitPoint);
         laserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y, distance);
+
+        reticle.SetActive(true);
         reticle.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         teleportReticleTransform.position = hitPoint;
     }
@@ -99,19 +103,30 @@ public class ThreeDConeDrag : MonoBehaviour {
         preLaserTransform.position = Vector3.Lerp(trackedObj.transform.position, hitPoint, .5f);
         preLaserTransform.LookAt(hitPoint);
         preLaserTransform.localScale = new Vector3(laserTransform.localScale.x, laserTransform.localScale.y, distance);
+
+        reticle.SetActive(true);
         reticle.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         teleportReticleTransform.position = hitPoint;
     }
 
+
+    void OnDisable()
+    {
+        preLaser.SetActive(false);
+        laser.SetActive(false);
+        reticle.SetActive(false);
+    }
+
+
     // Update is called once per frame
-
-
     void Update()
     {
         if (Controller.GetHairTriggerUp())
         {
             triggerDown = false;
             laser.SetActive(false);
+            teleTimeType.y = Time.time;
+            Logger.coneGrabs.Add(teleTimeType);
             //reticle.SetActive(false);
 
             stepFilter = new OneEuroFilter(filterFrequency);
@@ -128,6 +143,7 @@ public class ThreeDConeDrag : MonoBehaviour {
             {
                 preLaser.SetActive(false);
                 triggerDown = true;
+                teleTimeType.x = Time.time;
 
                 grabForward = trackedObj.transform.forward;
                 grabLoc = new Vector3(headTransform.position.x, cameraRigTransform.position.y, headTransform.position.z);

@@ -29,6 +29,7 @@ public class Logger : MonoBehaviour {
     }
 
     public static List<Vector2> grabs;
+    public static List<Vector2> coneGrabs;
     public static List<Vector2> flyTouchs;
     public static List<Vector2> teleports;
 
@@ -180,6 +181,17 @@ public class Logger : MonoBehaviour {
 
             if (1 / Time.smoothDeltaTime <= 50)
                 yield return null;
+
+            foreach (Vector2 t in coneGrabs)
+            {
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "ConeEvent", t.x, t.y, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block, bank.tName, FunctionController.miniMapGEnabled));
+            }
+            coneGrabs.Clear();
+
+            if (1 / Time.smoothDeltaTime <= 50)
+                yield return null;
+
+
             foreach (Vector2 t in teleports)
             {
                 string event_type = "";
@@ -239,6 +251,12 @@ public class Logger : MonoBehaviour {
                 sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "FlyEvent", t.x, t.y, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block ,bank.tName, FunctionController.miniMapGEnabled));
             }
             flyTouchs.Clear();
+
+            foreach (Vector2 t in coneGrabs)
+            {
+                sw.Write(string.Format(format_string, System.DateTime.Now.ToString(), bank.participant_name, "ConeEvent", t.x, t.y, "", "", "", "", "", "", bank.condition + bank.mapCond, bank.trial_number, nav_Search, bank.block, bank.tName, FunctionController.miniMapGEnabled));
+            }
+            coneGrabs.Clear();
 
             foreach (Vector2 t in teleports)
             {
