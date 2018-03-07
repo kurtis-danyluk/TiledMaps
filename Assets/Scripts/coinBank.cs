@@ -13,6 +13,7 @@ public class coinBank : MonoBehaviour {
     public bool useTele;
     public bool useRoom;
     public bool useMiniMap;
+    public bool useCone;
     public string tName;
     public int trial_number;
     public bool beaconTCoinF;
@@ -57,7 +58,13 @@ public class coinBank : MonoBehaviour {
             }
             string trial_controls = "";
 
-            if (useFly && useRoom && useTele)
+            int techCount = 0;
+            techCount += useFly ? 1 : 0;
+            techCount += useRoom ? 1 : 0;
+            techCount += useTele ? 1 : 0;
+            techCount += useCone ? 1 : 0;
+
+            if (techCount > 1)
             {
                 trial_controls = "combined";
                 controlLabel.text = "Full Control";
@@ -82,6 +89,12 @@ public class coinBank : MonoBehaviour {
                 controlLabel.text = "Room-in-Miniature";
                 condition = "room";
             } 
+            else if (useCone)
+            {
+                trial_controls = "cone";
+                controlLabel.text = "3D Cone Drag";
+                condition = "cone";
+            }
             string cbstring = "";
             if (beaconTCoinF)
                 cbstring = "Beacons";

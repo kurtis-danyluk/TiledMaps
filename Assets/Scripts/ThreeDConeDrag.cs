@@ -85,6 +85,8 @@ public class ThreeDConeDrag : MonoBehaviour {
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
+
+
     private void ShowLaser(Vector3 hitPoint, float distance)
     {
         laser.SetActive(true);
@@ -109,12 +111,31 @@ public class ThreeDConeDrag : MonoBehaviour {
         teleportReticleTransform.position = hitPoint;
     }
 
+    void OnApplicationQuit()
+    {
+        planeObject = null;
+    }
 
     void OnDisable()
     {
-        preLaser.SetActive(false);
-        laser.SetActive(false);
-        reticle.SetActive(false);
+        if(preLaser != null)
+            preLaser.SetActive(false);
+
+        if(reticle != null)
+            reticle.SetActive(false);
+
+        triggerDown = false;
+        if(laser != null)
+            laser.SetActive(false);
+        teleTimeType.y = Time.time;
+        Logger.coneGrabs.Add(teleTimeType);
+        
+        stepFilter = new OneEuroFilter(filterFrequency);
+        angleFilter = new OneEuroFilter(filterFrequency);
+        lastMovementRatio = 0;
+        lastRotAngle = 0;
+
+
     }
 
 

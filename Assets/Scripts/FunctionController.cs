@@ -38,8 +38,11 @@ public class FunctionController : MonoBehaviour {
     private static bool enableFlying;
     public GoogleStyleMovement flyingRight;
 
+    //Whether conedrag is available
     private static bool enableConeDrag;
     public ThreeDConeDrag coneDrag;
+
+    public grabDragController grabDragToggle;
 
     //Whether the token or token movement is currently available
     private static bool enableToken;
@@ -82,6 +85,7 @@ public class FunctionController : MonoBehaviour {
     public bool boolMovement = false;
     public void toggleMovement(bool state)
     {
+
         moveEnabled = state;
         if (flightGEnabled)
             enableFlying = state;
@@ -116,6 +120,8 @@ public class FunctionController : MonoBehaviour {
 
         pointbackLabel.gameObject.SetActive(!state);
         taskBank.controlLabel.gameObject.SetActive(state);
+        grabDragToggle.enabled = state;
+
         
     }
 
