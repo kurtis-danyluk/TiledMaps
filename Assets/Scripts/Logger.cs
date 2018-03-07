@@ -53,6 +53,7 @@ public class Logger : MonoBehaviour {
         grabs = new List<Vector2>();
         flyTouchs = new List<Vector2>();
         teleports = new List<Vector2>();
+        coneGrabs = new List<Vector2>();
         cTime = nTime = cTimeU = nTimeU = Time.time;
 
 

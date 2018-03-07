@@ -44,7 +44,7 @@ public class ThreeDConeDrag : MonoBehaviour {
     public Transform cameraRigTransform;
     public Transform headTransform;
 
-    private bool triggerDown;
+    public bool triggerDown;
 
     //private Vector2 teleTimeType;
 
