@@ -38,6 +38,7 @@ public class coinBank : MonoBehaviour {
     public int active_coin;
     public bool hasChanged;
     public FunctionController funcController;
+    public Transform headTransform;
 
 
 	// Use this for initialization
@@ -199,6 +200,7 @@ public class coinBank : MonoBehaviour {
                 tToken.transform.parent = this.transform;
                 tToken.GetComponent<basicToken>().bank = this;
                 tToken.GetComponent<basicToken>().lightHouseTransform = GameObject.Find("[CameraRig]").transform;
+                tToken.GetComponent<basicToken>().headTransform = headTransform;
                 tToken.GetComponent<basicToken>().coin_id = e[2];
                 float x = float.Parse(e[4]);
                 float z = float.Parse(e[6]);

@@ -55,6 +55,7 @@ public class controllerGrabToken : MonoBehaviour {
     protected void GrabObject()
     {
         // 1
+        
         objectInHand = collidingObject;
         collidingObject = null;
 

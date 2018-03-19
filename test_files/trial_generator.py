@@ -26,7 +26,7 @@ def setup_file(lat, lon, zoom, mercX, mercY, features_string, outfile, trial_set
 		theta = random() * 2*math.pi
 		x = r * math.cos(theta) + radius
 		z = r * math.sin(theta) + radius
-		o = random() * 2 + 1
+		o = random() + 0.5
 		outString += "@coin\tid\t{0}\tx\t{1}\tz\t{2}\toffset\t{3}\t{4}\n".format(i,x,z,o,bc_string)
 	
 	return outString
@@ -86,11 +86,11 @@ for i in range(5):
 	s = setup_file(51.17, -115.31, 11, 367, 383, "tm", fileNames[7].format(i,trial_set)+ ".csv",trial_set, 512, "c", 5)
 	print(s, file = open(fileNames[7].format(i,trial_set), 'w+'))
 	
-	s = setup_file(51.17, -115.31, 11, 367, 383, "cm", fileNames[6].format(i,trial_set)+ ".csv",trial_set, 512, "b", 20)
+	s = setup_file(51.17, -115.31, 11, 367, 383, "cm", fileNames[8].format(i,trial_set)+ ".csv",trial_set, 512, "b", 20)
 	print(s, file = open(fileNames[8].format(i,trial_set), 'w+'))
 	
 	
-	s = setup_file(51.17, -115.31, 11, 367, 383, "cm", fileNames[7].format(i,trial_set)+ ".csv",trial_set, 512, "c", 20)
+	s = setup_file(51.17, -115.31, 11, 367, 383, "cm", fileNames[9].format(i,trial_set)+ ".csv",trial_set, 512, "c", 20)
 	print(s, file = open(fileNames[9].format(i,trial_set), 'w+'))
 	
 	

@@ -31,6 +31,7 @@ public class basicToken : MonoBehaviour {
     public bool hasChanged = false;
 
     public Transform lightHouseTransform;
+    public Transform headTransform;
 
     // Use this for initialization
     void Start () {
@@ -79,16 +80,11 @@ public class basicToken : MonoBehaviour {
         }
         else
         {
-
-
-
             if (hasChanged)
             {
                 moveOffGround();
                 hasChanged = false;
-
             }
-
             if (showBeacon)
                 laser.SetActive(true);
             else
@@ -117,7 +113,9 @@ public class basicToken : MonoBehaviour {
                 if (showBeacon && !beaconEntered)
                 {
                     Vector2 beaconHeart = new Vector2(laser.transform.position.x, laser.transform.position.z);
-                    Vector2 lhHeart = new Vector2(lightHouseTransform.position.x, lightHouseTransform.position.z);
+                    //Vector2 lhHeart = new Vector2(lightHouseTransform.position.x, lightHouseTransform.position.z);
+                    Vector2 lhHeart = new Vector2(headTransform.position.x, headTransform.position.z);
+
                     if (Vector2.Distance(beaconHeart, lhHeart) < (laser.GetComponent<Renderer>().bounds.size.x) / 2)
                     {
                         beaconEntered = true;
